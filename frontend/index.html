@@ -331,6 +331,49 @@
           </div>
         </section>
 
+        <section class="running-lab panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">running engine</p>
+              <h3>Corrida e endurance</h3>
+            </div>
+            <button type="button" id="seedRunButton">Exemplo corrida</button>
+          </div>
+          <div class="running-kpis">
+            <article class="sc sc-glow-ac"><span class="ci">🏃</span><span class="cl">Distancia 28d</span><strong class="cv pos" id="runDistanceMetric">0km</strong><small class="cc">volume recente</small></article>
+            <article class="sc sc-glow-ac2"><span class="ci">⏱️</span><span class="cl">Pace medio</span><strong class="cv neu" id="runPaceMetric">--</strong><small class="cc">min/km</small></article>
+            <article class="sc sc-glow-fut"><span class="ci">🏁</span><span class="cl">Melhor estimado</span><strong class="cv fut" id="runBestMetric">--</strong><small class="cc">5k / 10k / longo</small></article>
+            <article class="sc sc-glow-dan"><span class="ci">⚖️</span><span class="cl">Carga aguda</span><strong class="cv neg" id="runLoadMetric">0</strong><small class="cc">corrida vs base</small></article>
+          </div>
+          <div class="running-grid">
+            <div class="running-card">
+              <div class="ct">Tendencia pessoal</div>
+              <div class="cs">Volume, ritmo e consistencia sem feed social</div>
+              <div class="running-trend" id="runTrend"></div>
+            </div>
+            <div class="running-card">
+              <div class="ct">Coach layer</div>
+              <div class="cs">Leitura com corpo, dor e carga</div>
+              <div class="insight-list" id="runInsights"></div>
+            </div>
+            <div class="running-card">
+              <div class="ct">Proxima corrida</div>
+              <div class="cs">Sugestoes privadas pelo estado atual</div>
+              <div class="run-prescription-list" id="runPrescriptionList"></div>
+            </div>
+            <div class="running-card">
+              <div class="ct">Zonas de pace</div>
+              <div class="cs">Ritmos praticos a partir do historico</div>
+              <div class="pace-zone-list" id="paceZoneList"></div>
+            </div>
+            <div class="running-card wide-running">
+              <div class="ct">Route lab</div>
+              <div class="cs">Splits e rota textual quando GPX/TCX trouxer pontos</div>
+              <div class="route-lab" id="routeLab"></div>
+            </div>
+          </div>
+        </section>
+
         <section class="workspace progress-secondary">
           <div class="panel">
             <div class="panel-header">

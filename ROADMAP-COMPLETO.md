@@ -38,6 +38,9 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [x] Criar temporadas/objetivos com periodizacao simples.
 - [x] Expandir corpo com estresse, nutricao, humor, medidas e areas de dor.
 - [x] Importar TCX basico e auditar duplicados exatos.
+- [x] Criar primeira camada "Running Engine": distancia 28d, pace medio, PR estimado, carga aguda/base, tendencias, insights e Route Lab textual.
+- [x] Evoluir Route Lab com mini-mapa SVG offline, splits destacados e segmentos pessoais por rota/distancia parecida.
+- [x] Criar coach privado de corrida com proxima corrida sugerida, zonas de pace e preenchimento do treino planejado.
 - [ ] Validar no uso real por uma semana.
 - [~] Decidir se a primeira base duravel sera `localStorage`, IndexedDB, SQLite/Capacitor ou API Node.
 
@@ -67,6 +70,7 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 
 - [x] Importar GPX basico para atividade de corrida/outro cardio.
 - [x] Importar TCX basico quando houver arquivo.
+- [x] Extrair splits, elevacao e amostra compacta de rota em GPX/TCX quando houver pontos.
 - [ ] Importar FIT quando for prioridade.
 - [ ] Importar exportacao do Strava como complemento, sem depender dele.
 - [ ] Importar atividades do Garmin/Coros/Polar quando houver arquivos.
@@ -151,6 +155,9 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [~] Filtros por tipo, periodo, status e busca textual.
 - [~] Evolucao por exercicio: melhor carga, volume e ultima execucao quando detalhes seguem formato simples.
 - [x] Evolucao por esporte: tempo, distancia, frequencia, melhor sessao e consistencia.
+- [x] Corrida: pace medio, volume 28d, tendencia semanal, PR estimado e Route Lab textual.
+- [x] Corrida: mini-mapa local, comparacao com rotas parecidas e leitura de queda/progressao por split.
+- [x] Corrida: zonas de pace e prescricoes de treino geradas pelo historico/carga/dor.
 - [~] Recordes pessoais manuais e automaticos.
 - [x] Grafico/indicador de consistencia semanal e mensal inicial.
 - [x] Notas por lesao, dor, sono, alimentacao ou energia.
@@ -212,6 +219,8 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [x] Gerar resumo semanal automatico local/exportavel.
 - [~] Detectar padroes: melhora, queda, excesso, repeticao de dor, buracos de consistencia.
 - [x] Recomendar proximo treino com base no historico, agenda e estado do corpo.
+- [x] Criar coach layer inicial para corrida cruzando pace, carga, dor, academia recente e consistencia.
+- [x] Transformar sugestao de corrida em treino planejado com um clique.
 - [x] Criar periodizacao simples: base, carga, deload, teste.
 - [~] Ajustar treino quando houve futevolei/natacao intensa na semana.
 - [x] Explicar recomendacoes em linguagem humana.
@@ -227,6 +236,8 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 
 ## Ideias grandes
 
+- [~] "Strava pessoal": competir por contexto pessoal, rota, corrida e atleta hibrido antes de feed social.
+- [x] "Segmentos privados": comparar rotas parecidas sem ranking social.
 - [ ] "Meu corpo agora": leitura do estado atual e proxima acao.
 - [x] "Temporada": organizar objetivos por trimestre.
 - [ ] "Treinador offline": sugestoes sem cloud obrigatoria.
