@@ -608,6 +608,94 @@ article small,
   color: var(--accent);
 }
 
+.activity-hub {
+  display: grid;
+  gap: 12px;
+  margin: -8px 0 22px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent) 7%, transparent), rgba(255, 255, 255, 0.025)),
+    var(--surface);
+  backdrop-filter: blur(var(--blur)) saturate(180%);
+}
+
+.activity-hub-main {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.activity-hub-title {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.activity-hub-title > span {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 15px;
+  background: color-mix(in srgb, var(--accent) 13%, transparent);
+  font-size: 1.45rem;
+}
+
+.activity-hub-title h3 {
+  margin: 0;
+}
+
+.activity-hub-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.activity-hub-actions button {
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 11px;
+  font-weight: 800;
+}
+
+.activity-hub-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.activity-hub-stats div,
+.activity-specific {
+  display: grid;
+  gap: 2px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface-2);
+}
+
+.activity-hub-stats span,
+.activity-hub-stats small,
+.activity-specific span {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.activity-hub-stats span {
+  text-transform: uppercase;
+  font-weight: 900;
+}
+
+.activity-hub-stats strong,
+.activity-specific strong {
+  color: var(--accent);
+  font-size: 1.05rem;
+}
+
 .ph {
   display: flex;
   justify-content: space-between;
@@ -1978,6 +2066,7 @@ textarea:focus {
 
   .appearance-grid,
   .profile-stats,
+  .activity-hub-stats,
   .data-health-grid,
   .swatch-grid {
     grid-template-columns: 1fr;
@@ -1985,5 +2074,18 @@ textarea:focus {
 
   .activity-focus-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .activity-hub-main {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .activity-hub-actions {
+    justify-content: stretch;
+  }
+
+  .activity-hub-actions button {
+    flex: 1;
   }
 }
