@@ -822,6 +822,42 @@ function renderMetrics() {
   $("#loadMetric").textContent = load;
 }
 
+function buildWeeklyCoachActions() {
+  const week = scopedWorkouts(currentWeekWorkouts());
+  const allWeek = currentWeekWorkouts();
+  const body = latestBodyLog();
+  const actions = [];
+  const type = activeSportFilter;
+  const label = type === "todos" ? "semana" : presetLabel(type).toLowerCase();
+  const load = loadSum(week);
+  const previous = loadSum(scopedWorkouts(previousWeekWorkouts()));
+  const planned = week.filter((item) => item.status === "planejado");
+  const done = week.filter((item) => item.status === "feito");
+
+  if (planned.length) actions.push({ tag: "Executar", title: `Fechar ${planned[0].name}`, text: `${formatDate(planned[0].date)} esta planejado. Depois registre RPE, energia e dor para calibrar o coach.`, action: "today" });
+  if (!week.length) actions.push({ tag: "Comecar", title: `Registrar ${label}`, text: type === "todos" ? "Sem treino filtrado nesta semana. Comece com uma sessao curta para criar lastro." : `Sem ${label} nesta semana. Use o botao registrar para criar a primeira sessao.`, action: "new" });
+  if (body?.pain >= 5) actions.push({ tag: "Recuperar", title: "Baixar impacto", text: `Dor recente ${body.pain}/10. Troque treino forte por mobilidade, natacao leve ou tecnica.`, action: "body" });
+  if (body?.sleep && body.sleep < 6) actions.push({ tag: "Sono", title: "Evitar intensidade maxima", text: `Sono recente ${body.sleep}h. Melhor volume facil do que teste de performance.`, action: "body" });
+  if (previous > 0 && load > previous * 1.35) actions.push({ tag: "Carga", title: "Semana subiu rapido", text: `Carga de ${label} esta ${Math.round(((load - previous) / previous) * 100)}% acima da anterior. Considere deload curto.`, action: "progress" });
+  if (type === "corrida") actions.push(...runningInsights().slice(0, 1).map(([title, text]) => ({ tag: "Corrida", title, text, action: "progress" })));
+  if (type === "academia" && parseExerciseDetails().length < 3) actions.push({ tag: "Academia", title: "Detalhar exercicios", text: "Use linhas tipo supino 4x8 70kg para destravar progressao e recordes.", action: "new" });
+  if (type === "natacao" && week.some((item) => !item.volume && !item.distance)) actions.push({ tag: "Natacao", title: "Registrar metragem", text: "Coloque volume/metragem para o progresso da natacao ficar real.", action: "new" });
+  if (type === "todos" && !new Set(allWeek.map((item) => item.type)).has("mobilidade")) actions.push({ tag: "Recuperacao", title: "Adicionar mobilidade", text: "Ainda nao tem mobilidade na semana. Dez minutos ja melhoram a leitura do corpo.", action: "new-mobility" });
+  if (!actions.length) actions.push({ tag: "Manter", title: "Semana equilibrada", text: `${done.length} sessao(oes) feitas e carga sob controle. Continue registrando detalhes pequenos.`, action: "progress" });
+
+  return actions.slice(0, 5);
+}
+
+function renderWeeklyCoach() {
+  $("#coachActionList").innerHTML = buildWeeklyCoachActions().map((item) => `
+    <button type="button" class="coach-action-card" data-coach-action="${item.action}">
+      <span>${item.tag}</span>
+      <strong>${item.title}</strong>
+      <small>${item.text}</small>
+    </button>
+  `).join("");
+}
+
 function renderWorkoutList() {
   const ordered = scopedWorkouts([...state.workouts]).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 8);
   $("#workoutList").innerHTML = ordered.length ? ordered.map((item, index) => workoutListItem(item, index)).join("") : '<p class="empty-state">Nenhum treino registrado ainda.</p>';
@@ -1472,6 +1508,7 @@ function render() {
   renderPresets();
   renderQuickStart();
   renderMetrics();
+  renderWeeklyCoach();
   renderWorkoutList();
   renderWeek();
   renderPlan();
@@ -1928,6 +1965,27 @@ $("#activityHub").addEventListener("click", (event) => {
   }
   if (button.dataset.activityAction === "history") setPage("history");
   if (button.dataset.activityAction === "progress") setPage("progress");
+});
+
+$("#coachActionList").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-coach-action]");
+  if (!button) return;
+  const action = button.dataset.coachAction;
+  if (action === "new") $("#addWorkoutButton").click();
+  if (action === "new-mobility") {
+    setPreset("mobilidade");
+    $("#addWorkoutButton").click();
+  }
+  if (action === "today") setPage("today");
+  if (action === "progress") setPage("progress");
+  if (action === "body") setPage("body");
+});
+
+$("#copyCoachButton").addEventListener("click", () => {
+  const text = buildWeeklyCoachActions().map((item) => `- ${item.tag}: ${item.title} — ${item.text}`).join("\n");
+  navigator.clipboard?.writeText(text);
+  $("#copyCoachButton").textContent = "Copiado";
+  setTimeout(() => { $("#copyCoachButton").textContent = "Copiar"; }, 1200);
 });
 
 $("#themeToggleButton").addEventListener("click", () => {

@@ -696,6 +696,49 @@ article small,
   font-size: 1.05rem;
 }
 
+.weekly-coach {
+  margin-bottom: 22px;
+}
+
+.coach-action-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 10px;
+}
+
+.coach-action-card {
+  display: grid;
+  gap: 5px;
+  min-height: 116px;
+  padding: 13px;
+  border-radius: 16px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent) 8%, transparent), rgba(255, 255, 255, 0.025)),
+    var(--surface-2);
+  text-align: left;
+}
+
+.coach-action-card:hover {
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  transform: translateY(-1px);
+}
+
+.coach-action-card span {
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.coach-action-card strong {
+  color: var(--text);
+}
+
+.coach-action-card small {
+  color: var(--muted);
+  line-height: 1.35;
+}
+
 .ph {
   display: flex;
   justify-content: space-between;
