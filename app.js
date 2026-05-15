@@ -274,7 +274,27 @@ function normalizeWorkout(item) {
     focus: String(item.focus || item.foco || "").trim(),
     location: String(item.location || item.local || "").trim(),
     note: String(item.note || item.notes || item.observacao || item.observação || item.nota || "").trim(),
-    details: String(item.details || item.detalhes || item.series || item.blocos || "").trim()
+    details: String(item.details || item.detalhes || item.series || item.blocos || "").trim(),
+    route: normalizeRoute(item.route || item.rota)
+  };
+}
+
+function normalizeRoute(route) {
+  if (!route || typeof route !== "object") return null;
+  const splits = Array.isArray(route.splits) ? route.splits.map((split, index) => ({
+    km: Number(split.km || index + 1),
+    pace: Number(split.pace || 0),
+    duration: Number(split.duration || 0)
+  })).filter((split) => split.duration > 0 || split.pace > 0).slice(0, 80) : [];
+  const points = Array.isArray(route.points) ? route.points.map((point) => ({
+    lat: Number(point.lat),
+    lon: Number(point.lon)
+  })).filter((point) => Number.isFinite(point.lat) && Number.isFinite(point.lon)).slice(0, 120) : [];
+  return {
+    source: String(route.source || "manual"),
+    elevationGain: Number(route.elevationGain || 0),
+    splits,
+    points
   };
 }
 
@@ -778,6 +798,267 @@ function buildInsights() {
   return insights;
 }
 
+function runningWorkouts(days = Infinity) {
+  const start = new Date();
+  if (Number.isFinite(days)) {
+    start.setDate(start.getDate() - days + 1);
+    start.setHours(0, 0, 0, 0);
+  }
+  return state.workouts
+    .filter((workout) => workout.type === "corrida" && Number(workout.distance || 0) > 0 && Number(workout.duration || 0) > 0)
+    .filter((workout) => !Number.isFinite(days) || new Date(`${workout.date}T12:00:00`) >= start)
+    .sort((a, b) => b.date.localeCompare(a.date));
+}
+
+function formatPace(value) {
+  if (!Number.isFinite(value) || value <= 0) return "--";
+  const minutes = Math.floor(value);
+  const seconds = Math.round((value - minutes) * 60);
+  return `${minutes}:${String(seconds).padStart(2, "0")}`;
+}
+
+function runningSummary() {
+  const all = runningWorkouts();
+  const last28 = runningWorkouts(28);
+  const distance28 = last28.reduce((sum, workout) => sum + Number(workout.distance || 0), 0);
+  const duration28 = last28.reduce((sum, workout) => sum + Number(workout.duration || 0), 0);
+  const avgPace = distance28 ? duration28 / distance28 : 0;
+  const acuteLoad = runningWorkouts(7).reduce((sum, workout) => sum + workoutLoad(workout), 0);
+  const chronicLoad = Math.round(runningWorkouts(42).reduce((sum, workout) => sum + workoutLoad(workout), 0) / 6);
+  const estimates = all.flatMap((workout) => {
+    const distance = Number(workout.distance || 0);
+    const duration = Number(workout.duration || 0);
+    if (distance < 1 || !duration) return [];
+    return [
+      { label: "5k", minutes: duration * (5 / distance) ** 1.06, workout },
+      { label: "10k", minutes: duration * (10 / distance) ** 1.06, workout }
+    ];
+  });
+  const bestEstimate = estimates.sort((a, b) => a.minutes - b.minutes)[0];
+  const longest = [...all].sort((a, b) => Number(b.distance || 0) - Number(a.distance || 0))[0];
+  return { all, last28, distance28, avgPace, acuteLoad, chronicLoad, bestEstimate, longest };
+}
+
+function weeklyRunningTrend() {
+  return Array.from({ length: 6 }, (_, index) => {
+    const offset = index - 5;
+    const { start, end } = weekWindow(offset);
+    const runs = workoutsInWindow(start, end).filter((workout) => workout.type === "corrida");
+    const distance = runs.reduce((sum, workout) => sum + Number(workout.distance || 0), 0);
+    const duration = runs.reduce((sum, workout) => sum + Number(workout.duration || 0), 0);
+    return {
+      label: start.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
+      distance,
+      pace: distance ? duration / distance : 0
+    };
+  });
+}
+
+function runningInsights() {
+  const { last28, distance28, avgPace, acuteLoad, chronicLoad, longest } = runningSummary();
+  const body = latestBodyLog();
+  const insights = [];
+  const ratio = chronicLoad ? acuteLoad / chronicLoad : 0;
+  if (!last28.length) insights.push(["Sem base recente", "Importe GPX/TCX/FIT ou registre distancia para o Finfit analisar corrida como esporte de verdade."]);
+  if (ratio > 1.35) insights.push(["Carga aguda alta", "A corrida dos ultimos 7 dias passou bastante da base. Melhor manter leve ou trocar por natacao/mobilidade."]);
+  if (ratio > 0 && ratio < 0.55 && distance28 > 0) insights.push(["Base caiu", "A carga de corrida recente esta abaixo da media. Retome por volume facil antes de tiro forte."]);
+  if (avgPace && longest && Number(longest.distance) >= 5) insights.push(["Base mensuravel", `Seu longo recente foi ${longest.distance}km. Use pace ${formatPace(avgPace)} como referencia conservadora de base.`]);
+  if (body?.pain >= 4 && last28.length) insights.push(["Dor muda a leitura", "Com dor corporal recente, queda de pace pode ser fadiga local e nao perda de condicionamento."]);
+  if (state.workouts.some((workout) => workout.type === "academia" && workout.date >= offsetDate(-2))) insights.push(["Contexto hibrido", "Se fez pernas pesado nos ultimos dias, compare corrida por RPE e nao so por pace."]);
+  if (!insights.length) insights.push(["Corrida sob controle", "Volume, pace e carga estao coerentes com os dados atuais. Boa fase para construir consistencia."]);
+  return insights;
+}
+
+function paceZones() {
+  const { avgPace, bestEstimate } = runningSummary();
+  const racePace = bestEstimate?.label === "5k" ? bestEstimate.minutes / 5 : bestEstimate?.label === "10k" ? bestEstimate.minutes / 10 : 0;
+  const anchor = racePace || avgPace || 6.5;
+  return [
+    { label: "Z2 facil", range: [anchor + 0.9, anchor + 1.7], note: "conversa inteira, base aerobica" },
+    { label: "Longo confortavel", range: [anchor + 0.65, anchor + 1.25], note: "volume sem quebrar a semana" },
+    { label: "Ritmo controlado", range: [anchor + 0.2, anchor + 0.55], note: "progressivo ou bloco moderado" },
+    { label: "Tempo forte", range: [anchor - 0.05, anchor + 0.18], note: "curto, exige corpo bom" },
+    { label: "Tiros", range: [Math.max(3.2, anchor - 0.55), Math.max(3.4, anchor - 0.2)], note: "usar com parcimonia" }
+  ];
+}
+
+function runPrescriptions() {
+  const { avgPace, acuteLoad, chronicLoad, distance28, longest } = runningSummary();
+  const body = latestBodyLog();
+  const ratio = chronicLoad ? acuteLoad / chronicLoad : 0;
+  const basePace = avgPace || 6.5;
+  const longDistance = Number(longest?.distance || 5);
+  if (body?.pain >= 5 || ratio > 1.35) {
+    return [
+      { type: "Recuperacao", title: "Rodagem muito leve", detail: `20-30min em ${formatPace(basePace + 1.2)}-${formatPace(basePace + 1.8)}/km ou natacao leve`, reason: "dor/carga pedem reduzir impacto" },
+      { type: "Tecnica", title: "Mobilidade + strides opcionais", detail: "10min mobilidade, 4x15s solto se estiver sem dor", reason: "mantem gesto sem somar muita carga" }
+    ];
+  }
+  if (!distance28) {
+    return [
+      { type: "Base", title: "Primeira corrida calibradora", detail: "30min leve + registrar RPE, dor e distancia", reason: "precisamos de referencia real" }
+    ];
+  }
+  if (ratio < 0.7) {
+    return [
+      { type: "Base", title: "Retomada facil", detail: `35-45min em ${formatPace(basePace + 0.8)}-${formatPace(basePace + 1.4)}/km`, reason: "base recente abaixo do normal" },
+      { type: "Progressivo", title: "Final controlado", detail: `30min leve + 10min perto de ${formatPace(basePace + 0.35)}/km`, reason: "acorda ritmo sem virar teste" }
+    ];
+  }
+  return [
+    { type: "Base", title: "Rodagem Z2", detail: `40-50min em ${formatPace(basePace + 0.8)}-${formatPace(basePace + 1.4)}/km`, reason: "construir motor sem atrapalhar academia" },
+    { type: "Progressivo", title: "Progressivo curto", detail: `15min facil + 3x6min em ${formatPace(basePace + 0.25)}/km com 2min leve`, reason: "melhora controle sem virar prova" },
+    { type: "Longo", title: "Longo pessoal", detail: `${Math.round(Math.min(longDistance * 1.12, longDistance + 1.2) * 10) / 10}km facil`, reason: "aumenta teto com incremento conservador" }
+  ];
+}
+
+function renderRunningLab() {
+  const { all, distance28, avgPace, acuteLoad, chronicLoad, bestEstimate, longest } = runningSummary();
+  $("#runDistanceMetric").textContent = `${Math.round(distance28 * 10) / 10}km`;
+  $("#runPaceMetric").textContent = avgPace ? `${formatPace(avgPace)}` : "--";
+  $("#runBestMetric").textContent = bestEstimate ? `${bestEstimate.label} ${formatPace(bestEstimate.minutes)}` : longest ? `${longest.distance}km` : "--";
+  $("#runLoadMetric").textContent = chronicLoad ? `${acuteLoad}/${chronicLoad}` : acuteLoad;
+
+  const maxDistance = Math.max(1, ...weeklyRunningTrend().map((week) => week.distance));
+  $("#runTrend").innerHTML = weeklyRunningTrend().map((week) => `
+    <div class="run-week">
+      <span>${week.label}</span>
+      <div class="run-bar"><i style="width:${Math.max(4, Math.round((week.distance / maxDistance) * 100))}%"></i></div>
+      <strong>${Math.round(week.distance * 10) / 10}km</strong>
+      <small>${week.pace ? formatPace(week.pace) : "--"}</small>
+    </div>
+  `).join("");
+
+  $("#runInsights").innerHTML = runningInsights().map(([title, text]) => `<div class="insight-card"><strong>${title}</strong><small>${text}</small></div>`).join("");
+  $("#runPrescriptionList").innerHTML = runPrescriptions().map((item) => `
+    <button type="button" class="run-prescription" data-run-prescription="${encodeURIComponent(JSON.stringify(item))}">
+      <span>${item.type}</span>
+      <strong>${item.title}</strong>
+      <small>${item.detail}</small>
+      <em>${item.reason}</em>
+    </button>
+  `).join("");
+  $("#paceZoneList").innerHTML = paceZones().map((zone) => `
+    <div class="pace-zone">
+      <span>${zone.label}</span>
+      <strong>${formatPace(zone.range[0])}-${formatPace(zone.range[1])}/km</strong>
+      <small>${zone.note}</small>
+    </div>
+  `).join("");
+  const withRoute = all.find((workout) => workout.route?.splits?.length || workout.route?.points?.length);
+  $("#routeLab").innerHTML = withRoute ? routeLabHtml(withRoute) : recentRunsHtml(all);
+}
+
+function routeLabHtml(workout) {
+  const splits = workout.route?.splits || [];
+  const points = workout.route?.points || [];
+  const similar = similarRuns(workout);
+  const pace = Number(workout.duration) / Number(workout.distance || 1);
+  return `
+    <div class="route-focus">
+      ${routeSvg(points)}
+      <div class="route-summary">
+        <strong>${workout.name}</strong>
+        <span>${formatDate(workout.date)} - ${workout.distance}km - ${formatPace(pace)}/km - elev +${Math.round(workout.route?.elevationGain || 0)}m</span>
+        <span>${routeVerdict(workout)}</span>
+      </div>
+    </div>
+    <div class="split-grid">
+      ${splits.length ? splits.slice(0, 12).map((split) => splitHtml(split, splits)).join("") : '<p class="empty-state">Sem splits por km nesse arquivo.</p>'}
+    </div>
+    <div class="route-compare">
+      <strong>Segmentos pessoais</strong>
+      ${similar.length ? similar.slice(0, 4).map((run) => `<div><span>${formatDate(run.date)} - ${run.distance}km</span><b>${formatPace(Number(run.duration) / Number(run.distance || 1))}/km</b></div>`).join("") : "<small>Sem rota parecida ainda. Importe a mesma volta algumas vezes para comparar como um segmento privado.</small>"}
+    </div>
+    <div class="route-points">${points.length ? `${points.length} pontos guardados como amostra compacta para mapa futuro.` : "Sem amostra de pontos."}</div>
+  `;
+}
+
+function splitHtml(split, splits) {
+  const pace = split.pace || split.duration;
+  const paces = splits.map((item) => item.pace || item.duration).filter(Boolean);
+  const best = Math.min(...paces);
+  const worst = Math.max(...paces);
+  const tone = pace === best ? "best" : pace === worst ? "slow" : "";
+  return `<div class="${tone}"><span>km ${split.km}</span><strong>${formatPace(pace)}</strong></div>`;
+}
+
+function routeVerdict(workout) {
+  const splits = workout.route?.splits || [];
+  if (splits.length >= 4) {
+    const firstHalf = splits.slice(0, Math.floor(splits.length / 2));
+    const secondHalf = splits.slice(Math.floor(splits.length / 2));
+    const avg = (items) => items.reduce((sum, split) => sum + Number(split.pace || split.duration || 0), 0) / Math.max(1, items.length);
+    const first = avg(firstHalf);
+    const second = avg(secondHalf);
+    if (second < first * 0.97) return "Final progressivo: ritmo melhorou na segunda metade.";
+    if (second > first * 1.06) return "Queda no final: pode ser fadiga, calor, subida ou carga acumulada.";
+  }
+  if (Number(workout.route?.elevationGain || 0) > Number(workout.distance || 0) * 12) return "Rota com subida relevante: compare por esforco, nao so por pace.";
+  return "Rota pronta para virar segmento privado quando houver repeticoes.";
+}
+
+function routeSvg(points) {
+  if (!points?.length) return '<div class="route-map empty">Sem mapa</div>';
+  const width = 360;
+  const height = 170;
+  const lats = points.map((point) => point.lat);
+  const lons = points.map((point) => point.lon);
+  const minLat = Math.min(...lats);
+  const maxLat = Math.max(...lats);
+  const minLon = Math.min(...lons);
+  const maxLon = Math.max(...lons);
+  const pad = 16;
+  const xScale = (width - pad * 2) / Math.max(0.000001, maxLon - minLon);
+  const yScale = (height - pad * 2) / Math.max(0.000001, maxLat - minLat);
+  const coords = points.map((point) => {
+    const x = pad + (point.lon - minLon) * xScale;
+    const y = height - pad - (point.lat - minLat) * yScale;
+    return `${Math.round(x * 10) / 10},${Math.round(y * 10) / 10}`;
+  }).join(" ");
+  const start = coords.split(" ")[0];
+  const end = coords.split(" ").at(-1);
+  const [sx, sy] = start.split(",");
+  const [ex, ey] = end.split(",");
+  return `
+    <svg class="route-map" viewBox="0 0 ${width} ${height}" role="img" aria-label="Mapa simplificado da rota">
+      <defs>
+        <linearGradient id="routeStroke" x1="0" x2="1">
+          <stop offset="0%" stop-color="var(--accent)" />
+          <stop offset="100%" stop-color="var(--teal)" />
+        </linearGradient>
+      </defs>
+      <polyline points="${coords}" fill="none" stroke="url(#routeStroke)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+      <circle cx="${sx}" cy="${sy}" r="5" fill="var(--accent)" />
+      <circle cx="${ex}" cy="${ey}" r="5" fill="var(--red)" />
+    </svg>
+  `;
+}
+
+function similarRuns(workout) {
+  const distance = Number(workout.distance || 0);
+  const points = workout.route?.points || [];
+  const start = points[0];
+  const end = points.at(-1);
+  return runningWorkouts()
+    .filter((run) => run.id !== workout.id)
+    .filter((run) => Math.abs(Number(run.distance || 0) - distance) <= Math.max(0.6, distance * 0.12))
+    .filter((run) => {
+      const runPoints = run.route?.points || [];
+      if (!start || !end || !runPoints.length) return true;
+      const runStart = runPoints[0];
+      const runEnd = runPoints.at(-1);
+      return haversine(start.lat, start.lon, runStart.lat, runStart.lon) < 220 && haversine(end.lat, end.lon, runEnd.lat, runEnd.lon) < 220;
+    })
+    .sort((a, b) => (Number(a.duration) / Number(a.distance || 1)) - (Number(b.duration) / Number(b.distance || 1)));
+}
+
+function recentRunsHtml(runs) {
+  return runs.length
+    ? runs.slice(0, 5).map((run) => `<div class="route-summary"><strong>${run.name}</strong><span>${formatDate(run.date)} - ${run.distance}km - ${formatPace(Number(run.duration) / Number(run.distance || 1))}/km</span></div>`).join("")
+    : '<p class="empty-state">Importe uma corrida GPX/TCX ou registre distancia para ativar o Route Lab.</p>';
+}
+
 function renderProgress() {
   const last28 = workoutsSince(28);
   const activeDays = new Set(last28.map((item) => item.date)).size;
@@ -814,6 +1095,8 @@ function renderProgress() {
   $("#exerciseGrid").innerHTML = exercises.length
     ? exercises.map((item) => `<div class="exercise-card"><strong>${item.name}</strong><small>${item.count} registros - melhor peso ${item.bestWeight || "-"}kg - melhor volume ${Math.round(item.bestVolume)}</small></div>`).join("")
     : '<p class="empty-state">Use detalhes como "supino 4x8 70kg" para detectar exercicios.</p>';
+
+  renderRunningLab();
 }
 
 function activeSeason() {
@@ -1211,11 +1494,22 @@ function parseGpx(text) {
   const doc = new DOMParser().parseFromString(text, "application/xml");
   const points = [...doc.querySelectorAll("trkpt")];
   const times = points.map((point) => point.querySelector("time")?.textContent).filter(Boolean);
+  const route = routeFromGpxPoints(points);
   const distance = gpxDistance(points);
   const start = times[0] ? new Date(times[0]) : new Date();
   const end = times.at(-1) ? new Date(times.at(-1)) : start;
   const minutes = Math.max(1, Math.round((end - start) / 60000) || 45);
-  return [normalizeWorkout({ type: "corrida", name: "Atividade GPX", date: start.toISOString().slice(0, 10), duration: minutes, distance, intensity: "moderado", note: "Importado de GPX" })];
+  return [normalizeWorkout({
+    type: "corrida",
+    name: "Atividade GPX",
+    date: start.toISOString().slice(0, 10),
+    duration: minutes,
+    distance,
+    intensity: "moderado",
+    note: "Importado de GPX",
+    details: route.splits.length ? `splits: ${route.splits.slice(0, 8).map((split) => `km${split.km} ${formatPace(split.pace)}`).join(" | ")}\nelevacao +${Math.round(route.elevationGain)}m` : "Importado de GPX",
+    route
+  })];
 }
 
 function parseTcx(text) {
@@ -1225,6 +1519,7 @@ function parseTcx(text) {
   const points = [...doc.querySelectorAll("Trackpoint")];
   const times = points.map((point) => point.querySelector("Time")?.textContent).filter(Boolean);
   const distances = points.map((point) => Number(point.querySelector("DistanceMeters")?.textContent || 0)).filter(Boolean);
+  const route = routeFromTcxPoints(points);
   const start = times[0] ? new Date(times[0]) : new Date();
   const end = times.at(-1) ? new Date(times.at(-1)) : start;
   const meters = Math.max(...distances, 0);
@@ -1237,8 +1532,65 @@ function parseTcx(text) {
     duration: minutes,
     distance: Math.round((meters / 1000) * 10) / 10,
     intensity: "moderado",
-    note: "Importado de TCX"
+    note: "Importado de TCX",
+    details: route.splits.length ? `splits: ${route.splits.slice(0, 8).map((split) => `km${split.km} ${formatPace(split.pace)}`).join(" | ")}\nelevacao +${Math.round(route.elevationGain)}m` : "Importado de TCX",
+    route
   })];
+}
+
+function routeFromGpxPoints(points) {
+  const clean = points.map((point) => ({
+    lat: Number(point.getAttribute("lat")),
+    lon: Number(point.getAttribute("lon")),
+    ele: Number(point.querySelector("ele")?.textContent || 0),
+    time: point.querySelector("time")?.textContent ? new Date(point.querySelector("time").textContent).getTime() : 0
+  })).filter((point) => Number.isFinite(point.lat) && Number.isFinite(point.lon));
+  return routeFromTimedPoints(clean, "gpx");
+}
+
+function routeFromTcxPoints(points) {
+  const clean = points.map((point) => {
+    const position = point.querySelector("Position");
+    return {
+      lat: Number(position?.querySelector("LatitudeDegrees")?.textContent),
+      lon: Number(position?.querySelector("LongitudeDegrees")?.textContent),
+      ele: Number(point.querySelector("AltitudeMeters")?.textContent || 0),
+      time: point.querySelector("Time")?.textContent ? new Date(point.querySelector("Time").textContent).getTime() : 0,
+      distanceMeters: Number(point.querySelector("DistanceMeters")?.textContent || 0)
+    };
+  }).filter((point) => Number.isFinite(point.lat) && Number.isFinite(point.lon));
+  return routeFromTimedPoints(clean, "tcx");
+}
+
+function routeFromTimedPoints(points, source) {
+  let total = 0;
+  let elevationGain = 0;
+  let nextSplit = 1000;
+  let splitStartTime = points[0]?.time || 0;
+  const splits = [];
+  for (let index = 1; index < points.length; index += 1) {
+    const previous = points[index - 1];
+    const current = points[index];
+    const segment = current.distanceMeters && previous.distanceMeters
+      ? Math.max(0, current.distanceMeters - previous.distanceMeters)
+      : haversine(previous.lat, previous.lon, current.lat, current.lon);
+    total += segment;
+    const elevationDelta = current.ele - previous.ele;
+    if (elevationDelta > 0) elevationGain += elevationDelta;
+    if (total >= nextSplit && current.time && splitStartTime) {
+      const duration = Math.max(0.1, (current.time - splitStartTime) / 60000);
+      splits.push({ km: splits.length + 1, pace: duration, duration });
+      splitStartTime = current.time;
+      nextSplit += 1000;
+    }
+  }
+  const step = Math.max(1, Math.ceil(points.length / 80));
+  return {
+    source,
+    elevationGain: Math.round(elevationGain),
+    splits,
+    points: points.filter((_, index) => index % step === 0).map((point) => ({ lat: point.lat, lon: point.lon }))
+  };
 }
 
 function gpxDistance(points) {
@@ -1271,6 +1623,10 @@ function progressReport() {
   const records = buildRecords().map((item) => `- ${item.label}: ${item.value} (${item.detail})`).join("\n") || "- Sem recordes ainda";
   const insights = buildInsights().map(([title, text]) => `- ${title}: ${text}`).join("\n");
   const sports = buildSportBreakdown().map((item) => `- ${item.label}: ${item.sessions} sessoes, ${item.minutes}min, carga ${item.load}`).join("\n") || "- Sem treinos";
+  const run = runningSummary();
+  const running = run.all.length
+    ? `- 28 dias: ${Math.round(run.distance28 * 10) / 10}km\n- Pace medio: ${formatPace(run.avgPace)}/km\n- Carga aguda/base: ${run.acuteLoad}/${run.chronicLoad || 0}`
+    : "- Sem corridas com distancia";
   return [
     "# Finfit - Relatorio local",
     "",
@@ -1281,6 +1637,9 @@ function progressReport() {
     "",
     "## Recordes",
     records,
+    "",
+    "## Corrida",
+    running,
     "",
     "## Alertas",
     insights
@@ -1502,6 +1861,53 @@ $("#seedProgressButton").addEventListener("click", () => {
   state.workouts = seedState.workouts.map(normalizeWorkout);
   render();
 });
+
+$("#seedRunButton").addEventListener("click", () => {
+  const runs = [
+    { name: "Corrida base Z2", date: offsetDate(-18), duration: 36, distance: 5.2, rpe: 5, note: "leve, conversa ok", route: { source: "sample", elevationGain: 22, points: sampleRoutePoints(0), splits: [{ km: 1, pace: 6.55 }, { km: 2, pace: 6.48 }, { km: 3, pace: 6.52 }, { km: 4, pace: 6.44 }, { km: 5, pace: 6.38 }] } },
+    { name: "Corrida progressiva", date: offsetDate(-9), duration: 42, distance: 6.4, rpe: 7, note: "final mais forte", route: { source: "sample", elevationGain: 35, points: sampleRoutePoints(0.0004), splits: [{ km: 1, pace: 6.5 }, { km: 2, pace: 6.35 }, { km: 3, pace: 6.28 }, { km: 4, pace: 6.12 }, { km: 5, pace: 5.58 }, { km: 6, pace: 5.45 }] } },
+    { name: "Longo curto", date: offsetDate(-3), duration: 58, distance: 8.7, rpe: 6, note: "boa base, sem forcar", route: { source: "sample", elevationGain: 48, points: sampleRoutePoints(0.0008), splits: [{ km: 1, pace: 6.48 }, { km: 2, pace: 6.42 }, { km: 3, pace: 6.39 }, { km: 4, pace: 6.35 }, { km: 5, pace: 6.4 }, { km: 6, pace: 6.36 }, { km: 7, pace: 6.31 }, { km: 8, pace: 6.24 }] } }
+  ].map((run) => normalizeWorkout({ id: uid("workout"), type: "corrida", intensity: "moderado", status: "feito", focus: "base aerobica", location: "rua", details: "amostra running engine", ...run }));
+  mergeWorkouts(runs);
+  render();
+});
+
+$("#runPrescriptionList").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-run-prescription]");
+  if (!button) return;
+  const item = JSON.parse(decodeURIComponent(button.dataset.runPrescription));
+  const duration = Number(item.detail.match(/(\d+)\s*-\s*(\d+)min/)?.[1] || item.detail.match(/(\d+)min/)?.[1] || 40);
+  fillWorkoutForm(normalizeWorkout({
+    id: uid("workout"),
+    type: "corrida",
+    name: `Corrida - ${item.title}`,
+    date: todayIso(),
+    duration,
+    intensity: item.type === "Progressivo" ? "forte" : "leve",
+    status: "planejado",
+    focus: item.type.toLowerCase(),
+    note: `${item.detail}. ${item.reason}`,
+    details: `Sugestao Finfit\n${item.type}\n${item.detail}\nMotivo: ${item.reason}`
+  }));
+  setPage("today");
+  $("#quickAdd").scrollIntoView({ behavior: "smooth", block: "start" });
+});
+
+function sampleRoutePoints(offset = 0) {
+  const baseLat = -23.5614 + offset;
+  const baseLon = -46.6558 + offset;
+  return [
+    [0, 0],
+    [0.002, 0.001],
+    [0.003, 0.004],
+    [0.001, 0.006],
+    [-0.002, 0.005],
+    [-0.003, 0.002],
+    [-0.001, -0.001],
+    [0.001, -0.002],
+    [0, 0]
+  ].map(([lat, lon]) => ({ lat: baseLat + lat, lon: baseLon + lon }));
+}
 
 $("#clearProgressButton").addEventListener("click", () => {
   $("#exerciseGrid").innerHTML = '<p class="empty-state">Use detalhes como "supino 4x8 70kg" para detectar exercicios.</p>';
