@@ -1,6 +1,6 @@
 {
   "name": "finfit",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Strava pessoal para planejamento, registro e organizacao de treinos.",
   "private": true,
   "scripts": {

@@ -17,6 +17,7 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 
 ## Status atual
 
+- [x] Salvar marco `1.0.0`: Finfit local, PWA/offline, visual alinhado ao Finanza, dashboard, captura rapida, historico, progresso, corpo, dados/importacoes e painel de usuario com temas.
 - [x] Criar base separada em `finfit-app`.
 - [x] Criar repositorio privado no GitHub.
 - [x] Definir norte do produto: Strava pessoal, sem foco comercial inicial.
@@ -50,17 +51,17 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [x] Baixar modelo CSV.
 - [x] Mostrar preview antes de importar.
 - [x] Permitir escolher entre mesclar ou substituir.
-- [~] Ignorar duplicados na mesclagem.
+- [x] Ignorar duplicados na mesclagem.
 - [x] Mostrar erros de importacao linha a linha no preview basico.
 
 ### Camada 2 - Planilhas e historico manual
 
 - [x] Importar CSV exportado de Google Sheets/Excel quando segue colunas simples.
-- [~] Criar mapeador de colunas: data, modalidade, duracao, nota, distancia, carga, RPE.
+- [x] Criar mapeador automatico de colunas: data, modalidade, duracao, nota, distancia, carga, RPE.
 - [x] Aceitar aliases em portugues: `data`, `tipo`, `modalidade`, `tempo`, `duracao`, `observacao`.
-- [~] Importar blocos de academia com exercicio, series, repeticoes, peso e descanso.
-- [~] Importar natacao com metragem, estilo, series e tempo.
-- [~] Importar futevolei com duracao, intensidade, local, dupla e resultado opcional.
+- [x] Importar blocos de academia com exercicio, series, repeticoes, peso e descanso.
+- [x] Importar natacao com metragem, estilo, series e tempo.
+- [x] Importar futevolei com duracao, intensidade, local, dupla e resultado opcional.
 
 ### Camada 3 - Apps externos
 
