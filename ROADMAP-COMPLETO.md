@@ -34,6 +34,9 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [x] Preparar PWA/offline com manifest, service worker e fallback.
 - [x] Criar modo "treino agora" com cronometro, descanso, sets e atalhos.
 - [x] Criar snapshots de auto-backup local.
+- [x] Criar temporadas/objetivos com periodizacao simples.
+- [x] Expandir corpo com estresse, nutricao, humor, medidas e areas de dor.
+- [x] Importar TCX basico e auditar duplicados exatos.
 - [ ] Validar no uso real por uma semana.
 - [~] Decidir se a primeira base duravel sera `localStorage`, IndexedDB, SQLite/Capacitor ou API Node.
 
@@ -62,7 +65,8 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 ### Camada 3 - Apps externos
 
 - [x] Importar GPX basico para atividade de corrida/outro cardio.
-- [ ] Importar TCX/FIT quando for prioridade.
+- [x] Importar TCX basico quando houver arquivo.
+- [ ] Importar FIT quando for prioridade.
 - [ ] Importar exportacao do Strava como complemento, sem depender dele.
 - [ ] Importar atividades do Garmin/Coros/Polar quando houver arquivos.
 - [ ] Importar Apple Health/Google Fit via arquivos ou integracao futura.
@@ -78,13 +82,13 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 ## Norte do produto
 
 - [ ] Registrar treino em menos de 30 segundos quando ja existe modelo.
-- [ ] Montar treinos por dia, objetivo, grupo muscular, esporte ou ciclo.
+- [x] Montar treinos por dia, objetivo, esporte ou ciclo simples.
 - [x] Visualizar semana atual, carga acumulada, recuperacao e proximo treino recomendado.
-- [ ] Separar plano do que foi executado.
-- [ ] Guardar historico de carga, repeticoes, distancia, tempo, zona, RPE, energia e observacoes.
+- [x] Separar plano do que foi executado por status planejado/feito/parcial/pulado.
+- [~] Guardar historico de carga, repeticoes, distancia, tempo, RPE, energia e observacoes.
 - [x] Mostrar progresso de forma pratica: volume, consistencia, recordes pessoais e sinais de excesso.
-- [ ] Funcionar muito bem no celular.
-- [ ] Nao depender de assinatura, feed social ou cloud obrigatoria.
+- [~] Funcionar muito bem no celular.
+- [x] Nao depender de assinatura, feed social ou cloud obrigatoria.
 
 ## 0.1 - Fundacao e identidade
 
@@ -123,12 +127,12 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 
 - [~] Criar biblioteca de exercicios.
 - [x] Criar templates: upper, natacao, futevolei, corrida/cardio e mobilidade.
-- [ ] Montar treino com blocos: aquecimento, principal, acessorios, cardio, mobilidade.
-- [ ] Suportar progressao planejada por carga, reps, RPE, distancia ou tempo.
+- [~] Montar treino com blocos: aquecimento, principal, acessorios, cardio, mobilidade.
+- [~] Suportar progressao planejada por carga, reps, RPE, distancia ou tempo.
 - [x] Criar ciclo semanal base.
 - [x] Copiar semana anterior.
 - [ ] Reordenar blocos e exercicios.
-- [ ] Criar plano por objetivo: forca, hipertrofia, condicionamento, tecnica, recuperacao.
+- [x] Criar plano por objetivo: forca, hipertrofia, condicionamento, tecnica, recuperacao.
 
 ## 0.5 - Dashboard pessoal
 
@@ -148,16 +152,16 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [x] Evolucao por esporte: tempo, distancia, frequencia, melhor sessao e consistencia.
 - [~] Recordes pessoais manuais e automaticos.
 - [x] Grafico/indicador de consistencia semanal e mensal inicial.
-- [ ] Notas por lesao, dor, sono, alimentacao ou energia.
+- [x] Notas por lesao, dor, sono, alimentacao ou energia.
 
 ## 0.7 - Corpo, recuperacao e contexto
 
-- [~] Registro simples de peso; falta medidas e fotos opcionais.
-- [x] Registro de sono, dor, energia e nota.
+- [~] Registro simples de peso e medidas; falta fotos opcionais.
+- [x] Registro de sono, dor, energia, estresse, nutricao, humor e nota.
 - [x] Indicador de prontidao simples, manual primeiro.
-- [~] Associar sintomas ou dor a treinos recentes.
+- [x] Associar sintomas ou dor a treinos recentes por data e areas.
 - [~] Sugerir reducao de carga quando sinais ruins se repetem.
-- [ ] Criar mapa corporal de dores e grupos treinados.
+- [~] Criar mapa corporal de dores e grupos treinados.
 
 ## 0.8 - Dados, backup e importacao
 
@@ -167,8 +171,8 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [x] Backup automatico local.
 - [x] Exportar CSV do historico.
 - [x] Importar GPX.
-- [ ] Importar TCX/FIT.
-- [~] Criar auditoria de duplicados.
+- [~] Importar TCX/FIT.
+- [x] Criar auditoria de duplicados.
 - [ ] Criar ferramenta de limpeza/migracao dos dados.
 
 ## 0.9 - Mobile e offline forte
@@ -207,9 +211,9 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [x] Gerar resumo semanal automatico local/exportavel.
 - [~] Detectar padroes: melhora, queda, excesso, repeticao de dor, buracos de consistencia.
 - [x] Recomendar proximo treino com base no historico, agenda e estado do corpo.
-- [ ] Criar periodizacao simples: base, carga, deload, teste.
-- [ ] Ajustar treino quando houve futevolei/natacao intensa na semana.
-- [ ] Explicar recomendacoes em linguagem humana.
+- [x] Criar periodizacao simples: base, carga, deload, teste.
+- [~] Ajustar treino quando houve futevolei/natacao intensa na semana.
+- [x] Explicar recomendacoes em linguagem humana.
 - [ ] Criar "coach mode" privado, sem rede social.
 
 ## 3.0 - Ecossistema pessoal
@@ -223,7 +227,7 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 ## Ideias grandes
 
 - [ ] "Meu corpo agora": leitura do estado atual e proxima acao.
-- [ ] "Temporada": organizar objetivos por trimestre.
+- [x] "Temporada": organizar objetivos por trimestre.
 - [ ] "Treinador offline": sugestoes sem cloud obrigatoria.
 - [ ] "Memoria corporal": historico de dor, carga e recuperacao.
 - [ ] "Importador universal": colar CSV, texto, print ou arquivo e transformar em treinos.
