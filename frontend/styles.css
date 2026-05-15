@@ -122,6 +122,7 @@ article small,
 .hero,
 .metrics,
 .workspace,
+.workout-form,
 .panel-header {
   display: grid;
   gap: 18px;
@@ -230,6 +231,97 @@ h3 {
   margin: 22px 0;
 }
 
+.quick-add {
+  margin-top: 22px;
+}
+
+.sport-preset-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.sport-preset {
+  display: grid;
+  gap: 3px;
+  min-height: 78px;
+  padding: 12px;
+  text-align: left;
+  border-radius: 16px;
+}
+
+.sport-preset strong,
+.sport-preset small {
+  display: block;
+}
+
+.sport-preset strong {
+  color: var(--text);
+}
+
+.sport-preset small {
+  color: var(--muted);
+}
+
+.sport-preset.active {
+  border-color: rgba(200, 245, 90, 0.34);
+  background: rgba(200, 245, 90, 0.08);
+}
+
+.workout-form {
+  grid-template-columns: 1.4fr 160px 120px 150px;
+  align-items: end;
+}
+
+label {
+  display: grid;
+  gap: 7px;
+}
+
+label span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+input,
+select {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.045);
+  color: var(--text);
+  font: inherit;
+  padding: 0 13px;
+  outline: none;
+}
+
+select option {
+  background: var(--surface-solid);
+  color: var(--text);
+}
+
+input:focus,
+select:focus {
+  border-color: rgba(200, 245, 90, 0.36);
+  box-shadow: 0 0 0 4px rgba(200, 245, 90, 0.06);
+}
+
+.wide {
+  grid-column: 1 / -2;
+}
+
+.save-workout {
+  min-height: 46px;
+  border-radius: 15px;
+  background: rgba(200, 245, 90, 0.12);
+  color: var(--accent);
+  font-weight: 850;
+}
+
 article,
 .panel {
   border: 1px solid var(--line);
@@ -290,7 +382,7 @@ article strong {
 
 .workout-list li {
   display: grid;
-  grid-template-columns: 44px 1fr auto;
+  grid-template-columns: 44px 1fr auto auto;
   align-items: center;
   gap: 12px;
   padding: 12px;
@@ -310,6 +402,19 @@ article strong {
   color: var(--teal);
   font-size: 0.85rem;
   font-weight: 800;
+}
+
+.delete-workout {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  color: var(--muted);
+}
+
+.empty-state {
+  margin: 0;
+  color: var(--muted);
+  padding: 14px 2px;
 }
 
 .week-grid {
@@ -385,8 +490,14 @@ article strong {
   .topbar,
   .hero,
   .metrics,
+  .sport-preset-grid,
+  .workout-form,
   .workspace {
     grid-template-columns: 1fr;
+  }
+
+  .wide {
+    grid-column: auto;
   }
 
   .primary-action {

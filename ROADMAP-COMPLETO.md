@@ -14,6 +14,7 @@ Legenda:
 - [x] Criar base separada em `finfit-app`.
 - [x] Definir norte do produto: Strava pessoal, sem foco comercial inicial.
 - [x] Criar primeiro prototipo visual dark fitness.
+- [x] Criar captura rapida multi-modalidade para academia, natacao, futevolei e treinos livres.
 - [ ] Validar no uso real por uma semana.
 - [ ] Decidir se a primeira base de dados sera `localStorage`, SQLite/Capacitor ou API Node.
 
@@ -41,6 +42,8 @@ Legenda:
 ## 0.2 - Registro rapido de treino
 
 - [ ] Criar formulario rapido para finalizar treino do dia.
+- [x] Criar formulario rapido para adicionar treinos variados durante a semana.
+- [x] Criar presets iniciais: academia, natacao, futevolei, corrida, mobilidade e outro.
 - [ ] Registrar duracao, tipo, intensidade, RPE, energia e observacao.
 - [ ] Permitir adicionar exercicios com series, repeticoes, peso e descanso.
 - [ ] Permitir cardio com distancia, tempo, pace, FC media/max e zona.
@@ -122,4 +125,3 @@ Legenda:
 - [ ] Modo academia sem internet.
 - [ ] Relatorio mensal: consistencia, evolucao, alertas e melhores treinos.
 - [ ] Integracao com wearables apenas se nao complicar a base.
-
