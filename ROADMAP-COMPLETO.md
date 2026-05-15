@@ -25,8 +25,12 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [x] Salvar treinos localmente no navegador.
 - [x] Criar metricas iniciais da semana.
 - [x] Criar importacao/exportacao inicial por JSON e CSV.
+- [x] Criar abas reais: Hoje, Plano, Historico, Corpo, Biblioteca e Dados.
+- [x] Criar edicao, duplicacao, exclusao, filtros, favoritos e templates locais.
+- [x] Criar registro de corpo/recuperacao.
+- [x] Criar preview de importacao, export CSV e import GPX basico.
 - [ ] Validar no uso real por uma semana.
-- [ ] Decidir se a primeira base duravel sera `localStorage`, IndexedDB, SQLite/Capacitor ou API Node.
+- [~] Decidir se a primeira base duravel sera `localStorage`, IndexedDB, SQLite/Capacitor ou API Node.
 
 ## Como importar informacoes
 
@@ -36,22 +40,23 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [x] Importar backup JSON proprio.
 - [x] Importar CSV simples com colunas: `date,type,name,duration,intensity,note`.
 - [x] Baixar modelo CSV.
-- [ ] Mostrar preview antes de importar.
-- [ ] Permitir escolher entre mesclar, substituir ou ignorar duplicados.
+- [x] Mostrar preview antes de importar.
+- [x] Permitir escolher entre mesclar ou substituir.
+- [~] Ignorar duplicados na mesclagem.
 - [ ] Mostrar erros de importacao linha a linha.
 
 ### Camada 2 - Planilhas e historico manual
 
 - [ ] Importar CSV exportado de Google Sheets/Excel.
 - [ ] Criar mapeador de colunas: data, modalidade, duracao, nota, distancia, carga, RPE.
-- [ ] Aceitar aliases em portugues: `data`, `tipo`, `modalidade`, `tempo`, `duracao`, `observacao`.
+- [x] Aceitar aliases em portugues: `data`, `tipo`, `modalidade`, `tempo`, `duracao`, `observacao`.
 - [ ] Importar blocos de academia com exercicio, series, repeticoes, peso e descanso.
 - [ ] Importar natação com metragem, estilo, series e tempo.
 - [ ] Importar futevolei com duracao, intensidade, local, dupla e resultado opcional.
 
 ### Camada 3 - Apps externos
 
-- [ ] Importar GPX para corrida/ciclismo/caminhada.
+- [x] Importar GPX basico para atividade de corrida/outro cardio.
 - [ ] Importar TCX/FIT quando for prioridade.
 - [ ] Importar exportacao do Strava como complemento, sem depender dele.
 - [ ] Importar atividades do Garmin/Coros/Polar quando houver arquivos.
@@ -60,7 +65,7 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 
 ### Camada 4 - Automacao inteligente
 
-- [ ] Colar texto livre e transformar em treino: `natacao 45min moderado hoje`.
+- [x] Colar texto livre e transformar em treino: `natacao 45min moderado hoje`.
 - [ ] Ler prints ou notas antigas e sugerir registros estruturados.
 - [ ] Resumir uma semana importada e apontar lacunas.
 - [ ] Sugerir categorias e modalidade quando o dado vier incompleto.
@@ -82,10 +87,10 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [x] Criar README, brief e roadmap.
 - [x] Criar UI inicial com linguagem visual preta, esportiva e organizada.
 - [x] Alinhar visual com a base do Finanza: DM Sans, Syne, glass, dark, lime contido.
-- [ ] Criar tokens de design: cores, espacamentos, estados, tipografia e componentes.
-- [ ] Definir navegacao principal: Hoje, Plano, Historico, Corpo, Biblioteca, Dados.
-- [ ] Criar modelo inicial de dados.
-- [ ] Definir nomenclatura: treino, sessao, bloco, exercicio, set, metrica, ciclo.
+- [x] Criar tokens de design: cores, espacamentos, estados, tipografia e componentes.
+- [x] Definir navegacao principal: Hoje, Plano, Historico, Corpo, Biblioteca, Dados.
+- [x] Criar modelo inicial de dados.
+- [~] Definir nomenclatura: treino, sessao, bloco, exercicio, set, metrica, ciclo.
 
 ## 0.2 - Registro rapido
 
@@ -93,47 +98,47 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [x] Criar presets iniciais: academia, natacao, futevolei, corrida, mobilidade e outro.
 - [x] Registrar duracao, tipo, intensidade e observacao.
 - [x] Salvar localmente.
-- [ ] Registrar RPE, energia, dor e qualidade.
-- [ ] Editar treino depois.
-- [ ] Duplicar treino anterior.
-- [ ] Marcar treino como planejado, feito, parcial ou pulado.
-- [ ] Criar entrada por texto livre.
-- [ ] Criar favoritos: "futevolei 90min forte", "natacao tecnica 45min", "academia upper".
+- [x] Registrar RPE, energia, dor e observacao.
+- [x] Editar treino depois.
+- [x] Duplicar treino anterior.
+- [x] Marcar treino como planejado, feito, parcial ou pulado.
+- [x] Criar entrada por texto livre.
+- [x] Criar favoritos: "futevolei 90min forte", "natacao tecnica 45min", "academia upper".
 
 ## 0.3 - Modalidades de verdade
 
-- [ ] Academia: exercicios, series, repeticoes, peso, descanso, RPE e observacao por exercicio.
-- [ ] Natacao: metragem, piscina, estilo, series, tempo, sensacao e tecnica.
-- [ ] Futevolei: duracao, intensidade, local, parceiro, adversario, resultado e observacoes.
-- [ ] Corrida: distancia, tempo, pace, elevacao, FC media/max, zona e percepcao.
-- [ ] Mobilidade/fisio: dor antes/depois, foco corporal, tempo e exercicios.
-- [ ] Treino livre: campos customizaveis.
+- [~] Academia: campos gerais de volume, foco, RPE e observacao; falta sets por exercicio.
+- [~] Natacao: campos gerais de metragem/volume, local e tecnica; falta series estruturadas.
+- [~] Futevolei: duracao, intensidade, local e observacoes; falta dupla, adversario e resultado.
+- [~] Corrida: distancia, tempo e percepcao; falta pace, elevacao e FC.
+- [~] Mobilidade/fisio: dor, foco corporal, tempo e observacoes; falta exercicios estruturados.
+- [~] Treino livre: campos gerais; falta campos customizaveis reais.
 
 ## 0.4 - Montador de treinos
 
-- [ ] Criar biblioteca de exercicios.
-- [ ] Criar templates: push, pull, legs, upper, lower, full body, corrida, natacao, mobilidade.
+- [~] Criar biblioteca de exercicios.
+- [x] Criar templates: upper, natacao, futevolei, corrida/cardio e mobilidade.
 - [ ] Montar treino com blocos: aquecimento, principal, acessorios, cardio, mobilidade.
 - [ ] Suportar progressao planejada por carga, reps, RPE, distancia ou tempo.
-- [ ] Criar ciclo semanal.
-- [ ] Copiar semana anterior.
+- [x] Criar ciclo semanal base.
+- [x] Copiar semana anterior.
 - [ ] Reordenar blocos e exercicios.
 - [ ] Criar plano por objetivo: forca, hipertrofia, condicionamento, tecnica, recuperacao.
 
 ## 0.5 - Dashboard pessoal
 
-- [ ] Tela "Hoje" com treinos sugeridos, prontidao e resumo da semana.
-- [ ] Semanario com dias, tipos de treino e status.
-- [ ] Indicadores: minutos totais, sessoes, volume, cardio, consistencia e descanso.
-- [ ] Carga semanal por modalidade.
-- [ ] Alertas pessoais: muita carga seguida, pouco descanso, grupo muscular esquecido.
+- [x] Tela "Hoje" com treinos sugeridos, prontidao e resumo da semana.
+- [x] Semanario com dias, tipos de treino e status.
+- [x] Indicadores: minutos totais, sessoes, modalidades e carga.
+- [~] Carga semanal por modalidade.
+- [~] Alertas pessoais: muita carga seguida, pouco descanso, grupo muscular esquecido.
 - [ ] Comparar semana atual com semana anterior.
 - [ ] Mostrar "proxima melhor acao" sem moralismo.
 
 ## 0.6 - Historico e progresso
 
-- [ ] Linha do tempo de treinos.
-- [ ] Filtros por tipo, grupo muscular, exercicio, periodo e intensidade.
+- [x] Linha do tempo de treinos.
+- [~] Filtros por tipo, periodo, status e busca textual.
 - [ ] Evolucao por exercicio: melhor carga, reps, volume e ultima execucao.
 - [ ] Evolucao por esporte: tempo, distancia, frequencia, melhor sessao e consistencia.
 - [ ] Recordes pessoais manuais e automaticos.
@@ -142,11 +147,11 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 
 ## 0.7 - Corpo, recuperacao e contexto
 
-- [ ] Registro simples de peso, medidas e fotos opcionais.
-- [ ] Registro de sono, dor, energia e estresse.
-- [ ] Indicador de prontidao simples, manual primeiro.
-- [ ] Associar sintomas ou dor a treinos recentes.
-- [ ] Sugerir reducao de carga quando sinais ruins se repetem.
+- [~] Registro simples de peso; falta medidas e fotos opcionais.
+- [x] Registro de sono, dor, energia e nota.
+- [x] Indicador de prontidao simples, manual primeiro.
+- [~] Associar sintomas ou dor a treinos recentes.
+- [~] Sugerir reducao de carga quando sinais ruins se repetem.
 - [ ] Criar mapa corporal de dores e grupos treinados.
 
 ## 0.8 - Dados, backup e importacao
@@ -155,8 +160,8 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [x] Importar CSV simples.
 - [ ] Preview de importacao.
 - [ ] Backup automatico local.
-- [ ] Exportar CSV do historico.
-- [ ] Importar GPX.
+- [x] Exportar CSV do historico.
+- [x] Importar GPX.
 - [ ] Importar TCX/FIT.
 - [ ] Criar auditoria de duplicados.
 - [ ] Criar ferramenta de limpeza/migracao dos dados.
