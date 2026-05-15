@@ -1,0 +1,14 @@
+{
+  "name": "finfit",
+  "version": "0.1.0",
+  "description": "Strava pessoal para planejamento, registro e organizacao de treinos.",
+  "private": true,
+  "scripts": {
+    "start": "npx serve frontend",
+    "check": "node --check frontend/app.js"
+  },
+  "devDependencies": {
+    "serve": "^14.2.4"
+  }
+}
+
