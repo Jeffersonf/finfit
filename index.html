@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Finfit</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark">F</span>
+        <div>
+          <strong>Finfit</strong>
+          <small>training system</small>
+        </div>
+      </div>
+      <nav class="nav" aria-label="Principal">
+        <button class="active" type="button">Hoje</button>
+        <button type="button">Plano</button>
+        <button type="button">Historico</button>
+        <button type="button">Corpo</button>
+        <button type="button">Biblioteca</button>
+      </nav>
+    </aside>
+
+    <main class="shell">
+      <section class="topbar" aria-label="Resumo">
+        <div>
+          <p class="eyebrow">sexta, 15 maio</p>
+          <h1>Treino de hoje</h1>
+        </div>
+        <button class="primary-action" type="button" id="finishWorkout">Finalizar treino</button>
+      </section>
+
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">proxima melhor acao</p>
+          <h2>Upper strength + cardio leve</h2>
+          <p>Plano enxuto para manter consistencia sem atropelar recuperacao. Foco em peito, costas, ombro e 18 minutos de zona 2.</p>
+        </div>
+        <div class="readiness" aria-label="Prontidao">
+          <span>Prontidao</span>
+          <strong>82</strong>
+          <small>boa para carga moderada</small>
+        </div>
+      </section>
+
+      <section class="metrics" aria-label="Metricas da semana">
+        <article>
+          <span>Sessoes</span>
+          <strong>4/5</strong>
+          <small>semana atual</small>
+        </article>
+        <article>
+          <span>Volume</span>
+          <strong>18.4t</strong>
+          <small>+12% vs anterior</small>
+        </article>
+        <article>
+          <span>Cardio</span>
+          <strong>92min</strong>
+          <small>zona 2 dominante</small>
+        </article>
+        <article>
+          <span>Descanso</span>
+          <strong>31h</strong>
+          <small>desde ultimo treino</small>
+        </article>
+      </section>
+
+      <section class="workspace">
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Plano da sessao</h3>
+            <button type="button">Editar</button>
+          </div>
+          <ol class="workout-list" id="workoutList"></ol>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Semana</h3>
+            <button type="button">Copiar</button>
+          </div>
+          <div class="week-grid" id="weekGrid"></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
+
