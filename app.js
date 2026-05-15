@@ -642,6 +642,68 @@ function renderActivityFocus() {
       </button>
     `;
   }).join("");
+  renderActivityHub();
+}
+
+function renderActivityHub() {
+  const target = $("#activityHub");
+  if (!target) return;
+  const items = scopedWorkouts([...state.workouts]);
+  const week = scopedWorkouts(currentWeekWorkouts());
+  const label = activeSportFilter === "todos" ? "Todas modalidades" : presetLabel(activeSportFilter);
+  const minutes = items.reduce((sum, item) => sum + Number(item.duration || 0), 0);
+  const distance = items.reduce((sum, item) => sum + Number(item.distance || 0), 0);
+  const load = loadSum(items);
+  const last = [...items].sort((a, b) => b.date.localeCompare(a.date))[0];
+  const best = [...items].sort((a, b) => workoutLoad(b) - workoutLoad(a))[0];
+  const specific = activitySpecificHtml(activeSportFilter, items);
+  target.innerHTML = `
+    <div class="activity-hub-main">
+      <div class="activity-hub-title">
+        <span>${sportIcon(activeSportFilter)}</span>
+        <div>
+          <p class="eyebrow">foco atual</p>
+          <h3>${label}</h3>
+        </div>
+      </div>
+      <div class="activity-hub-actions">
+        <button type="button" data-activity-action="new">${activeSportFilter === "todos" ? "Novo treino" : `Registrar ${label}`}</button>
+        <button type="button" data-activity-action="history">Historico</button>
+        <button type="button" data-activity-action="progress">Progresso</button>
+      </div>
+    </div>
+    <div class="activity-hub-stats">
+      <div><span>Sessoes</span><strong>${items.length}</strong><small>${week.length} nesta semana</small></div>
+      <div><span>Tempo</span><strong>${minutes}min</strong><small>historico filtrado</small></div>
+      <div><span>Carga</span><strong>${load}</strong><small>${best ? `pico ${workoutLoad(best)}` : "sem pico"}</small></div>
+      <div><span>${activeSportFilter === "corrida" ? "Distancia" : activeSportFilter === "natacao" ? "Metragem" : "Ultimo"}</span><strong>${distance ? `${Math.round(distance * 10) / 10}` : last ? formatDate(last.date) : "--"}</strong><small>${last ? last.name : "sem registros"}</small></div>
+    </div>
+    ${specific}
+  `;
+}
+
+function activitySpecificHtml(type, items) {
+  if (type === "todos") return "";
+  if (!items.length) return `<div class="activity-specific empty-state">Sem dados de ${presetLabel(type).toLowerCase()} ainda. Clique em registrar para comecar.</div>`;
+  if (type === "corrida") {
+    const runs = runningWorkouts();
+    const avg = runs.reduce((sum, run) => sum + Number(run.duration || 0), 0) / Math.max(1, runs.reduce((sum, run) => sum + Number(run.distance || 0), 0));
+    const longest = [...runs].sort((a, b) => Number(b.distance || 0) - Number(a.distance || 0))[0];
+    return `<div class="activity-specific"><strong>Pace medio ${formatPace(avg)}/km</strong><span>Maior corrida: ${longest ? `${longest.distance}km em ${formatDate(longest.date)}` : "--"}. Running Engine fica em Progresso.</span></div>`;
+  }
+  if (type === "academia") {
+    const exercises = parseExerciseDetails();
+    return `<div class="activity-specific"><strong>${exercises.length} exercicios detectados</strong><span>${exercises[0] ? `Principal: ${exercises[0].name}, melhor volume ${Math.round(exercises[0].bestVolume)}` : "Use detalhes como supino 4x8 70kg para destravar recordes."}</span></div>`;
+  }
+  if (type === "natacao") {
+    const volume = items.reduce((sum, item) => sum + Number(item.volume || item.distance || 0), 0);
+    return `<div class="activity-specific"><strong>${Math.round(volume)}m registrados</strong><span>Registre metragem, estilo e series para comparar tecnica e resistencia.</span></div>`;
+  }
+  if (type === "futevolei") {
+    const places = new Set(items.map((item) => item.location).filter(Boolean));
+    return `<div class="activity-specific"><strong>${places.size || 0} local(is)</strong><span>Anote dupla, resultado e intensidade para descobrir combinacoes melhores.</span></div>`;
+  }
+  return `<div class="activity-specific"><strong>${presetLabel(type)} em foco</strong><span>O historico e a semana estao filtrados para esta modalidade.</span></div>`;
 }
 
 function formatClock(seconds) {
@@ -1855,6 +1917,17 @@ $$("[data-page-target]").forEach((button) => button.addEventListener("click", ()
 $("#activityFocusGrid").addEventListener("click", (event) => {
   const button = event.target.closest("[data-sport-focus]");
   if (button) setSportFilter(button.dataset.sportFocus);
+});
+
+$("#activityHub").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-activity-action]");
+  if (!button) return;
+  if (button.dataset.activityAction === "new") {
+    if (activeSportFilter !== "todos") setPreset(activeSportFilter);
+    $("#addWorkoutButton").click();
+  }
+  if (button.dataset.activityAction === "history") setPage("history");
+  if (button.dataset.activityAction === "progress") setPage("progress");
 });
 
 $("#themeToggleButton").addEventListener("click", () => {
