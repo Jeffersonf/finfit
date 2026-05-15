@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="dark" data-accent="lime">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#08090d">
+    <meta name="theme-color" id="themeColorMeta" content="#08090d">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Finfit">
@@ -16,31 +16,59 @@
   </head>
   <body>
     <aside class="sidebar">
-      <div class="brand">
-        <span class="brand-mark">F</span>
-        <div>
-          <strong>Finfit</strong>
-          <small>training system</small>
+      <div class="logo brand">
+        <span class="brand-word"><span>fin</span><span>fit</span></span>
+        <div class="logo-actions brand-actions">
+          <button class="theme-btn" type="button" id="themeToggleButton" title="Alternar tema" aria-label="Alternar tema">🌙</button>
+          <button class="theme-btn" type="button" data-page-target="user" title="Usuario" aria-label="Abrir usuario">⚙️</button>
         </div>
       </div>
+      <div class="sb-search" id="sidebarSearch"><span>🔍</span><input id="sidebarSearchInput" placeholder="Buscar treino..."></div>
+      <div class="nav-lbl">Menu</div>
       <nav class="nav" aria-label="Principal">
-        <button class="active" type="button" data-page-target="today">Hoje</button>
-        <button type="button" data-page-target="plan">Plano</button>
-        <button type="button" data-page-target="history">Historico</button>
-        <button type="button" data-page-target="progress">Progresso</button>
-        <button type="button" data-page-target="body">Corpo</button>
-        <button type="button" data-page-target="library">Biblioteca</button>
-        <button type="button" data-page-target="data">Dados</button>
+        <button class="nav-item active" type="button" data-page-target="today"><span class="ico">📊</span>Dashboard</button>
+        <button class="nav-item" type="button" data-page-target="plan"><span class="ico">📌</span>Plano semanal</button>
+        <button class="nav-item" type="button" data-page-target="history"><span class="ico">💪</span>Histórico</button>
+        <button class="nav-item an" type="button" data-page-target="progress"><span class="ico">📈</span>Progresso</button>
+        <button class="nav-item" type="button" data-page-target="body"><span class="ico">🫀</span>Corpo</button>
+        <button class="nav-item fn" type="button" data-page-target="library"><span class="ico">🏆</span>Biblioteca</button>
+        <button class="nav-item" type="button" data-page-target="data"><span class="ico">📥</span>Dados</button>
+        <button class="nav-item" type="button" data-page-target="user"><span class="ico">⚙️</span>Usuário</button>
       </nav>
+      <div class="sidebar-utility">
+        <div class="sidebar-card">
+          <div class="sidebar-card-head">
+            <div class="sidebar-card-kicker">Atalhos fixos</div>
+            <button class="sidebar-card-edit" type="button" data-page-target="user">Editar</button>
+          </div>
+          <div class="sidebar-icon-shortcuts">
+            <button type="button" title="Novo treino" id="sidebarNewWorkout">💪</button>
+            <button type="button" title="Treino agora" id="sidebarLiveWorkout">⏱️</button>
+            <button type="button" title="Importar" data-page-target="data">📥</button>
+          </div>
+        </div>
+        <div class="sidebar-mini-actions">
+          <button class="sidebar-mini-btn primary" type="button" id="sidebarQuickAdd">+ Novo</button>
+          <button class="sidebar-mini-btn" type="button" data-page-target="data">Importar</button>
+        </div>
+      </div>
+      <div class="sb-bottom">
+        <div class="made-by">feito com carinho por <span>jeffef.dev</span></div>
+        <button class="acct-btn" type="button" data-page-target="user">
+          <div class="uavatar">JF</div>
+          <div class="acct-copy"><div class="uname">Jefferson</div><div class="urole">Finfit local</div></div>
+          <span>▲</span>
+        </button>
+      </div>
     </aside>
 
     <main class="shell">
-      <section class="topbar" aria-label="Resumo">
+      <section class="topbar ph" aria-label="Resumo">
         <div>
-          <p class="eyebrow" id="todayLabel">hoje</p>
-          <h1 id="pageTitle">Treinos da semana</h1>
+          <div class="pt" id="pageTitle">Dashboard</div>
+          <div class="ps" id="todayLabel">hoje</div>
         </div>
-        <button class="primary-action" type="button" id="addWorkoutButton">Adicionar treino</button>
+        <button class="primary-action btn btn-p" type="button" id="addWorkoutButton">+ Novo treino</button>
       </section>
 
       <section class="page active" id="page-today">
@@ -50,10 +78,28 @@
             <h2 id="recommendationTitle">Registre, revise e ajuste a semana.</h2>
             <p id="recommendationText">O Finfit combina modalidades, carga, dor e energia para sugerir o proximo passo sem virar uma rede social.</p>
           </div>
-          <div class="readiness" aria-label="Prontidao">
+          <div class="readiness sc sc-glow-ac" aria-label="Prontidao">
+            <span class="ci">⚡</span>
             <span>Prontidao</span>
             <strong id="readinessScore">75</strong>
             <small id="readinessLabel">base local</small>
+          </div>
+        </section>
+
+        <section class="quick-actions-widget dash-section box">
+          <div class="bh">
+            <div>
+              <div class="ct">Ações rápidas</div>
+              <div class="cs">Menos cliques para registrar, revisar e decidir o treino</div>
+            </div>
+          </div>
+          <div class="quick-actions-grid">
+            <button class="quick-action-card primary" type="button" id="dashboardQuickWorkout"><strong>+ Treino</strong><small>Lançamento manual</small></button>
+            <button class="quick-action-card" type="button" id="dashboardQuickLive"><strong>⏱️ Agora</strong><small>Cronômetro e sets</small></button>
+            <button class="quick-action-card" type="button" data-page-target="plan"><strong>📌 Plano</strong><small>Semana e temporada</small></button>
+            <button class="quick-action-card" type="button" data-page-target="progress"><strong>📈 Progresso</strong><small>Recordes e alertas</small></button>
+            <button class="quick-action-card" type="button" data-page-target="data"><strong>📥 Importar</strong><small>CSV, GPX, TCX</small></button>
+            <button class="quick-action-card" type="button" data-page-target="user"><strong>⚙️ Visual</strong><small>Tema e cores</small></button>
           </div>
         </section>
 
@@ -174,10 +220,10 @@
         </section>
 
         <section class="metrics" aria-label="Metricas da semana">
-          <article><span>Sessoes</span><strong id="sessionMetric">0</strong><small>semana atual</small></article>
-          <article><span>Tempo</span><strong id="timeMetric">0min</strong><small>total registrado</small></article>
-          <article><span>Modalidades</span><strong id="sportMetric">0</strong><small>tipos diferentes</small></article>
-          <article><span>Carga</span><strong id="loadMetric">0</strong><small>min x RPE</small></article>
+          <article class="sc sc-glow-ac"><span class="ci">✅</span><span class="cl">Sessoes</span><strong class="cv pos" id="sessionMetric">0</strong><small class="cc">semana atual</small></article>
+          <article class="sc sc-glow-ac2"><span class="ci">⏱️</span><span class="cl">Tempo</span><strong class="cv neu" id="timeMetric">0min</strong><small class="cc">total registrado</small></article>
+          <article class="sc sc-glow-fut"><span class="ci">🏅</span><span class="cl">Modalidades</span><strong class="cv fut" id="sportMetric">0</strong><small class="cc">tipos diferentes</small></article>
+          <article class="sc sc-glow-dan"><span class="ci">🔥</span><span class="cl">Carga</span><strong class="cv neg" id="loadMetric">0</strong><small class="cc">min x RPE</small></article>
         </section>
 
         <section class="workspace">
@@ -378,7 +424,66 @@
           <div class="import-preview" id="importPreview"></div>
           <div class="duplicate-audit" id="duplicateAudit"></div>
           <p class="data-hint" id="backupHint">Auto-backup local ainda nao calculado.</p>
-          <p class="data-hint" id="dataHint">CSV aceito: date,type,name,duration,intensity,note,details,rpe,energy,pain,status,distance,volume,focus,location.</p>
+          <p class="data-hint" id="dataHint">CSV aceito: date,type,name,duration,intensity,note,details,rpe,energy,pain,status,distance,volume,focus,location. Tambem entende aliases em portugues e colunas de blocos.</p>
+        </section>
+      </section>
+
+      <section class="page" id="page-user">
+        <section class="workspace">
+          <div class="panel user-panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">usuario</p>
+                <h3>Visual do app</h3>
+              </div>
+              <button type="button" id="resetAppearanceButton">Padrao</button>
+            </div>
+            <div class="appearance-grid">
+              <label>
+                <span>Tema</span>
+                <select id="themeSelect">
+                  <option value="dark">Escuro Finanza</option>
+                  <option value="black">Black</option>
+                  <option value="light">Claro Finanza</option>
+                </select>
+              </label>
+              <label>
+                <span>Cor principal</span>
+                <select id="accentSelect">
+                  <option value="lime">Lima Finanza</option>
+                  <option value="teal">Verde agua</option>
+                  <option value="purple">Roxo</option>
+                  <option value="amber">Amarelo</option>
+                </select>
+              </label>
+            </div>
+            <div class="swatch-grid" aria-label="Cores rapidas">
+              <button type="button" class="swatch lime active" data-accent-choice="lime"><span></span>Lima</button>
+              <button type="button" class="swatch teal" data-accent-choice="teal"><span></span>Agua</button>
+              <button type="button" class="swatch purple" data-accent-choice="purple"><span></span>Roxo</button>
+              <button type="button" class="swatch amber" data-accent-choice="amber"><span></span>Amarelo</button>
+            </div>
+          </div>
+          <div class="panel user-panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">perfil local</p>
+                <h3>Jefferson</h3>
+              </div>
+              <span class="profile-chip">offline</span>
+            </div>
+            <div class="user-hero-card">
+              <div class="uavatar big">JF</div>
+              <div>
+                <strong>Minha Conta</strong>
+                <span>Finfit local, sem assinatura e com dados neste navegador.</span>
+              </div>
+            </div>
+            <div class="profile-stats">
+              <article><span>Treinos</span><strong id="userWorkoutCount">0</strong><small>registrados</small></article>
+              <article><span>Backups</span><strong id="userBackupCount">0</strong><small>snapshots locais</small></article>
+            </div>
+          </div>
         </section>
       </section>
     </main>

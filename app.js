@@ -2,6 +2,7 @@ const STORAGE_KEY = "finfit.state.v2";
 const LEGACY_WORKOUTS_KEY = "finfit.workouts.v1";
 const AUTO_BACKUP_KEY = "finfit.autoBackups.v1";
 const ACTIVE_SESSION_KEY = "finfit.activeSession.v1";
+const APPEARANCE_KEY = "finfit.appearance.v1";
 
 const presets = [
   { type: "academia", label: "Academia", defaultName: "Academia - forca", duration: 60 },
@@ -57,6 +58,36 @@ let timerInterval = null;
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
+
+function loadAppearance() {
+  try {
+    return { theme: "dark", accent: "lime", ...JSON.parse(localStorage.getItem(APPEARANCE_KEY)) };
+  } catch {
+    return { theme: "dark", accent: "lime" };
+  }
+}
+
+function applyAppearance(appearance = loadAppearance()) {
+  const theme = ["dark", "black", "light"].includes(appearance.theme) ? appearance.theme : "dark";
+  const accent = ["lime", "teal", "purple", "amber"].includes(appearance.accent) ? appearance.accent : "lime";
+  document.documentElement.dataset.theme = theme;
+  document.documentElement.dataset.accent = accent;
+  const meta = $("#themeColorMeta");
+  if (meta) meta.content = theme === "light" ? "#f4f7ef" : theme === "black" ? "#000000" : "#08090d";
+  const themeButton = $("#themeToggleButton");
+  if (themeButton) themeButton.textContent = theme === "light" ? "🌙" : theme === "black" ? "☀️" : "⚫";
+  const themeSelect = $("#themeSelect");
+  const accentSelect = $("#accentSelect");
+  if (themeSelect) themeSelect.value = theme;
+  if (accentSelect) accentSelect.value = accent;
+  $$("[data-accent-choice]").forEach((button) => button.classList.toggle("active", button.dataset.accentChoice === accent));
+}
+
+function saveAppearance(patch) {
+  const next = { ...loadAppearance(), ...patch };
+  localStorage.setItem(APPEARANCE_KEY, JSON.stringify(next));
+  applyAppearance(next);
+}
 
 const fields = {
   id: $("#workoutId"),
@@ -343,7 +374,7 @@ function recommendation() {
 function setPage(page) {
   $$(".page").forEach((item) => item.classList.toggle("active", item.id === `page-${page}`));
   $$("[data-page-target]").forEach((button) => button.classList.toggle("active", button.dataset.pageTarget === page));
-  const titles = { today: "Treinos da semana", plan: "Plano semanal", history: "Historico", progress: "Progresso", body: "Corpo e recuperacao", library: "Biblioteca", data: "Dados" };
+  const titles = { today: "Treinos da semana", plan: "Plano semanal", history: "Historico", progress: "Progresso", body: "Corpo e recuperacao", library: "Biblioteca", data: "Dados", user: "Usuario" };
   $("#pageTitle").textContent = titles[page] || "Finfit";
 }
 
@@ -888,11 +919,13 @@ function renderPreview() {
     $("#importPreview").innerHTML = "";
     return;
   }
+  const stats = importMergeStats(pendingImport);
   $("#importPreview").innerHTML = `
     <div class="preview-row">
       <div>
         <strong>${pendingImport.length} treino(s) prontos para importar</strong>
         <div class="card-meta">Preview: ${pendingImport.slice(0, 3).map((item) => item.name).join(", ")}</div>
+        <div class="card-meta">Mesclagem: ${stats.added} novo(s), ${stats.skippedExisting} ja existente(s), ${stats.skippedInternal} duplicado(s) no arquivo.</div>
         ${pendingImportErrors.length ? `<div class="card-meta">${pendingImportErrors.slice(0, 5).join(" | ")}</div>` : ""}
       </div>
       <div class="preview-actions">
@@ -912,6 +945,14 @@ function renderBackupStatus() {
     : "Auto-backup local ainda nao criado. Um snapshot sera criado automaticamente.";
 }
 
+function renderUserPanel() {
+  applyAppearance();
+  const workoutCount = $("#userWorkoutCount");
+  const backupCount = $("#userBackupCount");
+  if (workoutCount) workoutCount.textContent = state.workouts.length;
+  if (backupCount) backupCount.textContent = loadAutoBackups().length;
+}
+
 function render() {
   saveState();
   renderPresets();
@@ -926,6 +967,7 @@ function render() {
   renderLibrary();
   renderPreview();
   renderBackupStatus();
+  renderUserPanel();
   renderTimer();
 }
 
@@ -937,13 +979,44 @@ function upsertWorkout(workout) {
 
 function mergeWorkouts(items) {
   const existingKeys = new Set(state.workouts.map(workoutKey));
+  const incomingKeys = new Set();
+  const stats = { added: 0, skippedExisting: 0, skippedInternal: 0 };
   items.forEach((item) => {
     const key = workoutKey(item);
-    if (!existingKeys.has(key)) {
-      existingKeys.add(key);
-      state.workouts.push(item);
+    if (existingKeys.has(key)) {
+      stats.skippedExisting += 1;
+      return;
     }
+    if (incomingKeys.has(key)) {
+      stats.skippedInternal += 1;
+      return;
+    }
+    incomingKeys.add(key);
+    existingKeys.add(key);
+    state.workouts.push(item);
+    stats.added += 1;
   });
+  return stats;
+}
+
+function importMergeStats(items) {
+  const existingKeys = new Set(state.workouts.map(workoutKey));
+  const incomingKeys = new Set();
+  const stats = { added: 0, skippedExisting: 0, skippedInternal: 0 };
+  items.forEach((item) => {
+    const key = workoutKey(item);
+    if (existingKeys.has(key)) {
+      stats.skippedExisting += 1;
+      return;
+    }
+    if (incomingKeys.has(key)) {
+      stats.skippedInternal += 1;
+      return;
+    }
+    incomingKeys.add(key);
+    stats.added += 1;
+  });
+  return stats;
 }
 
 function workoutKey(item) {
@@ -1025,10 +1098,11 @@ function csvCell(value) {
 
 function parseCsv(text) {
   const rows = text.trim().split(/\r?\n/).filter(Boolean).map(splitCsvLine);
-  const headers = rows.shift()?.map((header) => header.trim().toLowerCase()) || [];
+  const headers = rows.shift()?.map(normalizeCsvHeader) || [];
   const errors = [];
   const items = rows.map((row, index) => {
     const raw = Object.fromEntries(headers.map((header, colIndex) => [header, row[colIndex] || ""]));
+    raw.details ||= buildCsvDetails(raw);
     const item = normalizeWorkout(raw);
     if (!raw.date && !raw.data) errors.push(`Linha ${index + 2}: sem data, usei hoje.`);
     if (!raw.duration && !raw.duracao && !raw.tempo) errors.push(`Linha ${index + 2}: sem duracao, usei 30min.`);
@@ -1036,6 +1110,78 @@ function parseCsv(text) {
     return item;
   });
   return { items, errors };
+}
+
+function normalizeCsvHeader(header) {
+  const key = String(header || "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_|_$/g, "");
+  const aliases = {
+    data: "date",
+    dia: "date",
+    modalidade: "type",
+    tipo: "type",
+    esporte: "type",
+    nome: "name",
+    treino: "name",
+    titulo: "name",
+    tempo: "duration",
+    duracao: "duration",
+    minutos: "duration",
+    intensidade: "intensity",
+    esforco: "intensity",
+    estado: "status",
+    energia: "energy",
+    dor: "pain",
+    distancia: "distance",
+    km: "distance",
+    carga: "volume",
+    metragem: "volume",
+    volume_total: "volume",
+    foco: "focus",
+    local: "location",
+    observacao: "note",
+    observacoes: "note",
+    nota: "note",
+    notas: "note",
+    detalhes: "details",
+    blocos: "details",
+    exercicio: "exercise",
+    exercicios: "exercise",
+    series: "sets",
+    sets: "sets",
+    repeticoes: "reps",
+    reps: "reps",
+    repeticao: "reps",
+    peso: "weight",
+    descanso: "rest",
+    estilo: "style",
+    ritmo: "pace",
+    dupla: "partner",
+    parceiro: "partner",
+    resultado: "result"
+  };
+  return aliases[key] || key;
+}
+
+function buildCsvDetails(raw) {
+  const parts = [];
+  if (raw.exercise || raw.sets || raw.reps || raw.weight || raw.rest) {
+    const exercise = raw.exercise || "Exercicio";
+    const scheme = [raw.sets && `${raw.sets} series`, raw.reps && `${raw.reps} reps`, raw.weight && `${raw.weight}kg`, raw.rest && `${raw.rest} descanso`].filter(Boolean).join(" - ");
+    parts.push([exercise, scheme].filter(Boolean).join(": "));
+  }
+  if (raw.style || raw.pace) {
+    parts.push([raw.style && `estilo ${raw.style}`, raw.pace && `ritmo ${raw.pace}`].filter(Boolean).join(" - "));
+  }
+  if (raw.partner || raw.result) {
+    parts.push([raw.partner && `dupla ${raw.partner}`, raw.result && `resultado ${raw.result}`].filter(Boolean).join(" - "));
+  }
+  return parts.join("\n");
 }
 
 function splitCsvLine(line) {
@@ -1176,6 +1322,37 @@ function fillSeasonForm(season) {
 }
 
 $$("[data-page-target]").forEach((button) => button.addEventListener("click", () => setPage(button.dataset.pageTarget)));
+
+$("#themeToggleButton").addEventListener("click", () => {
+  const current = loadAppearance();
+  const next = current.theme === "dark" ? "black" : current.theme === "black" ? "light" : "dark";
+  saveAppearance({ theme: next });
+});
+
+$("#themeSelect").addEventListener("change", (event) => saveAppearance({ theme: event.target.value }));
+$("#accentSelect").addEventListener("change", (event) => saveAppearance({ accent: event.target.value }));
+
+$(".swatch-grid").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-accent-choice]");
+  if (button) saveAppearance({ accent: button.dataset.accentChoice });
+});
+
+$("#resetAppearanceButton").addEventListener("click", () => saveAppearance({ theme: "dark", accent: "lime" }));
+
+$("#sidebarSearchInput").addEventListener("input", (event) => {
+  setPage("history");
+  $("#searchInput").value = event.target.value;
+  renderHistory();
+});
+
+$("#sidebarQuickAdd").addEventListener("click", () => $("#addWorkoutButton").click());
+$("#sidebarNewWorkout").addEventListener("click", () => $("#addWorkoutButton").click());
+$("#sidebarLiveWorkout").addEventListener("click", () => {
+  setPage("today");
+  $("#workMode").scrollIntoView({ behavior: "smooth", block: "start" });
+});
+$("#dashboardQuickWorkout").addEventListener("click", () => $("#addWorkoutButton").click());
+$("#dashboardQuickLive").addEventListener("click", () => $("#sidebarLiveWorkout").click());
 
 $("#sportPresetGrid").addEventListener("click", (event) => {
   const button = event.target.closest("[data-type]");
@@ -1490,10 +1667,10 @@ $("#importPreview").addEventListener("click", (event) => {
     pendingImportErrors = [];
   }
   if (event.target.id === "confirmMergeButton") {
-    mergeWorkouts(pendingImport);
+    const stats = mergeWorkouts(pendingImport);
     pendingImport = [];
     pendingImportErrors = [];
-    $("#dataHint").textContent = "Importacao mesclada com sucesso.";
+    $("#dataHint").textContent = `Importacao mesclada: ${stats.added} novo(s), ${stats.skippedExisting + stats.skippedInternal} duplicado(s) ignorado(s).`;
   }
   if (event.target.id === "confirmReplaceButton") {
     state.workouts = pendingImport;
@@ -1511,6 +1688,7 @@ function registerServiceWorker() {
   });
 }
 
+applyAppearance();
 resetForm();
 resetBodyForm();
 resetSeasonForm();
