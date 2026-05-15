@@ -202,10 +202,38 @@
       <section class="page" id="page-plan">
         <section class="panel">
           <div class="panel-header">
+            <h3>Temporada</h3>
+            <button type="button" id="clearSeasonFormButton">Limpar</button>
+          </div>
+          <form class="season-form" id="seasonForm">
+            <input type="hidden" id="seasonId">
+            <label><span>Nome</span><input id="seasonName" placeholder="Ex: Base de maio" required></label>
+            <label>
+              <span>Objetivo</span>
+              <select id="seasonObjective">
+                <option value="forca">Forca</option>
+                <option value="hipertrofia">Hipertrofia</option>
+                <option value="condicionamento">Condicionamento</option>
+                <option value="tecnica">Tecnica</option>
+                <option value="recuperacao">Recuperacao</option>
+              </select>
+            </label>
+            <label><span>Inicio</span><input id="seasonStart" type="date" required></label>
+            <label><span>Fim</span><input id="seasonEnd" type="date" required></label>
+            <label><span>Sessoes/sem</span><input id="seasonSessions" type="number" min="1" max="14" step="1" value="5"></label>
+            <label class="wide"><span>Nota</span><input id="seasonNote" placeholder="Ex: priorizar natacao leve e manter futevolei"></label>
+            <button class="save-workout" type="submit">Salvar temporada</button>
+          </form>
+          <div class="season-list" id="seasonList"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
             <h3>Plano semanal</h3>
             <button type="button" id="createWeekPlanButton">Gerar base</button>
           </div>
           <div class="plan-grid" id="planGrid"></div>
+          <div class="periodization-grid" id="periodizationGrid"></div>
         </section>
       </section>
 
@@ -289,6 +317,13 @@
               <label><span>Sono</span><input id="bodySleep" type="number" min="0" max="14" step="0.5" placeholder="horas"></label>
               <label><span>Energia</span><input id="bodyEnergy" type="number" min="1" max="10" step="1"></label>
               <label><span>Dor</span><input id="bodyPain" type="number" min="0" max="10" step="1"></label>
+              <label><span>Estresse</span><input id="bodyStress" type="number" min="0" max="10" step="1"></label>
+              <label><span>Nutri</span><input id="bodyNutrition" type="number" min="1" max="10" step="1"></label>
+              <label><span>Humor</span><input id="bodyMood" type="number" min="1" max="10" step="1"></label>
+              <label><span>Cintura</span><input id="bodyWaist" type="number" min="0" step="0.1" placeholder="cm"></label>
+              <label><span>Peito</span><input id="bodyChest" type="number" min="0" step="0.1" placeholder="cm"></label>
+              <label><span>Quadril</span><input id="bodyHip" type="number" min="0" step="0.1" placeholder="cm"></label>
+              <label><span>Areas de dor</span><input id="bodyPainAreas" placeholder="ombro, joelho, lombar..."></label>
               <label class="wide"><span>Nota</span><input id="bodyNote" placeholder="ombro, joelho, cansaço, humor..."></label>
               <button class="save-workout" type="submit">Salvar corpo</button>
             </form>
@@ -337,8 +372,11 @@
             <label class="file-action"><span>Importar JSON</span><input id="importJsonInput" type="file" accept="application/json,.json"></label>
             <label class="file-action"><span>Importar CSV</span><input id="importCsvInput" type="file" accept="text/csv,.csv"></label>
             <label class="file-action"><span>Importar GPX</span><input id="importGpxInput" type="file" accept=".gpx,application/gpx+xml,text/xml"></label>
+            <label class="file-action"><span>Importar TCX</span><input id="importTcxInput" type="file" accept=".tcx,application/vnd.garmin.tcx+xml,text/xml"></label>
+            <button type="button" id="auditDuplicatesButton">Auditar duplicados</button>
           </div>
           <div class="import-preview" id="importPreview"></div>
+          <div class="duplicate-audit" id="duplicateAudit"></div>
           <p class="data-hint" id="backupHint">Auto-backup local ainda nao calculado.</p>
           <p class="data-hint" id="dataHint">CSV aceito: date,type,name,duration,intensity,note,details,rpe,energy,pain,status,distance,volume,focus,location.</p>
         </section>

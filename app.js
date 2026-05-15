@@ -37,11 +37,14 @@ const seedState = {
     { id: "seed-3", type: "futevolei", name: "Futevolei", date: "2026-05-15", duration: 90, intensity: "forte", status: "feito", rpe: 8, energy: 8, pain: 2, distance: "", volume: "", focus: "jogo", location: "praia", note: "jogo intenso", details: "parceiro Joao\n3 jogos\nresultado 2x1" }
   ],
   bodyLogs: [
-    { id: "body-1", date: "2026-05-14", weight: 82.4, sleep: 7, energy: 8, pain: 1, note: "recuperacao boa" },
-    { id: "body-2", date: "2026-05-15", weight: 82.1, sleep: 6.5, energy: 7, pain: 2, note: "ombro ok, perna pesada" }
+    { id: "body-1", date: "2026-05-14", weight: 82.4, sleep: 7, energy: 8, pain: 1, stress: 3, nutrition: 8, mood: 8, waist: 86, chest: 102, hip: 98, painAreas: "ombro leve", note: "recuperacao boa" },
+    { id: "body-2", date: "2026-05-15", weight: 82.1, sleep: 6.5, energy: 7, pain: 2, stress: 4, nutrition: 7, mood: 7, waist: 85.8, chest: 102, hip: 98, painAreas: "perna", note: "ombro ok, perna pesada" }
   ],
   favorites: [],
   templates: baseTemplates,
+  seasons: [
+    { id: "season-1", name: "Base pessoal", objective: "condicionamento", start: "2026-05-11", end: "2026-06-21", sessionsPerWeek: 5, note: "manter academia, natacao e futevolei sem exagerar carga" }
+  ],
   importMode: "merge"
 };
 
@@ -80,7 +83,24 @@ const bodyFields = {
   sleep: $("#bodySleep"),
   energy: $("#bodyEnergy"),
   pain: $("#bodyPain"),
+  stress: $("#bodyStress"),
+  nutrition: $("#bodyNutrition"),
+  mood: $("#bodyMood"),
+  waist: $("#bodyWaist"),
+  chest: $("#bodyChest"),
+  hip: $("#bodyHip"),
+  painAreas: $("#bodyPainAreas"),
   note: $("#bodyNote")
+};
+
+const seasonFields = {
+  id: $("#seasonId"),
+  name: $("#seasonName"),
+  objective: $("#seasonObjective"),
+  start: $("#seasonStart"),
+  end: $("#seasonEnd"),
+  sessionsPerWeek: $("#seasonSessions"),
+  note: $("#seasonNote")
 };
 
 function loadState() {
@@ -107,6 +127,7 @@ function withDefaults(value) {
     bodyLogs: (value.bodyLogs || []).map(normalizeBodyLog),
     favorites: value.favorites || [],
     templates: value.templates?.length ? value.templates : baseTemplates,
+    seasons: (value.seasons || []).map(normalizeSeason),
     importMode: value.importMode || "merge"
   };
 }
@@ -234,6 +255,26 @@ function normalizeBodyLog(item) {
     sleep: numberOrBlank(item.sleep || item.sono),
     energy: numberOrBlank(item.energy || item.energia),
     pain: numberOrBlank(item.pain || item.dor),
+    stress: numberOrBlank(item.stress || item.estresse),
+    nutrition: numberOrBlank(item.nutrition || item.nutricao || item.nutri),
+    mood: numberOrBlank(item.mood || item.humor),
+    waist: numberOrBlank(item.waist || item.cintura),
+    chest: numberOrBlank(item.chest || item.peito),
+    hip: numberOrBlank(item.hip || item.quadril),
+    painAreas: String(item.painAreas || item.pain_areas || item.areasDor || item.areas_dor || "").trim(),
+    note: String(item.note || item.nota || "").trim()
+  };
+}
+
+function normalizeSeason(item) {
+  const sessions = Number(item.sessionsPerWeek || item.sessions || item.sessoes || 5);
+  return {
+    id: item.id || uid("season"),
+    name: String(item.name || item.nome || "Temporada").trim(),
+    objective: String(item.objective || item.objetivo || "condicionamento").trim(),
+    start: String(item.start || item.inicio || todayIso()).slice(0, 10),
+    end: String(item.end || item.fim || offsetDate(42)).slice(0, 10),
+    sessionsPerWeek: Number.isFinite(sessions) && sessions > 0 ? sessions : 5,
     note: String(item.note || item.nota || "").trim()
   };
 }
@@ -277,8 +318,11 @@ function readiness() {
   const pain = Number(body?.pain || 0);
   const energy = Number(body?.energy || 7);
   const sleep = Number(body?.sleep || 7);
+  const stress = Number(body?.stress || 0);
+  const nutrition = Number(body?.nutrition || 7);
+  const mood = Number(body?.mood || 7);
   const loadPenalty = Math.min(22, Math.round(weekLoad / 180));
-  const score = Math.max(25, Math.min(98, 58 + energy * 4 + sleep * 2 - pain * 5 - loadPenalty));
+  const score = Math.max(25, Math.min(98, 48 + energy * 3 + sleep * 2 + nutrition * 1.5 + mood - pain * 5 - stress * 2 - loadPenalty));
   return Math.round(score);
 }
 
@@ -692,7 +736,10 @@ function buildInsights() {
   if (previousLoad > 0 && currentLoad > previousLoad * 1.35) insights.push(["Carga subiu rapido", "Semana atual esta mais de 35% acima da anterior. Vale controlar RPE e dor."]);
   if (week.length >= 6) insights.push(["Pouco espaco de descanso", "Ha treino em muitos dias da semana. Um dia leve pode render mais do que forcar."]);
   if (body?.pain >= 5) insights.push(["Dor alta registrada", "Dor corporal recente esta alta. Priorize mobilidade, tecnica ou reducao de carga."]);
+  if (body?.painAreas) insights.push(["Mapa de dor ativo", `Areas recentes: ${body.painAreas}. Compare com os treinos de maior carga.`]);
   if (body?.sleep && body.sleep < 6) insights.push(["Sono baixo", "Sono recente abaixo de 6h reduz prontidao e aumenta risco de treino ruim."]);
+  if (body?.stress >= 7) insights.push(["Estresse alto", "Estresse recente alto pede treino mais tecnico ou moderado."]);
+  if (body?.nutrition && body.nutrition <= 4) insights.push(["Nutri baixa", "Alimentacao percebida baixa pode derrubar treino forte."]);
   if (!types.has("academia")) insights.push(["Forca ausente", "Ainda nao entrou academia nesta semana. Um treino curto pode manter base."]);
   if (!types.has("mobilidade")) insights.push(["Recuperacao esquecida", "Sem mobilidade registrada. Dez minutos ja deixam rastro util no historico."]);
   if (!insights.length) insights.push(["Semana sob controle", "Carga, modalidades e recuperacao estao em uma zona boa pelos dados atuais."]);
@@ -738,6 +785,51 @@ function renderProgress() {
     : '<p class="empty-state">Use detalhes como "supino 4x8 70kg" para detectar exercicios.</p>';
 }
 
+function activeSeason() {
+  const today = todayIso();
+  return state.seasons.find((season) => season.start <= today && season.end >= today) || state.seasons.at(-1);
+}
+
+function seasonWeeks(season) {
+  if (!season) return [];
+  const start = new Date(`${season.start}T12:00:00`);
+  const end = new Date(`${season.end}T12:00:00`);
+  const weeks = [];
+  let cursor = new Date(start);
+  let index = 1;
+  while (cursor <= end && index <= 16) {
+    const phase = ["base", "carga", "pico", "deload"][(index - 1) % 4];
+    weeks.push({ index, phase, date: cursor.toISOString().slice(0, 10) });
+    cursor.setDate(cursor.getDate() + 7);
+    index += 1;
+  }
+  return weeks;
+}
+
+function renderSeasons() {
+  $("#seasonList").innerHTML = state.seasons.length ? state.seasons.map((season) => `
+    <div class="season-card">
+      <strong>${season.name}</strong>
+      <small>${season.objective} - ${formatDate(season.start)} ate ${formatDate(season.end)} - ${season.sessionsPerWeek} sessoes/sem</small>
+      ${season.note ? `<small>${season.note}</small>` : ""}
+      <div class="card-actions">
+        <button type="button" data-season-action="edit" data-id="${season.id}">Editar</button>
+        <button type="button" data-season-action="delete" data-id="${season.id}">Excluir</button>
+      </div>
+    </div>
+  `).join("") : '<p class="empty-state">Nenhuma temporada planejada ainda.</p>';
+}
+
+function renderPeriodization() {
+  const season = activeSeason();
+  $("#periodizationGrid").innerHTML = season ? seasonWeeks(season).map((week) => `
+    <div class="period-card">
+      <strong>Semana ${week.index}</strong>
+      <small>${week.phase} - inicio ${formatDate(week.date)}</small>
+    </div>
+  `).join("") : '<p class="empty-state">Crie uma temporada para ver a periodizacao.</p>';
+}
+
 function renderPlan() {
   const week = currentWeekWorkouts();
   $("#planGrid").innerHTML = weekDays.map((day) => {
@@ -749,6 +841,8 @@ function renderPlan() {
       </div>
     `;
   }).join("");
+  renderSeasons();
+  renderPeriodization();
 }
 
 function renderBody() {
@@ -756,7 +850,9 @@ function renderBody() {
   $("#bodyList").innerHTML = ordered.length ? ordered.map((item) => `
     <div class="body-item">
       <strong>${formatDate(item.date)}</strong>
-      <div class="card-meta">peso ${item.weight || "-"}kg - sono ${item.sleep || "-"}h - energia ${item.energy || "-"} - dor ${item.pain || "0"}</div>
+      <div class="card-meta">peso ${item.weight || "-"}kg - sono ${item.sleep || "-"}h - energia ${item.energy || "-"} - dor ${item.pain || "0"} - estresse ${item.stress || "-"}</div>
+      <div class="card-meta">nutri ${item.nutrition || "-"} - humor ${item.mood || "-"} - cintura ${item.waist || "-"}cm - peito ${item.chest || "-"}cm - quadril ${item.hip || "-"}cm</div>
+      ${item.painAreas ? `<div class="card-meta">areas: ${item.painAreas}</div>` : ""}
       ${item.note ? `<div class="card-meta">${item.note}</div>` : ""}
       <div class="card-actions">
         <button type="button" data-body-action="edit" data-id="${item.id}">Editar</button>
@@ -854,6 +950,41 @@ function workoutKey(item) {
   return [item.date, item.type, item.name, item.duration, item.intensity].join("|").toLowerCase();
 }
 
+function duplicateGroups() {
+  const groups = new Map();
+  state.workouts.forEach((workout) => {
+    const key = workoutKey(workout);
+    const items = groups.get(key) || [];
+    items.push(workout);
+    groups.set(key, items);
+  });
+  return [...groups.values()].filter((items) => items.length > 1);
+}
+
+function renderDuplicateAudit() {
+  const groups = duplicateGroups();
+  $("#duplicateAudit").innerHTML = groups.length ? groups.map((items, index) => `
+    <div class="duplicate-card">
+      <strong>Duplicado ${index + 1}: ${items[0].name}</strong>
+      <small>${items.length} registros em ${formatDate(items[0].date)} - ${presetLabel(items[0].type)}</small>
+      <div class="card-actions">
+        <button type="button" data-duplicate-action="keep-first" data-key="${encodeURIComponent(workoutKey(items[0]))}">Manter primeiro</button>
+      </div>
+    </div>
+  `).join("") : '<p class="empty-state">Nenhum duplicado exato encontrado.</p>';
+}
+
+function removeDuplicateGroup(key) {
+  const seen = new Set();
+  state.workouts = state.workouts.filter((workout) => {
+    const current = workoutKey(workout);
+    if (current !== key) return true;
+    if (seen.has(current)) return false;
+    seen.add(current);
+    return true;
+  });
+}
+
 function parseQuickText(text) {
   const lower = text.toLowerCase();
   const type = presets.find((preset) => lower.includes(preset.type) || lower.includes(preset.label.toLowerCase()))?.type || "outro";
@@ -941,6 +1072,29 @@ function parseGpx(text) {
   return [normalizeWorkout({ type: "corrida", name: "Atividade GPX", date: start.toISOString().slice(0, 10), duration: minutes, distance, intensity: "moderado", note: "Importado de GPX" })];
 }
 
+function parseTcx(text) {
+  const doc = new DOMParser().parseFromString(text, "application/xml");
+  const activity = doc.querySelector("Activity");
+  const sport = String(activity?.getAttribute("Sport") || "corrida").toLowerCase();
+  const points = [...doc.querySelectorAll("Trackpoint")];
+  const times = points.map((point) => point.querySelector("Time")?.textContent).filter(Boolean);
+  const distances = points.map((point) => Number(point.querySelector("DistanceMeters")?.textContent || 0)).filter(Boolean);
+  const start = times[0] ? new Date(times[0]) : new Date();
+  const end = times.at(-1) ? new Date(times.at(-1)) : start;
+  const meters = Math.max(...distances, 0);
+  const minutes = Math.max(1, Math.round((end - start) / 60000) || 45);
+  const type = sport.includes("biking") || sport.includes("running") ? "corrida" : "outro";
+  return [normalizeWorkout({
+    type,
+    name: `Atividade TCX${sport ? ` - ${sport}` : ""}`,
+    date: start.toISOString().slice(0, 10),
+    duration: minutes,
+    distance: Math.round((meters / 1000) * 10) / 10,
+    intensity: "moderado",
+    note: "Importado de TCX"
+  })];
+}
+
 function gpxDistance(points) {
   let total = 0;
   for (let index = 1; index < points.length; index += 1) {
@@ -995,13 +1149,30 @@ function handleImport(items, source, errors = []) {
 }
 
 function resetBodyForm() {
-  bodyFields.id.value = "";
+  Object.values(bodyFields).forEach((input) => {
+    input.value = "";
+  });
   bodyFields.date.value = todayIso();
-  bodyFields.weight.value = "";
-  bodyFields.sleep.value = "";
-  bodyFields.energy.value = "";
-  bodyFields.pain.value = "";
-  bodyFields.note.value = "";
+}
+
+function resetSeasonForm() {
+  seasonFields.id.value = "";
+  seasonFields.name.value = "";
+  seasonFields.objective.value = "condicionamento";
+  seasonFields.start.value = todayIso();
+  seasonFields.end.value = offsetDate(42);
+  seasonFields.sessionsPerWeek.value = 5;
+  seasonFields.note.value = "";
+}
+
+function seasonFromForm() {
+  return normalizeSeason(Object.fromEntries(Object.entries(seasonFields).map(([key, input]) => [key, input.value])));
+}
+
+function fillSeasonForm(season) {
+  Object.entries(seasonFields).forEach(([key, input]) => {
+    input.value = season[key] ?? "";
+  });
 }
 
 $$("[data-page-target]").forEach((button) => button.addEventListener("click", () => setPage(button.dataset.pageTarget)));
@@ -1123,6 +1294,27 @@ $("#clearFiltersButton").addEventListener("click", () => {
   renderHistory();
 });
 
+$("#seasonForm").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const season = seasonFromForm();
+  const index = state.seasons.findIndex((item) => item.id === season.id);
+  if (index >= 0) state.seasons[index] = season;
+  else state.seasons.push(season);
+  resetSeasonForm();
+  render();
+});
+
+$("#seasonList").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-season-action]");
+  if (!button) return;
+  const season = state.seasons.find((item) => item.id === button.dataset.id);
+  if (button.dataset.seasonAction === "delete") state.seasons = state.seasons.filter((item) => item.id !== button.dataset.id);
+  if (button.dataset.seasonAction === "edit" && season) fillSeasonForm(season);
+  render();
+});
+
+$("#clearSeasonFormButton").addEventListener("click", resetSeasonForm);
+
 $("#refreshProgressButton").addEventListener("click", renderProgress);
 
 $("#exportReportButton").addEventListener("click", () => {
@@ -1166,12 +1358,16 @@ $("#seedBodyButton").addEventListener("click", () => {
 });
 
 $("#createWeekPlanButton").addEventListener("click", () => {
-  const base = [
-    ["academia", "Academia - upper", 60, 1],
-    ["natacao", "Natacao tecnica", 45, 3],
-    ["futevolei", "Futevolei", 90, 5],
-    ["mobilidade", "Mobilidade recuperativa", 25, 0]
-  ];
+  const season = activeSeason();
+  const objective = season?.objective || "condicionamento";
+  const baseByObjective = {
+    forca: [["academia", "Academia - forca", 70, 1], ["natacao", "Natacao leve", 35, 3], ["academia", "Academia - lower", 65, 4], ["mobilidade", "Mobilidade", 25, 6]],
+    hipertrofia: [["academia", "Academia - push", 65, 1], ["academia", "Academia - pull", 65, 3], ["academia", "Academia - legs", 65, 5], ["mobilidade", "Mobilidade", 25, 6]],
+    tecnica: [["natacao", "Natacao tecnica", 45, 1], ["futevolei", "Futevolei fundamentos", 75, 3], ["academia", "Academia base", 50, 5], ["mobilidade", "Mobilidade", 25, 0]],
+    recuperacao: [["mobilidade", "Mobilidade", 25, 1], ["natacao", "Natacao leve", 35, 3], ["academia", "Academia leve", 45, 5]],
+    condicionamento: [["academia", "Academia - upper", 60, 1], ["natacao", "Natacao tecnica", 45, 3], ["futevolei", "Futevolei", 90, 5], ["mobilidade", "Mobilidade recuperativa", 25, 0]]
+  };
+  const base = baseByObjective[objective] || baseByObjective.condicionamento;
   const today = new Date();
   const monday = new Date(today);
   const day = monday.getDay() || 7;
@@ -1264,6 +1460,30 @@ $("#importGpxInput").addEventListener("change", (event) => {
   });
 });
 
+$("#importTcxInput").addEventListener("change", (event) => {
+  readFileAsText(event.target.files[0], (text) => {
+    try {
+      handleImport(parseTcx(text), "TCX");
+    } catch {
+      $("#dataHint").textContent = "Nao consegui importar esse TCX.";
+    } finally {
+      event.target.value = "";
+    }
+  });
+});
+
+$("#auditDuplicatesButton").addEventListener("click", renderDuplicateAudit);
+
+$("#duplicateAudit").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-duplicate-action]");
+  if (!button) return;
+  if (button.dataset.duplicateAction === "keep-first") {
+    removeDuplicateGroup(decodeURIComponent(button.dataset.key));
+    render();
+    renderDuplicateAudit();
+  }
+});
+
 $("#importPreview").addEventListener("click", (event) => {
   if (event.target.id === "cancelImportButton") {
     pendingImport = [];
@@ -1293,6 +1513,7 @@ function registerServiceWorker() {
 
 resetForm();
 resetBodyForm();
+resetSeasonForm();
 registerServiceWorker();
 render();
 timerInterval = window.setInterval(renderTimer, 1000);

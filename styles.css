@@ -133,6 +133,7 @@ article small,
 .workspace,
 .workout-form,
 .body-form,
+.season-form,
 .panel-header,
 .filter-grid,
 .quick-text {
@@ -419,7 +420,8 @@ article strong {
 }
 
 .workout-form,
-.body-form {
+.body-form,
+.season-form {
   grid-template-columns: 1.4fr repeat(4, minmax(110px, 1fr));
   align-items: end;
 }
@@ -502,11 +504,14 @@ textarea:focus {
 .body-list,
 .favorite-grid,
 .template-list,
+.season-list,
 .plan-grid,
+.periodization-grid,
 .progress-grid,
 .record-grid,
 .exercise-grid,
 .insight-list,
+.duplicate-audit,
 .import-preview {
   display: grid;
   gap: 10px;
@@ -599,11 +604,14 @@ textarea:focus {
 .body-item,
 .favorite-card,
 .template-card,
+.season-card,
 .plan-day,
+.period-card,
 .progress-card,
 .record-card,
 .exercise-card,
 .insight-card,
+.duplicate-card,
 .preview-row {
   padding: 14px;
 }
@@ -615,7 +623,10 @@ textarea:focus {
 .progress-card,
 .record-card,
 .exercise-card,
-.insight-card {
+.insight-card,
+.season-card,
+.period-card,
+.duplicate-card {
   border: 1px solid var(--line);
   background: var(--surface-2);
   border-radius: 16px;
@@ -624,15 +635,30 @@ textarea:focus {
 .progress-card strong,
 .record-card strong,
 .exercise-card strong,
-.insight-card strong {
+.insight-card strong,
+.season-card strong,
+.period-card strong,
+.duplicate-card strong {
   display: block;
 }
 
 .progress-card small,
 .record-card small,
 .exercise-card small,
-.insight-card small {
+.insight-card small,
+.season-card small,
+.period-card small,
+.duplicate-card small {
   color: var(--muted);
+}
+
+.season-list,
+.periodization-grid {
+  margin-top: 16px;
+}
+
+.periodization-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .progress-bar {
@@ -806,9 +832,11 @@ textarea:focus {
   .quick-start-grid,
   .workout-form,
   .body-form,
+  .season-form,
   .workspace,
   .filter-grid,
   .plan-grid,
+  .periodization-grid,
   .progress-grid,
   .timer-controls,
   .quick-text,
