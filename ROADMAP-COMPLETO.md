@@ -42,6 +42,7 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [x] Evoluir Route Lab com mini-mapa SVG offline, splits destacados e segmentos pessoais por rota/distancia parecida.
 - [x] Criar coach privado de corrida com proxima corrida sugerida, zonas de pace e preenchimento do treino planejado.
 - [x] Tornar modalidades visiveis como hub: filtro global, resumo por esporte e acoes rapidas.
+- [x] Criar Coach Semanal com proximas acoes copiaveis e atalhos para executar.
 - [ ] Validar no uso real por uma semana.
 - [~] Decidir se a primeira base duravel sera `localStorage`, IndexedDB, SQLite/Capacitor ou API Node.
 
@@ -144,6 +145,7 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 
 - [x] Tela "Hoje" com treinos sugeridos, prontidao e resumo da semana.
 - [x] Criar seletor/hub de modalidade para alternar entre academia, natacao, corrida, futevolei, mobilidade e tudo.
+- [x] Mostrar proximas acoes da semana com base em modalidade, carga, dor, sono e planos.
 - [x] Semanario com dias, tipos de treino e status.
 - [x] Indicadores: minutos totais, sessoes, modalidades e carga.
 - [x] Carga semanal por modalidade.
