@@ -45,6 +45,10 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [x] Criar Coach Semanal com proximas acoes copiaveis e atalhos para executar.
 - [x] Criar engines 1.1 para academia, natacao e futevolei com metricas e exemplos.
 - [x] Adicionar restore manual a partir do IndexedDB local.
+- [x] Criar relatorio mensal exportavel.
+- [x] Criar limpeza de dados com deduplicacao, normalizacao e snapshot.
+- [x] Criar modelos rapidos de detalhes por modalidade no formulario.
+- [x] Exibir status PWA/offline e atualizar app com um clique.
 - [ ] Validar no uso real por uma semana.
 - [~] Decidir se a primeira base duravel sera `localStorage`, IndexedDB, SQLite/Capacitor ou API Node.
 
@@ -188,6 +192,7 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [~] Importar TCX/FIT.
 - [x] Criar auditoria de duplicados.
 - [ ] Criar ferramenta de limpeza/migracao dos dados.
+- [x] Criar ferramenta de limpeza/migracao dos dados.
 
 ## 0.9 - Mobile e offline forte
 

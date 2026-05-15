@@ -552,6 +552,7 @@ function setPreset(type) {
   fields.duration.value = selectedPreset.duration;
   $("#modalityHint").textContent = modalityHint(selectedPreset.type);
   renderPresets();
+  renderDetailHelper();
 }
 
 function modalityHint(type) {
@@ -644,6 +645,19 @@ function renderQuickStart() {
       <small>${preset.duration} min</small>
     </button>
   `).join("");
+}
+
+function renderDetailHelper() {
+  const helpers = {
+    academia: ["supino 4x8 70kg\nremada 4x10 60kg\ndesenvolvimento 3x8 32kg", "agachamento 4x6 90kg\nstiff 3x8 80kg\nleg press 4x10 140kg"],
+    natacao: ["400m solto\n8x50m tecnica\n300m moderado", "600m crawl\n6x100m ritmo\n200m solto"],
+    futevolei: ["dupla Joao\n3 jogos\nresultado 2x1\nponto forte: saque", "treino tecnico\nrecepcao e ataque\nsensacao: leve"],
+    corrida: ["Z2 facil\npace alvo 6:30-7:10/km\nterreno plano", "progressivo\n3x6min controlado\n2min leve"],
+    mobilidade: ["quadril 10min\ntoracica 8min\nombro 6min\ndor antes/depois", "respiracao 5min\nalongamento posterior\nmobilidade tornozelo"],
+    outro: ["objetivo:\nblocos:\nsensacao:"]
+  };
+  const items = helpers[selectedPreset.type] || helpers.outro;
+  $("#detailHelper").innerHTML = items.map((text, index) => `<button type="button" data-detail-template="${encodeURIComponent(text)}">Modelo ${index + 1}</button>`).join("");
 }
 
 function renderActivityFocus() {
@@ -2038,6 +2052,64 @@ function progressReport() {
   ].join("\n");
 }
 
+function monthlyReport() {
+  const now = new Date();
+  const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  const items = state.workouts.filter((workout) => workout.date.startsWith(month));
+  const body = state.bodyLogs.filter((log) => log.date.startsWith(month));
+  const bySport = presets.map((preset) => {
+    const sportItems = items.filter((item) => item.type === preset.type);
+    return {
+      label: preset.label,
+      count: sportItems.length,
+      minutes: sportItems.reduce((sum, item) => sum + Number(item.duration || 0), 0),
+      load: loadSum(sportItems),
+      distance: sportItems.reduce((sum, item) => sum + Number(item.distance || item.volume || 0), 0)
+    };
+  }).filter((item) => item.count);
+  const best = buildRecords().slice(0, 6).map((item) => `- ${item.label}: ${item.value} (${item.detail})`).join("\n") || "- Sem recordes";
+  const avgEnergy = body.length ? Math.round((body.reduce((sum, item) => sum + Number(item.energy || 0), 0) / body.length) * 10) / 10 : "--";
+  const avgPain = body.length ? Math.round((body.reduce((sum, item) => sum + Number(item.pain || 0), 0) / body.length) * 10) / 10 : "--";
+  return [
+    `# Finfit - Relatorio mensal ${month}`,
+    "",
+    `Gerado em ${new Date().toLocaleString("pt-BR")}`,
+    "",
+    "## Resumo",
+    `- Treinos: ${items.length}`,
+    `- Minutos: ${items.reduce((sum, item) => sum + Number(item.duration || 0), 0)}`,
+    `- Carga: ${loadSum(items)}`,
+    `- Energia media: ${avgEnergy}`,
+    `- Dor media: ${avgPain}`,
+    "",
+    "## Modalidades",
+    bySport.map((item) => `- ${item.label}: ${item.count} sessoes, ${item.minutes}min, carga ${item.load}${item.distance ? `, volume/dist ${Math.round(item.distance * 10) / 10}` : ""}`).join("\n") || "- Sem dados",
+    "",
+    "## Melhores marcas",
+    best,
+    "",
+    "## Coach",
+    buildWeeklyCoachActions().map((item) => `- ${item.tag}: ${item.title} - ${item.text}`).join("\n")
+  ].join("\n");
+}
+
+function cleanData() {
+  const before = state.workouts.length;
+  const seen = new Set();
+  state.workouts = state.workouts.map(normalizeWorkout).filter((workout) => {
+    const key = workoutKey(workout);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  state.bodyLogs = state.bodyLogs.map(normalizeBodyLog);
+  state.seasons = state.seasons.map(normalizeSeason);
+  const removed = before - state.workouts.length;
+  createAutoBackup("limpeza");
+  $("#dataHint").textContent = `Limpeza concluida: ${removed} duplicado(s) removido(s), dados normalizados e snapshot criado.`;
+  render();
+}
+
 function handleImport(items, source, errors = []) {
   pendingImport = items.map(normalizeWorkout);
   pendingImportErrors = errors;
@@ -2145,6 +2217,14 @@ $("#dashboardQuickLive").addEventListener("click", () => $("#sidebarLiveWorkout"
 $("#sportPresetGrid").addEventListener("click", (event) => {
   const button = event.target.closest("[data-type]");
   if (button) setPreset(button.dataset.type);
+});
+
+$("#detailHelper").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-detail-template]");
+  if (!button) return;
+  const text = decodeURIComponent(button.dataset.detailTemplate);
+  fields.details.value = fields.details.value ? `${fields.details.value}\n${text}` : text;
+  fields.details.focus();
 });
 
 $("#quickStartGrid").addEventListener("click", (event) => {
@@ -2454,6 +2534,12 @@ $("#exportCsvButton").addEventListener("click", () => {
   downloadFile(`finfit-treinos-${todayIso()}.csv`, toCsv(state.workouts), "text/csv");
 });
 
+$("#exportMonthlyReportButton").addEventListener("click", () => {
+  downloadFile(`finfit-relatorio-mensal-${todayIso().slice(0, 7)}.md`, monthlyReport(), "text/markdown");
+});
+
+$("#cleanDataButton").addEventListener("click", cleanData);
+
 $("#downloadTemplateButton").addEventListener("click", () => {
   downloadFile("finfit-modelo-importacao.csv", toCsv(seedState.workouts), "text/csv");
 });
@@ -2548,10 +2634,19 @@ $("#importPreview").addEventListener("click", (event) => {
 
 function registerServiceWorker() {
   if (!("serviceWorker" in navigator)) return;
-  navigator.serviceWorker.register("./sw.js").catch(() => {
+  navigator.serviceWorker.register("./sw.js").then((registration) => {
+    $("#pwaStatus").textContent = "Offline ativo. Dados ficam neste navegador.";
+    registration.addEventListener("updatefound", () => {
+      $("#pwaStatus").textContent = "Atualizacao disponivel.";
+      $("#pwaBanner").classList.add("attention");
+    });
+  }).catch(() => {
+    $("#pwaStatus").textContent = "Offline indisponivel neste contexto.";
     // PWA registration is best-effort in local/dev contexts.
   });
 }
+
+$("#reloadAppButton").addEventListener("click", () => window.location.reload());
 
 applyAppearance();
 resetForm();

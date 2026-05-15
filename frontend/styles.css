@@ -517,6 +517,33 @@ article small,
   padding: 28px 28px 96px 264px;
 }
 
+.pwa-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding: 9px 12px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.pwa-banner.attention {
+  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  color: var(--accent);
+}
+
+.pwa-banner button {
+  min-height: 30px;
+  padding: 0 10px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
 .topbar,
 .hero,
 .metrics,
@@ -1396,6 +1423,22 @@ textarea:focus {
   color: var(--muted);
   font-size: 0.86rem;
   text-transform: none;
+}
+
+.detail-helper {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.detail-helper button {
+  min-height: 34px;
+  padding: 0 11px;
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  color: var(--accent);
+  font-size: 0.82rem;
+  font-weight: 800;
 }
 
 .wide {
