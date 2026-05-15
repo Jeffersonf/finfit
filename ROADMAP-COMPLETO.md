@@ -29,6 +29,8 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [x] Criar edicao, duplicacao, exclusao, filtros, favoritos e templates locais.
 - [x] Criar registro de corpo/recuperacao.
 - [x] Criar preview de importacao, export CSV e import GPX basico.
+- [x] Criar aba de progresso com consistencia, semana vs anterior, recordes, alertas e modalidades.
+- [x] Criar detalhes estruturados por treino para academia, natacao, futevolei e outros.
 - [ ] Validar no uso real por uma semana.
 - [~] Decidir se a primeira base duravel sera `localStorage`, IndexedDB, SQLite/Capacitor ou API Node.
 
@@ -43,16 +45,16 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [x] Mostrar preview antes de importar.
 - [x] Permitir escolher entre mesclar ou substituir.
 - [~] Ignorar duplicados na mesclagem.
-- [ ] Mostrar erros de importacao linha a linha.
+- [x] Mostrar erros de importacao linha a linha no preview basico.
 
 ### Camada 2 - Planilhas e historico manual
 
-- [ ] Importar CSV exportado de Google Sheets/Excel.
-- [ ] Criar mapeador de colunas: data, modalidade, duracao, nota, distancia, carga, RPE.
+- [x] Importar CSV exportado de Google Sheets/Excel quando segue colunas simples.
+- [~] Criar mapeador de colunas: data, modalidade, duracao, nota, distancia, carga, RPE.
 - [x] Aceitar aliases em portugues: `data`, `tipo`, `modalidade`, `tempo`, `duracao`, `observacao`.
-- [ ] Importar blocos de academia com exercicio, series, repeticoes, peso e descanso.
-- [ ] Importar natação com metragem, estilo, series e tempo.
-- [ ] Importar futevolei com duracao, intensidade, local, dupla e resultado opcional.
+- [~] Importar blocos de academia com exercicio, series, repeticoes, peso e descanso.
+- [~] Importar natacao com metragem, estilo, series e tempo.
+- [~] Importar futevolei com duracao, intensidade, local, dupla e resultado opcional.
 
 ### Camada 3 - Apps externos
 
@@ -74,10 +76,10 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 
 - [ ] Registrar treino em menos de 30 segundos quando ja existe modelo.
 - [ ] Montar treinos por dia, objetivo, grupo muscular, esporte ou ciclo.
-- [ ] Visualizar semana atual, carga acumulada, recuperacao e proximo treino recomendado.
+- [x] Visualizar semana atual, carga acumulada, recuperacao e proximo treino recomendado.
 - [ ] Separar plano do que foi executado.
 - [ ] Guardar historico de carga, repeticoes, distancia, tempo, zona, RPE, energia e observacoes.
-- [ ] Mostrar progresso de forma pratica: volume, consistencia, recordes pessoais e sinais de excesso.
+- [x] Mostrar progresso de forma pratica: volume, consistencia, recordes pessoais e sinais de excesso.
 - [ ] Funcionar muito bem no celular.
 - [ ] Nao depender de assinatura, feed social ou cloud obrigatoria.
 
@@ -107,9 +109,9 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 
 ## 0.3 - Modalidades de verdade
 
-- [~] Academia: campos gerais de volume, foco, RPE e observacao; falta sets por exercicio.
-- [~] Natacao: campos gerais de metragem/volume, local e tecnica; falta series estruturadas.
-- [~] Futevolei: duracao, intensidade, local e observacoes; falta dupla, adversario e resultado.
+- [~] Academia: detalhes por linha, volume, foco, RPE e recordes detectados; falta editor de sets dedicado.
+- [~] Natacao: detalhes por linha, metragem/volume, local e tecnica; falta editor de series dedicado.
+- [~] Futevolei: detalhes por linha, duracao, intensidade, local e observacoes; falta campos dedicados para dupla/adversario/resultado.
 - [~] Corrida: distancia, tempo e percepcao; falta pace, elevacao e FC.
 - [~] Mobilidade/fisio: dor, foco corporal, tempo e observacoes; falta exercicios estruturados.
 - [~] Treino livre: campos gerais; falta campos customizaveis reais.
@@ -130,19 +132,19 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [x] Tela "Hoje" com treinos sugeridos, prontidao e resumo da semana.
 - [x] Semanario com dias, tipos de treino e status.
 - [x] Indicadores: minutos totais, sessoes, modalidades e carga.
-- [~] Carga semanal por modalidade.
-- [~] Alertas pessoais: muita carga seguida, pouco descanso, grupo muscular esquecido.
-- [ ] Comparar semana atual com semana anterior.
-- [ ] Mostrar "proxima melhor acao" sem moralismo.
+- [x] Carga semanal por modalidade.
+- [x] Alertas pessoais: muita carga seguida, pouco descanso, grupo muscular esquecido.
+- [x] Comparar semana atual com semana anterior.
+- [x] Mostrar "proxima melhor acao" sem moralismo.
 
 ## 0.6 - Historico e progresso
 
 - [x] Linha do tempo de treinos.
 - [~] Filtros por tipo, periodo, status e busca textual.
-- [ ] Evolucao por exercicio: melhor carga, reps, volume e ultima execucao.
-- [ ] Evolucao por esporte: tempo, distancia, frequencia, melhor sessao e consistencia.
-- [ ] Recordes pessoais manuais e automaticos.
-- [ ] Grafico de consistencia semanal e mensal.
+- [~] Evolucao por exercicio: melhor carga, volume e ultima execucao quando detalhes seguem formato simples.
+- [x] Evolucao por esporte: tempo, distancia, frequencia, melhor sessao e consistencia.
+- [~] Recordes pessoais manuais e automaticos.
+- [x] Grafico/indicador de consistencia semanal e mensal inicial.
 - [ ] Notas por lesao, dor, sono, alimentacao ou energia.
 
 ## 0.7 - Corpo, recuperacao e contexto
@@ -158,12 +160,12 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 
 - [x] Exportar/importar backup JSON.
 - [x] Importar CSV simples.
-- [ ] Preview de importacao.
+- [x] Preview de importacao.
 - [ ] Backup automatico local.
 - [x] Exportar CSV do historico.
 - [x] Importar GPX.
 - [ ] Importar TCX/FIT.
-- [ ] Criar auditoria de duplicados.
+- [~] Criar auditoria de duplicados.
 - [ ] Criar ferramenta de limpeza/migracao dos dados.
 
 ## 0.9 - Mobile e offline forte
@@ -199,9 +201,9 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 
 ## 2.0 - Inteligencia pessoal
 
-- [ ] Gerar resumo semanal automatico.
-- [ ] Detectar padroes: melhora, queda, excesso, repeticao de dor, buracos de consistencia.
-- [ ] Recomendar proximo treino com base no historico, agenda e estado do corpo.
+- [x] Gerar resumo semanal automatico local/exportavel.
+- [~] Detectar padroes: melhora, queda, excesso, repeticao de dor, buracos de consistencia.
+- [x] Recomendar proximo treino com base no historico, agenda e estado do corpo.
 - [ ] Criar periodizacao simples: base, carga, deload, teste.
 - [ ] Ajustar treino quando houve futevolei/natacao intensa na semana.
 - [ ] Explicar recomendacoes em linguagem humana.

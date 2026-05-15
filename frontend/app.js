@@ -30,9 +30,9 @@ const baseTemplates = [
 
 const seedState = {
   workouts: [
-    { id: "seed-1", type: "academia", name: "Academia - peito e costas", date: "2026-05-11", duration: 70, intensity: "forte", status: "feito", rpe: 8, energy: 8, pain: 1, distance: "", volume: 9200, focus: "peito costas", location: "academia", note: "boa carga, sem dor" },
-    { id: "seed-2", type: "natacao", name: "Natacao tecnica", date: "2026-05-13", duration: 45, intensity: "moderado", status: "feito", rpe: 6, energy: 7, pain: 0, distance: 1500, volume: 1500, focus: "respiracao", location: "piscina", note: "respiracao melhorou" },
-    { id: "seed-3", type: "futevolei", name: "Futevolei", date: "2026-05-15", duration: 90, intensity: "forte", status: "feito", rpe: 8, energy: 8, pain: 2, distance: "", volume: "", focus: "jogo", location: "praia", note: "jogo intenso" }
+    { id: "seed-1", type: "academia", name: "Academia - peito e costas", date: "2026-05-11", duration: 70, intensity: "forte", status: "feito", rpe: 8, energy: 8, pain: 1, distance: "", volume: 9200, focus: "peito costas", location: "academia", note: "boa carga, sem dor", details: "supino 4x8 70kg\nremada 4x10 60kg\ndesenvolvimento 3x8 32kg" },
+    { id: "seed-2", type: "natacao", name: "Natacao tecnica", date: "2026-05-13", duration: 45, intensity: "moderado", status: "feito", rpe: 6, energy: 7, pain: 0, distance: 1500, volume: 1500, focus: "respiracao", location: "piscina", note: "respiracao melhorou", details: "400m solto\n8x50m tecnica\n300m moderado" },
+    { id: "seed-3", type: "futevolei", name: "Futevolei", date: "2026-05-15", duration: 90, intensity: "forte", status: "feito", rpe: 8, energy: 8, pain: 2, distance: "", volume: "", focus: "jogo", location: "praia", note: "jogo intenso", details: "parceiro Joao\n3 jogos\nresultado 2x1" }
   ],
   bodyLogs: [
     { id: "body-1", date: "2026-05-14", weight: 82.4, sleep: 7, energy: 8, pain: 1, note: "recuperacao boa" },
@@ -46,6 +46,7 @@ const seedState = {
 let state = loadState();
 let selectedPreset = presets[0];
 let pendingImport = [];
+let pendingImportErrors = [];
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -64,7 +65,8 @@ const fields = {
   volume: $("#workoutVolume"),
   focus: $("#workoutFocus"),
   location: $("#workoutLocation"),
-  note: $("#workoutNote")
+  note: $("#workoutNote"),
+  details: $("#workoutDetails")
 };
 
 const bodyFields = {
@@ -128,19 +130,20 @@ function presetLabel(type) {
 
 function normalizeType(value) {
   const raw = String(value || "outro").trim().toLowerCase();
+  const normalized = raw.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   const aliases = {
     musculacao: "academia",
-    musculação: "academia",
     gym: "academia",
     swim: "natacao",
-    natação: "natacao",
+    natacao: "natacao",
     futebol: "futevolei",
-    futevôlei: "futevolei",
+    futevolei: "futevolei",
     run: "corrida",
     running: "corrida",
+    corrida: "corrida",
     mobilidade: "mobilidade"
   };
-  const type = aliases[raw] || raw;
+  const type = aliases[normalized] || aliases[raw] || normalized;
   return presets.some((preset) => preset.type === type) ? type : "outro";
 }
 
@@ -165,7 +168,8 @@ function normalizeWorkout(item) {
     volume: numberOrBlank(item.volume || item.carga || item.metragem),
     focus: String(item.focus || item.foco || "").trim(),
     location: String(item.location || item.local || "").trim(),
-    note: String(item.note || item.notes || item.observacao || item.observação || item.nota || "").trim()
+    note: String(item.note || item.notes || item.observacao || item.observação || item.nota || "").trim(),
+    details: String(item.details || item.detalhes || item.series || item.blocos || "").trim()
   };
 }
 
@@ -242,7 +246,7 @@ function recommendation() {
 function setPage(page) {
   $$(".page").forEach((item) => item.classList.toggle("active", item.id === `page-${page}`));
   $$("[data-page-target]").forEach((button) => button.classList.toggle("active", button.dataset.pageTarget === page));
-  const titles = { today: "Treinos da semana", plan: "Plano semanal", history: "Historico", body: "Corpo e recuperacao", library: "Biblioteca", data: "Dados" };
+  const titles = { today: "Treinos da semana", plan: "Plano semanal", history: "Historico", progress: "Progresso", body: "Corpo e recuperacao", library: "Biblioteca", data: "Dados" };
   $("#pageTitle").textContent = titles[page] || "Finfit";
 }
 
@@ -250,7 +254,20 @@ function setPreset(type) {
   selectedPreset = presets.find((preset) => preset.type === type) || presets[0];
   fields.name.value = selectedPreset.defaultName;
   fields.duration.value = selectedPreset.duration;
+  $("#modalityHint").textContent = modalityHint(selectedPreset.type);
   renderPresets();
+}
+
+function modalityHint(type) {
+  const hints = {
+    academia: "Uma linha por exercicio: supino 4x8 70kg. Isso alimenta recordes por exercicio.",
+    natacao: "Use blocos com metragem: 8x50m tecnica, 400m solto. O volume entra no progresso.",
+    futevolei: "Registre parceiro, quantidade de jogos, resultado e sensacao do corpo.",
+    corrida: "Distancia, pace, zona ou terreno ajudam a comparar progresso.",
+    mobilidade: "Anote regioes, dor antes/depois e foco corporal.",
+    outro: "Use linhas curtas com o que voce quer lembrar depois."
+  };
+  return hints[type] || hints.outro;
 }
 
 function resetForm() {
@@ -266,6 +283,7 @@ function resetForm() {
   fields.focus.value = "";
   fields.location.value = "";
   fields.note.value = "";
+  fields.details.value = "";
   $("#saveWorkoutButton").textContent = "Salvar treino";
   setPreset(selectedPreset.type);
 }
@@ -286,7 +304,8 @@ function workoutFromForm() {
     volume: fields.volume.value,
     focus: fields.focus.value,
     location: fields.location.value,
-    note: fields.note.value
+    note: fields.note.value,
+    details: fields.details.value
   });
 }
 
@@ -306,6 +325,7 @@ function fillWorkoutForm(workout) {
   fields.focus.value = workout.focus;
   fields.location.value = workout.location;
   fields.note.value = workout.note;
+  fields.details.value = workout.details;
   $("#saveWorkoutButton").textContent = "Atualizar treino";
   renderPresets();
   setPage("today");
@@ -402,6 +422,7 @@ function renderHistory() {
         <strong>${item.name}</strong>
         <div class="timeline-meta">${item.duration}min - ${item.intensity} - carga ${workoutLoad(item)}${item.focus ? ` - ${item.focus}` : ""}${item.location ? ` - ${item.location}` : ""}</div>
         ${item.note ? `<div class="timeline-meta">${item.note}</div>` : ""}
+        ${item.details ? `<div class="timeline-meta">${item.details.split("\n").slice(0, 2).join(" / ")}</div>` : ""}
       </div>
       <div class="timeline-actions">
         <button type="button" data-action="edit" data-id="${item.id}">Editar</button>
@@ -410,6 +431,152 @@ function renderHistory() {
       </div>
     </div>
   `).join("") : '<p class="empty-state">Nada encontrado com os filtros atuais.</p>';
+}
+
+function weekWindow(offsetWeeks = 0) {
+  const now = new Date();
+  const start = new Date(now);
+  const day = start.getDay() || 7;
+  start.setDate(start.getDate() - day + 1 + offsetWeeks * 7);
+  start.setHours(0, 0, 0, 0);
+  const end = new Date(start);
+  end.setDate(start.getDate() + 7);
+  return { start, end };
+}
+
+function workoutsInWindow(start, end) {
+  return state.workouts.filter((workout) => {
+    const date = new Date(`${workout.date}T12:00:00`);
+    return date >= start && date < end;
+  });
+}
+
+function previousWeekWorkouts() {
+  const { start, end } = weekWindow(-1);
+  return workoutsInWindow(start, end);
+}
+
+function workoutsSince(days) {
+  const start = new Date();
+  start.setDate(start.getDate() - days + 1);
+  start.setHours(0, 0, 0, 0);
+  return state.workouts.filter((workout) => new Date(`${workout.date}T12:00:00`) >= start);
+}
+
+function loadSum(items) {
+  return items.reduce((sum, item) => sum + workoutLoad(item), 0);
+}
+
+function buildSportBreakdown() {
+  const totalLoad = Math.max(1, loadSum(state.workouts));
+  return presets.map((preset) => {
+    const items = state.workouts.filter((workout) => workout.type === preset.type);
+    const minutes = items.reduce((sum, item) => sum + Number(item.duration || 0), 0);
+    const load = loadSum(items);
+    const distance = items.reduce((sum, item) => sum + Number(item.distance || 0), 0);
+    return {
+      ...preset,
+      sessions: items.length,
+      minutes,
+      load,
+      distance,
+      pct: Math.round((load / totalLoad) * 100)
+    };
+  }).filter((item) => item.sessions > 0);
+}
+
+function parseExerciseDetails() {
+  const records = new Map();
+  state.workouts.forEach((workout) => {
+    if (workout.type !== "academia" || !workout.details) return;
+    workout.details.split(/\r?\n/).forEach((line) => {
+      const match = line.trim().match(/^(.+?)\s+(\d+)x(\d+)(?:\s+(\d+(?:[.,]\d+)?)\s*kg)?/i);
+      if (!match) return;
+      const name = match[1].trim().toLowerCase();
+      const sets = Number(match[2]);
+      const reps = Number(match[3]);
+      const weight = Number(String(match[4] || 0).replace(",", "."));
+      const volume = sets * reps * weight;
+      const current = records.get(name) || { name, bestWeight: 0, bestVolume: 0, lastDate: workout.date, count: 0 };
+      current.bestWeight = Math.max(current.bestWeight, weight);
+      current.bestVolume = Math.max(current.bestVolume, volume);
+      current.lastDate = current.lastDate > workout.date ? current.lastDate : workout.date;
+      current.count += 1;
+      records.set(name, current);
+    });
+  });
+  return [...records.values()].sort((a, b) => b.bestVolume - a.bestVolume);
+}
+
+function buildRecords() {
+  const bestLoad = [...state.workouts].sort((a, b) => workoutLoad(b) - workoutLoad(a))[0];
+  const bestDuration = [...state.workouts].sort((a, b) => Number(b.duration || 0) - Number(a.duration || 0))[0];
+  const bestDistance = [...state.workouts].filter((item) => Number(item.distance || 0) > 0).sort((a, b) => Number(b.distance || 0) - Number(a.distance || 0))[0];
+  const bestVolume = [...state.workouts].filter((item) => Number(item.volume || 0) > 0).sort((a, b) => Number(b.volume || 0) - Number(a.volume || 0))[0];
+  return [
+    bestLoad && { label: "Maior carga", value: workoutLoad(bestLoad), detail: `${bestLoad.name} - ${formatDate(bestLoad.date)}` },
+    bestDuration && { label: "Mais longo", value: `${bestDuration.duration}min`, detail: `${bestDuration.name} - ${formatDate(bestDuration.date)}` },
+    bestDistance && { label: "Maior distancia", value: `${bestDistance.distance}`, detail: `${bestDistance.name} - ${formatDate(bestDistance.date)}` },
+    bestVolume && { label: "Maior volume", value: bestVolume.volume, detail: `${bestVolume.name} - ${formatDate(bestVolume.date)}` }
+  ].filter(Boolean);
+}
+
+function buildInsights() {
+  const week = currentWeekWorkouts();
+  const prev = previousWeekWorkouts();
+  const body = latestBodyLog();
+  const currentLoad = loadSum(week);
+  const previousLoad = loadSum(prev);
+  const types = new Set(week.map((workout) => workout.type));
+  const insights = [];
+
+  if (previousLoad > 0 && currentLoad > previousLoad * 1.35) insights.push(["Carga subiu rapido", "Semana atual esta mais de 35% acima da anterior. Vale controlar RPE e dor."]);
+  if (week.length >= 6) insights.push(["Pouco espaco de descanso", "Ha treino em muitos dias da semana. Um dia leve pode render mais do que forcar."]);
+  if (body?.pain >= 5) insights.push(["Dor alta registrada", "Dor corporal recente esta alta. Priorize mobilidade, tecnica ou reducao de carga."]);
+  if (body?.sleep && body.sleep < 6) insights.push(["Sono baixo", "Sono recente abaixo de 6h reduz prontidao e aumenta risco de treino ruim."]);
+  if (!types.has("academia")) insights.push(["Forca ausente", "Ainda nao entrou academia nesta semana. Um treino curto pode manter base."]);
+  if (!types.has("mobilidade")) insights.push(["Recuperacao esquecida", "Sem mobilidade registrada. Dez minutos ja deixam rastro util no historico."]);
+  if (!insights.length) insights.push(["Semana sob controle", "Carga, modalidades e recuperacao estao em uma zona boa pelos dados atuais."]);
+
+  return insights;
+}
+
+function renderProgress() {
+  const last28 = workoutsSince(28);
+  const activeDays = new Set(last28.map((item) => item.date)).size;
+  const currentLoad = loadSum(currentWeekWorkouts());
+  const previousLoad = loadSum(previousWeekWorkouts());
+  const delta = previousLoad ? Math.round(((currentLoad - previousLoad) / previousLoad) * 100) : 0;
+  const records = buildRecords();
+  const exercises = parseExerciseDetails();
+  const bestLoad = records.find((item) => item.label === "Maior carga");
+
+  $("#consistencyMetric").textContent = `${Math.round((activeDays / 28) * 100)}%`;
+  $("#weekDeltaMetric").textContent = `${delta > 0 ? "+" : ""}${delta}%`;
+  $("#bestLoadMetric").textContent = bestLoad?.value || 0;
+  $("#recordCountMetric").textContent = records.length + exercises.length;
+
+  $("#sportBreakdown").innerHTML = buildSportBreakdown().length
+    ? buildSportBreakdown().map((item) => `
+      <div class="progress-card">
+        <strong>${item.label}</strong>
+        <small>${item.sessions} sessoes - ${item.minutes}min - carga ${item.load}${item.distance ? ` - distancia ${item.distance}` : ""}</small>
+        <div class="progress-bar"><span style="width:${Math.min(100, item.pct)}%"></span></div>
+      </div>
+    `).join("")
+    : '<p class="empty-state">Sem treinos para analisar ainda.</p>';
+
+  $("#insightList").innerHTML = buildInsights().map(([title, text]) => `
+    <div class="insight-card"><strong>${title}</strong><small>${text}</small></div>
+  `).join("");
+
+  $("#recordGrid").innerHTML = records.length
+    ? records.map((item) => `<div class="record-card"><strong>${item.label}: ${item.value}</strong><small>${item.detail}</small></div>`).join("")
+    : '<p class="empty-state">Sem recordes suficientes ainda.</p>';
+
+  $("#exerciseGrid").innerHTML = exercises.length
+    ? exercises.map((item) => `<div class="exercise-card"><strong>${item.name}</strong><small>${item.count} registros - melhor peso ${item.bestWeight || "-"}kg - melhor volume ${Math.round(item.bestVolume)}</small></div>`).join("")
+    : '<p class="empty-state">Use detalhes como "supino 4x8 70kg" para detectar exercicios.</p>';
 }
 
 function renderPlan() {
@@ -468,7 +635,11 @@ function renderPreview() {
   }
   $("#importPreview").innerHTML = `
     <div class="preview-row">
-      <div><strong>${pendingImport.length} treino(s) prontos para importar</strong><div class="card-meta">Preview: ${pendingImport.slice(0, 3).map((item) => item.name).join(", ")}</div></div>
+      <div>
+        <strong>${pendingImport.length} treino(s) prontos para importar</strong>
+        <div class="card-meta">Preview: ${pendingImport.slice(0, 3).map((item) => item.name).join(", ")}</div>
+        ${pendingImportErrors.length ? `<div class="card-meta">${pendingImportErrors.slice(0, 5).join(" | ")}</div>` : ""}
+      </div>
       <div class="preview-actions">
         <button type="button" id="confirmMergeButton">Mesclar</button>
         <button type="button" id="confirmReplaceButton">Substituir</button>
@@ -486,6 +657,7 @@ function render() {
   renderWeek();
   renderPlan();
   renderHistory();
+  renderProgress();
   renderBody();
   renderLibrary();
   renderPreview();
@@ -540,20 +712,29 @@ function downloadFile(filename, content, type) {
 }
 
 function toCsv(items) {
-  const headers = ["date", "type", "name", "duration", "intensity", "status", "rpe", "energy", "pain", "distance", "volume", "focus", "location", "note"];
+  const headers = ["date", "type", "name", "duration", "intensity", "status", "rpe", "energy", "pain", "distance", "volume", "focus", "location", "note", "details"];
   const rows = items.map((item) => headers.map((key) => csvCell(item[key])).join(","));
   return [headers.join(","), ...rows].join("\n");
 }
 
 function csvCell(value) {
-  const text = String(value ?? "");
+  const text = String(value ?? "").replace(/\r?\n/g, " / ");
   return /[",\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
 }
 
 function parseCsv(text) {
   const rows = text.trim().split(/\r?\n/).filter(Boolean).map(splitCsvLine);
   const headers = rows.shift()?.map((header) => header.trim().toLowerCase()) || [];
-  return rows.map((row) => Object.fromEntries(headers.map((header, index) => [header, row[index] || ""]))).map(normalizeWorkout);
+  const errors = [];
+  const items = rows.map((row, index) => {
+    const raw = Object.fromEntries(headers.map((header, colIndex) => [header, row[colIndex] || ""]));
+    const item = normalizeWorkout(raw);
+    if (!raw.date && !raw.data) errors.push(`Linha ${index + 2}: sem data, usei hoje.`);
+    if (!raw.duration && !raw.duracao && !raw.tempo) errors.push(`Linha ${index + 2}: sem duracao, usei 30min.`);
+    if (!raw.type && !raw.tipo && !raw.modalidade) errors.push(`Linha ${index + 2}: sem modalidade, usei outro.`);
+    return item;
+  });
+  return { items, errors };
 }
 
 function splitCsvLine(line) {
@@ -616,8 +797,29 @@ function readFileAsText(file, callback) {
   reader.readAsText(file);
 }
 
-function handleImport(items, source) {
+function progressReport() {
+  const records = buildRecords().map((item) => `- ${item.label}: ${item.value} (${item.detail})`).join("\n") || "- Sem recordes ainda";
+  const insights = buildInsights().map(([title, text]) => `- ${title}: ${text}`).join("\n");
+  const sports = buildSportBreakdown().map((item) => `- ${item.label}: ${item.sessions} sessoes, ${item.minutes}min, carga ${item.load}`).join("\n") || "- Sem treinos";
+  return [
+    "# Finfit - Relatorio local",
+    "",
+    `Gerado em ${new Date().toLocaleString("pt-BR")}`,
+    "",
+    "## Modalidades",
+    sports,
+    "",
+    "## Recordes",
+    records,
+    "",
+    "## Alertas",
+    insights
+  ].join("\n");
+}
+
+function handleImport(items, source, errors = []) {
   pendingImport = items.map(normalizeWorkout);
+  pendingImportErrors = errors;
   $("#dataHint").textContent = `${pendingImport.length} treino(s) lidos de ${source}. Confirme abaixo para importar.`;
   renderPreview();
 }
@@ -740,6 +942,21 @@ $("#clearFiltersButton").addEventListener("click", () => {
   renderHistory();
 });
 
+$("#refreshProgressButton").addEventListener("click", renderProgress);
+
+$("#exportReportButton").addEventListener("click", () => {
+  downloadFile(`finfit-relatorio-${todayIso()}.md`, progressReport(), "text/markdown");
+});
+
+$("#seedProgressButton").addEventListener("click", () => {
+  state.workouts = seedState.workouts.map(normalizeWorkout);
+  render();
+});
+
+$("#clearProgressButton").addEventListener("click", () => {
+  $("#exerciseGrid").innerHTML = '<p class="empty-state">Use detalhes como "supino 4x8 70kg" para detectar exercicios.</p>';
+});
+
 $("#bodyForm").addEventListener("submit", (event) => {
   event.preventDefault();
   const log = normalizeBodyLog(Object.fromEntries(Object.entries(bodyFields).map(([key, input]) => [key, input.value])));
@@ -830,7 +1047,8 @@ $("#importJsonInput").addEventListener("change", (event) => {
 $("#importCsvInput").addEventListener("change", (event) => {
   readFileAsText(event.target.files[0], (text) => {
     try {
-      handleImport(parseCsv(text), "CSV");
+      const parsed = parseCsv(text);
+      handleImport(parsed.items, "CSV", parsed.errors);
     } catch {
       $("#dataHint").textContent = "Nao consegui importar esse CSV.";
     } finally {
@@ -852,15 +1070,20 @@ $("#importGpxInput").addEventListener("change", (event) => {
 });
 
 $("#importPreview").addEventListener("click", (event) => {
-  if (event.target.id === "cancelImportButton") pendingImport = [];
+  if (event.target.id === "cancelImportButton") {
+    pendingImport = [];
+    pendingImportErrors = [];
+  }
   if (event.target.id === "confirmMergeButton") {
     mergeWorkouts(pendingImport);
     pendingImport = [];
+    pendingImportErrors = [];
     $("#dataHint").textContent = "Importacao mesclada com sucesso.";
   }
   if (event.target.id === "confirmReplaceButton") {
     state.workouts = pendingImport;
     pendingImport = [];
+    pendingImportErrors = [];
     $("#dataHint").textContent = "Treinos substituidos com sucesso.";
   }
   render();

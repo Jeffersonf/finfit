@@ -22,6 +22,7 @@
         <button class="active" type="button" data-page-target="today">Hoje</button>
         <button type="button" data-page-target="plan">Plano</button>
         <button type="button" data-page-target="history">Historico</button>
+        <button type="button" data-page-target="progress">Progresso</button>
         <button type="button" data-page-target="body">Corpo</button>
         <button type="button" data-page-target="library">Biblioteca</button>
         <button type="button" data-page-target="data">Dados</button>
@@ -128,6 +129,11 @@
               <span>Nota rapida</span>
               <input id="workoutNote" name="note" placeholder="Ex: senti ombro, piscina boa, jogo intenso...">
             </label>
+            <label class="wide">
+              <span>Detalhes</span>
+              <textarea id="workoutDetails" rows="4" placeholder="Ex academia: supino 4x8 70kg&#10;Ex natacao: 8x50m forte, 400m solto&#10;Ex futevolei: parceiro Joao, 3 jogos, 2x1"></textarea>
+              <small class="field-hint" id="modalityHint">Use linhas curtas. O Finfit usa isso para progresso e historico.</small>
+            </label>
             <div class="form-actions">
               <button class="save-workout" type="submit" id="saveWorkoutButton">Salvar treino</button>
               <button type="button" id="saveFavoriteButton">Salvar favorito</button>
@@ -194,6 +200,49 @@
         </section>
       </section>
 
+      <section class="page" id="page-progress">
+        <section class="metrics" aria-label="Progresso">
+          <article><span>Consistencia</span><strong id="consistencyMetric">0%</strong><small>ultimos 28 dias</small></article>
+          <article><span>Semana vs anterior</span><strong id="weekDeltaMetric">0%</strong><small>carga de treino</small></article>
+          <article><span>Maior carga</span><strong id="bestLoadMetric">0</strong><small>sessao unica</small></article>
+          <article><span>Recordes</span><strong id="recordCountMetric">0</strong><small>automaticos locais</small></article>
+        </section>
+
+        <section class="workspace">
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Por modalidade</h3>
+              <button type="button" id="refreshProgressButton">Atualizar</button>
+            </div>
+            <div class="progress-grid" id="sportBreakdown"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Alertas</h3>
+              <button type="button" id="exportReportButton">Relatorio</button>
+            </div>
+            <div class="insight-list" id="insightList"></div>
+          </div>
+        </section>
+
+        <section class="workspace progress-secondary">
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Recordes e melhores marcas</h3>
+              <button type="button" id="seedProgressButton">Exemplos</button>
+            </div>
+            <div class="record-grid" id="recordGrid"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Exercicios detectados</h3>
+              <button type="button" id="clearProgressButton">Limpar busca</button>
+            </div>
+            <div class="exercise-grid" id="exerciseGrid"></div>
+          </div>
+        </section>
+      </section>
+
       <section class="page" id="page-body">
         <section class="workspace">
           <div class="panel">
@@ -256,7 +305,7 @@
             <label class="file-action"><span>Importar GPX</span><input id="importGpxInput" type="file" accept=".gpx,application/gpx+xml,text/xml"></label>
           </div>
           <div class="import-preview" id="importPreview"></div>
-          <p class="data-hint" id="dataHint">CSV aceito: date,type,name,duration,intensity,note,rpe,energy,pain,status,distance,volume,focus,location.</p>
+          <p class="data-hint" id="dataHint">CSV aceito: date,type,name,duration,intensity,note,details,rpe,energy,pain,status,distance,volume,focus,location.</p>
         </section>
       </section>
     </main>

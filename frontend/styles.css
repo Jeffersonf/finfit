@@ -42,7 +42,8 @@ body {
 
 button,
 input,
-select {
+select,
+textarea {
   font: inherit;
 }
 
@@ -365,7 +366,8 @@ label span {
 }
 
 input,
-select {
+select,
+textarea {
   width: 100%;
   min-height: 46px;
   border: 1px solid var(--line);
@@ -376,15 +378,29 @@ select {
   outline: none;
 }
 
+textarea {
+  min-height: 110px;
+  resize: vertical;
+  padding: 12px 13px;
+  line-height: 1.45;
+}
+
 select option {
   background: var(--surface-solid);
   color: var(--text);
 }
 
 input:focus,
-select:focus {
+select:focus,
+textarea:focus {
   border-color: rgba(200, 245, 90, 0.36);
   box-shadow: 0 0 0 4px rgba(200, 245, 90, 0.06);
+}
+
+.field-hint {
+  color: var(--muted);
+  font-size: 0.86rem;
+  text-transform: none;
 }
 
 .wide {
@@ -416,6 +432,10 @@ select:focus {
 .favorite-grid,
 .template-list,
 .plan-grid,
+.progress-grid,
+.record-grid,
+.exercise-grid,
+.insight-list,
 .import-preview {
   display: grid;
   gap: 10px;
@@ -509,8 +529,54 @@ select:focus {
 .favorite-card,
 .template-card,
 .plan-day,
+.progress-card,
+.record-card,
+.exercise-card,
+.insight-card,
 .preview-row {
   padding: 14px;
+}
+
+.progress-secondary {
+  margin-top: 22px;
+}
+
+.progress-card,
+.record-card,
+.exercise-card,
+.insight-card {
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  border-radius: 16px;
+}
+
+.progress-card strong,
+.record-card strong,
+.exercise-card strong,
+.insight-card strong {
+  display: block;
+}
+
+.progress-card small,
+.record-card small,
+.exercise-card small,
+.insight-card small {
+  color: var(--muted);
+}
+
+.progress-bar {
+  height: 8px;
+  overflow: hidden;
+  margin-top: 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.progress-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), var(--teal));
 }
 
 .timeline-item {
@@ -648,7 +714,7 @@ select:focus {
   }
 
   .nav {
-    grid-template-columns: repeat(6, minmax(96px, 1fr));
+    grid-template-columns: repeat(7, minmax(96px, 1fr));
     overflow-x: auto;
   }
 
@@ -670,6 +736,7 @@ select:focus {
   .workspace,
   .filter-grid,
   .plan-grid,
+  .progress-grid,
   .quick-text,
   .timeline-item {
     grid-template-columns: 1fr;
