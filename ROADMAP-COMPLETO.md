@@ -31,6 +31,9 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [x] Criar preview de importacao, export CSV e import GPX basico.
 - [x] Criar aba de progresso com consistencia, semana vs anterior, recordes, alertas e modalidades.
 - [x] Criar detalhes estruturados por treino para academia, natacao, futevolei e outros.
+- [x] Preparar PWA/offline com manifest, service worker e fallback.
+- [x] Criar modo "treino agora" com cronometro, descanso, sets e atalhos.
+- [x] Criar snapshots de auto-backup local.
 - [ ] Validar no uso real por uma semana.
 - [~] Decidir se a primeira base duravel sera `localStorage`, IndexedDB, SQLite/Capacitor ou API Node.
 
@@ -161,7 +164,7 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [x] Exportar/importar backup JSON.
 - [x] Importar CSV simples.
 - [x] Preview de importacao.
-- [ ] Backup automatico local.
+- [x] Backup automatico local.
 - [x] Exportar CSV do historico.
 - [x] Importar GPX.
 - [ ] Importar TCX/FIT.
@@ -170,20 +173,20 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 
 ## 0.9 - Mobile e offline forte
 
-- [ ] Ajustar layout mobile como uso principal.
-- [ ] Preparar PWA.
+- [~] Ajustar layout mobile como uso principal.
+- [x] Preparar PWA.
 - [ ] Avaliar Capacitor seguindo a linha do Finanza.
 - [ ] Migrar armazenamento para IndexedDB ou SQLite no app.
-- [ ] Modo academia sem internet.
-- [ ] Cronometro e descanso entre series.
-- [ ] Atalhos rapidos na tela inicial.
-- [ ] Lembrete de backup.
+- [x] Modo academia sem internet.
+- [x] Cronometro e descanso entre series.
+- [x] Atalhos rapidos na tela inicial.
+- [x] Lembrete/status de backup.
 
 ## 1.0 - App pessoal estavel
 
 - [ ] Fluxo completo: planejar, executar, revisar e ajustar.
 - [ ] Uso diario sem friccao.
-- [ ] Backup confiavel.
+- [~] Backup confiavel.
 - [ ] Visual consistente e rapido.
 - [ ] Documentacao de uso pessoal.
 - [ ] Dados importaveis/exportaveis.

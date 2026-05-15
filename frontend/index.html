@@ -3,7 +3,12 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#08090d">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Finfit">
     <title>Finfit</title>
+    <link rel="manifest" href="./manifest.webmanifest">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -139,6 +144,33 @@
               <button type="button" id="saveFavoriteButton">Salvar favorito</button>
             </div>
           </form>
+        </section>
+
+        <section class="work-mode panel" id="workMode">
+          <div class="panel-header">
+            <h3>Treino agora</h3>
+            <button type="button" id="resetTimerButton">Zerar</button>
+          </div>
+          <div class="live-grid">
+            <div class="timer-face">
+              <span id="activeWorkoutLabel">Nenhum treino ativo</span>
+              <strong id="timerDisplay">00:00</strong>
+              <small id="timerStatus">Escolha um atalho para iniciar</small>
+            </div>
+            <div class="rest-face">
+              <span>Descanso</span>
+              <strong id="restDisplay">00:00</strong>
+              <small>Set atual: <b id="setCounter">0</b></small>
+            </div>
+          </div>
+          <div class="quick-start-grid" id="quickStartGrid"></div>
+          <div class="timer-controls">
+            <button type="button" id="startPauseButton">Iniciar</button>
+            <button type="button" id="nextSetButton">Proximo set</button>
+            <button type="button" id="startRestButton">Descanso</button>
+            <label class="compact-field"><span>Descanso seg</span><input id="restSecondsInput" type="number" min="10" step="5" value="90"></label>
+            <button class="save-workout" type="button" id="finishActiveWorkoutButton">Finalizar e salvar</button>
+          </div>
         </section>
 
         <section class="metrics" aria-label="Metricas da semana">
@@ -299,12 +331,15 @@
           <div class="data-actions">
             <button type="button" id="exportJsonButton">Exportar backup</button>
             <button type="button" id="exportCsvButton">Exportar CSV</button>
+            <button type="button" id="downloadAutoBackupButton">Baixar ultimo auto-backup</button>
+            <button type="button" id="createAutoBackupButton">Criar snapshot</button>
             <button type="button" id="replaceWithPreviewButton">Substituir com preview</button>
             <label class="file-action"><span>Importar JSON</span><input id="importJsonInput" type="file" accept="application/json,.json"></label>
             <label class="file-action"><span>Importar CSV</span><input id="importCsvInput" type="file" accept="text/csv,.csv"></label>
             <label class="file-action"><span>Importar GPX</span><input id="importGpxInput" type="file" accept=".gpx,application/gpx+xml,text/xml"></label>
           </div>
           <div class="import-preview" id="importPreview"></div>
+          <p class="data-hint" id="backupHint">Auto-backup local ainda nao calculado.</p>
           <p class="data-hint" id="dataHint">CSV aceito: date,type,name,duration,intensity,note,details,rpe,energy,pain,status,distance,volume,focus,location.</p>
         </section>
       </section>

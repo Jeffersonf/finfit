@@ -5,10 +5,9 @@
   "private": true,
   "scripts": {
     "start": "npx serve frontend",
-    "check": "node --check frontend/app.js"
+    "check": "node --check frontend/app.js && node --check frontend/sw.js"
   },
   "devDependencies": {
     "serve": "^14.2.4"
   }
 }
-

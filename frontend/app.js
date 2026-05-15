@@ -1,5 +1,7 @@
 const STORAGE_KEY = "finfit.state.v2";
 const LEGACY_WORKOUTS_KEY = "finfit.workouts.v1";
+const AUTO_BACKUP_KEY = "finfit.autoBackups.v1";
+const ACTIVE_SESSION_KEY = "finfit.activeSession.v1";
 
 const presets = [
   { type: "academia", label: "Academia", defaultName: "Academia - forca", duration: 60 },
@@ -47,6 +49,8 @@ let state = loadState();
 let selectedPreset = presets[0];
 let pendingImport = [];
 let pendingImportErrors = [];
+let activeSession = loadActiveSession();
+let timerInterval = null;
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -109,6 +113,55 @@ function withDefaults(value) {
 
 function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  maybeCreateAutoBackup();
+}
+
+function loadAutoBackups() {
+  try {
+    return JSON.parse(localStorage.getItem(AUTO_BACKUP_KEY)) || [];
+  } catch {
+    return [];
+  }
+}
+
+function saveAutoBackups(backups) {
+  localStorage.setItem(AUTO_BACKUP_KEY, JSON.stringify(backups.slice(-7)));
+}
+
+function createAutoBackup(reason = "auto") {
+  const backups = loadAutoBackups();
+  backups.push({
+    id: uid("backup"),
+    reason,
+    createdAt: new Date().toISOString(),
+    state
+  });
+  saveAutoBackups(backups);
+}
+
+function maybeCreateAutoBackup() {
+  const backups = loadAutoBackups();
+  const last = backups.at(-1);
+  const lastTime = last ? new Date(last.createdAt).getTime() : 0;
+  const hours = (Date.now() - lastTime) / 36e5;
+  if (!last || hours >= 12) createAutoBackup("auto");
+}
+
+function latestAutoBackup() {
+  return loadAutoBackups().at(-1);
+}
+
+function loadActiveSession() {
+  try {
+    return JSON.parse(localStorage.getItem(ACTIVE_SESSION_KEY)) || null;
+  } catch {
+    return null;
+  }
+}
+
+function saveActiveSession() {
+  if (activeSession) localStorage.setItem(ACTIVE_SESSION_KEY, JSON.stringify(activeSession));
+  else localStorage.removeItem(ACTIVE_SESSION_KEY);
 }
 
 function todayIso() {
@@ -339,6 +392,112 @@ function renderPresets() {
       <small>${preset.duration} min sugeridos</small>
     </button>
   `).join("");
+}
+
+function renderQuickStart() {
+  $("#quickStartGrid").innerHTML = presets.map((preset) => `
+    <button type="button" data-quick-start="${preset.type}">
+      <strong>${preset.label}</strong><br>
+      <small>${preset.duration} min</small>
+    </button>
+  `).join("");
+}
+
+function formatClock(seconds) {
+  const safe = Math.max(0, Math.floor(seconds));
+  const minutes = Math.floor(safe / 60);
+  const secs = safe % 60;
+  return `${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+}
+
+function elapsedSeconds() {
+  if (!activeSession) return 0;
+  const base = Number(activeSession.elapsedBefore || 0);
+  if (!activeSession.running) return base;
+  return base + Math.floor((Date.now() - activeSession.startedAt) / 1000);
+}
+
+function restSecondsLeft() {
+  if (!activeSession?.restEndsAt) return 0;
+  return Math.max(0, Math.ceil((activeSession.restEndsAt - Date.now()) / 1000));
+}
+
+function startSession(type = selectedPreset.type) {
+  const preset = presets.find((item) => item.type === type) || selectedPreset;
+  activeSession = {
+    type: preset.type,
+    name: preset.defaultName,
+    startedAt: Date.now(),
+    elapsedBefore: 0,
+    running: true,
+    restEndsAt: null,
+    setCount: 0
+  };
+  saveActiveSession();
+  renderTimer();
+}
+
+function toggleSessionTimer() {
+  if (!activeSession) {
+    startSession();
+    return;
+  }
+  if (activeSession.running) {
+    activeSession.elapsedBefore = elapsedSeconds();
+    activeSession.running = false;
+  } else {
+    activeSession.startedAt = Date.now();
+    activeSession.running = true;
+  }
+  saveActiveSession();
+  renderTimer();
+}
+
+function startRest() {
+  if (!activeSession) startSession();
+  const seconds = Number($("#restSecondsInput").value || 90);
+  activeSession.restEndsAt = Date.now() + seconds * 1000;
+  saveActiveSession();
+  renderTimer();
+}
+
+function nextSet() {
+  if (!activeSession) startSession();
+  activeSession.setCount = Number(activeSession.setCount || 0) + 1;
+  startRest();
+}
+
+function resetSession() {
+  activeSession = null;
+  saveActiveSession();
+  renderTimer();
+}
+
+function finishActiveSession() {
+  if (!activeSession) return;
+  const duration = Math.max(1, Math.round(elapsedSeconds() / 60));
+  upsertWorkout(normalizeWorkout({
+    type: activeSession.type,
+    name: activeSession.name,
+    date: todayIso(),
+    duration,
+    intensity: "moderado",
+    status: "feito",
+    details: `Modo treino agora\nsets: ${activeSession.setCount || 0}\ntempo: ${formatClock(elapsedSeconds())}`
+  }));
+  resetSession();
+  render();
+}
+
+function renderTimer() {
+  $("#timerDisplay").textContent = formatClock(elapsedSeconds());
+  $("#restDisplay").textContent = formatClock(restSecondsLeft());
+  $("#setCounter").textContent = activeSession?.setCount || 0;
+  $("#activeWorkoutLabel").textContent = activeSession ? activeSession.name : "Nenhum treino ativo";
+  $("#timerStatus").textContent = activeSession
+    ? activeSession.running ? "rodando offline no navegador" : "pausado"
+    : "Escolha um atalho para iniciar";
+  $("#startPauseButton").textContent = activeSession?.running ? "Pausar" : "Iniciar";
 }
 
 function renderMetrics() {
@@ -649,9 +808,18 @@ function renderPreview() {
   `;
 }
 
+function renderBackupStatus() {
+  const backups = loadAutoBackups();
+  const latest = backups.at(-1);
+  $("#backupHint").textContent = latest
+    ? `Auto-backup local: ${new Date(latest.createdAt).toLocaleString("pt-BR")} (${backups.length}/7 snapshots guardados).`
+    : "Auto-backup local ainda nao criado. Um snapshot sera criado automaticamente.";
+}
+
 function render() {
   saveState();
   renderPresets();
+  renderQuickStart();
   renderMetrics();
   renderWorkoutList();
   renderWeek();
@@ -661,6 +829,8 @@ function render() {
   renderBody();
   renderLibrary();
   renderPreview();
+  renderBackupStatus();
+  renderTimer();
 }
 
 function upsertWorkout(workout) {
@@ -841,6 +1011,17 @@ $("#sportPresetGrid").addEventListener("click", (event) => {
   if (button) setPreset(button.dataset.type);
 });
 
+$("#quickStartGrid").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-quick-start]");
+  if (button) startSession(button.dataset.quickStart);
+});
+
+$("#startPauseButton").addEventListener("click", toggleSessionTimer);
+$("#nextSetButton").addEventListener("click", nextSet);
+$("#startRestButton").addEventListener("click", startRest);
+$("#resetTimerButton").addEventListener("click", resetSession);
+$("#finishActiveWorkoutButton").addEventListener("click", finishActiveSession);
+
 $("#workoutForm").addEventListener("submit", (event) => {
   event.preventDefault();
   upsertWorkout(workoutFromForm());
@@ -1017,6 +1198,20 @@ $("#exportJsonButton").addEventListener("click", () => {
   downloadFile(`finfit-backup-${todayIso()}.json`, JSON.stringify({ app: "finfit", version: 2, exportedAt: new Date().toISOString(), ...state }, null, 2), "application/json");
 });
 
+$("#createAutoBackupButton").addEventListener("click", () => {
+  createAutoBackup("manual");
+  renderBackupStatus();
+});
+
+$("#downloadAutoBackupButton").addEventListener("click", () => {
+  const backup = latestAutoBackup();
+  if (!backup) {
+    $("#backupHint").textContent = "Nenhum auto-backup local encontrado ainda.";
+    return;
+  }
+  downloadFile(`finfit-auto-backup-${todayIso()}.json`, JSON.stringify({ app: "finfit", version: 2, exportedAt: backup.createdAt, ...backup.state }, null, 2), "application/json");
+});
+
 $("#exportCsvButton").addEventListener("click", () => {
   downloadFile(`finfit-treinos-${todayIso()}.csv`, toCsv(state.workouts), "text/csv");
 });
@@ -1089,6 +1284,15 @@ $("#importPreview").addEventListener("click", (event) => {
   render();
 });
 
+function registerServiceWorker() {
+  if (!("serviceWorker" in navigator)) return;
+  navigator.serviceWorker.register("./sw.js").catch(() => {
+    // PWA registration is best-effort in local/dev contexts.
+  });
+}
+
 resetForm();
 resetBodyForm();
+registerServiceWorker();
 render();
+timerInterval = window.setInterval(renderTimer, 1000);
