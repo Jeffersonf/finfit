@@ -94,6 +94,11 @@ const presetGrid = document.querySelector("#sportPresetGrid");
 const workoutList = document.querySelector("#workoutList");
 const weekGrid = document.querySelector("#weekGrid");
 const seedButton = document.querySelector("#seedButton");
+const exportJsonButton = document.querySelector("#exportJsonButton");
+const importJsonInput = document.querySelector("#importJsonInput");
+const importCsvInput = document.querySelector("#importCsvInput");
+const downloadTemplateButton = document.querySelector("#downloadTemplateButton");
+const dataHint = document.querySelector("#dataHint");
 
 function loadWorkouts() {
   try {
@@ -105,6 +110,99 @@ function loadWorkouts() {
 
 function saveWorkouts() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(workouts));
+}
+
+function normalizeWorkout(item) {
+  const type = String(item.type || "outro").trim().toLowerCase();
+  const validType = presets.some((preset) => preset.type === type) ? type : "outro";
+  const duration = Number(item.duration || item.minutes || 0);
+
+  return {
+    id: item.id || crypto.randomUUID(),
+    type: validType,
+    name: String(item.name || presetLabel(validType)).trim(),
+    date: String(item.date || todayIso()).slice(0, 10),
+    duration: Number.isFinite(duration) && duration > 0 ? duration : 30,
+    intensity: String(item.intensity || "moderado").trim().toLowerCase(),
+    note: String(item.note || item.notes || "").trim()
+  };
+}
+
+function importWorkouts(items, source) {
+  const incoming = items.map(normalizeWorkout);
+  const existingKeys = new Set(workouts.map(workoutKey));
+  const merged = [...workouts];
+
+  incoming.forEach((item) => {
+    const key = workoutKey(item);
+    if (!existingKeys.has(key)) {
+      existingKeys.add(key);
+      merged.push(item);
+    }
+  });
+
+  workouts = merged;
+  saveWorkouts();
+  render();
+  dataHint.textContent = `${incoming.length} treino(s) lidos de ${source}. Total atual: ${workouts.length}.`;
+}
+
+function workoutKey(item) {
+  return [item.date, item.type, item.name, item.duration, item.intensity].join("|").toLowerCase();
+}
+
+function downloadFile(filename, content, type) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+function parseCsv(text) {
+  const rows = text
+    .trim()
+    .split(/\r?\n/)
+    .filter(Boolean)
+    .map(splitCsvLine);
+  const headers = rows.shift()?.map((header) => header.trim().toLowerCase()) || [];
+
+  return rows.map((row) => Object.fromEntries(headers.map((header, index) => [header, row[index] || ""])));
+}
+
+function splitCsvLine(line) {
+  const result = [];
+  let current = "";
+  let quoted = false;
+
+  for (let index = 0; index < line.length; index += 1) {
+    const char = line[index];
+    const next = line[index + 1];
+
+    if (char === '"' && next === '"') {
+      current += '"';
+      index += 1;
+    } else if (char === '"') {
+      quoted = !quoted;
+    } else if (char === "," && !quoted) {
+      result.push(current.trim());
+      current = "";
+    } else {
+      current += char;
+    }
+  }
+
+  result.push(current.trim());
+  return result;
+}
+
+function readFileAsText(file, callback) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.addEventListener("load", () => callback(String(reader.result || "")));
+  reader.readAsText(file);
 }
 
 function todayIso() {
@@ -268,6 +366,51 @@ seedButton.addEventListener("click", () => {
   workouts = [...seedWorkouts];
   saveWorkouts();
   render();
+});
+
+exportJsonButton.addEventListener("click", () => {
+  const payload = {
+    app: "finfit",
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    workouts
+  };
+  downloadFile(`finfit-backup-${todayIso()}.json`, JSON.stringify(payload, null, 2), "application/json");
+});
+
+downloadTemplateButton.addEventListener("click", () => {
+  const template = [
+    "date,type,name,duration,intensity,note",
+    "2026-05-15,futevolei,Futevolei,90,forte,jogo intenso",
+    "2026-05-16,natacao,Natacao tecnica,45,moderado,respiracao melhorou"
+  ].join("\n");
+  downloadFile("finfit-modelo-importacao.csv", template, "text/csv");
+});
+
+importJsonInput.addEventListener("change", (event) => {
+  readFileAsText(event.target.files[0], (text) => {
+    try {
+      const parsed = JSON.parse(text);
+      const items = Array.isArray(parsed) ? parsed : parsed.workouts || [];
+      importWorkouts(items, "JSON");
+    } catch {
+      dataHint.textContent = "Nao consegui importar esse JSON. Confira se o arquivo e um backup valido do Finfit.";
+    } finally {
+      importJsonInput.value = "";
+    }
+  });
+});
+
+importCsvInput.addEventListener("change", (event) => {
+  readFileAsText(event.target.files[0], (text) => {
+    try {
+      importWorkouts(parseCsv(text), "CSV");
+    } catch {
+      dataHint.textContent = "Nao consegui importar esse CSV. Use o modelo com date,type,name,duration,intensity,note.";
+    } finally {
+      importCsvInput.value = "";
+    }
+  });
 });
 
 resetForm();

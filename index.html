@@ -125,6 +125,25 @@
           <div class="week-grid" id="weekGrid"></div>
         </div>
       </section>
+
+      <section class="data-panel panel">
+        <div class="panel-header">
+          <h3>Dados</h3>
+          <button type="button" id="downloadTemplateButton">Modelo CSV</button>
+        </div>
+        <div class="data-actions">
+          <button type="button" id="exportJsonButton">Exportar backup</button>
+          <label class="file-action">
+            <span>Importar JSON</span>
+            <input id="importJsonInput" type="file" accept="application/json,.json">
+          </label>
+          <label class="file-action">
+            <span>Importar CSV</span>
+            <input id="importCsvInput" type="file" accept="text/csv,.csv">
+          </label>
+        </div>
+        <p class="data-hint" id="dataHint">CSV aceito: date,type,name,duration,intensity,note. Ex: 2026-05-15,futevolei,Futevolei,90,forte,jogo intenso.</p>
+      </section>
     </main>
 
     <script src="./app.js"></script>
