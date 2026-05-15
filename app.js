@@ -290,6 +290,24 @@ async function bootstrapDurableState() {
   renderDataHealth();
 }
 
+async function restoreStateFromIndexedDb() {
+  try {
+    const payload = await idbGet("state");
+    if (!payload?.state) {
+      $("#dataHint").textContent = "IndexedDB ainda nao tem um estado salvo para restaurar.";
+      return;
+    }
+    state = withDefaults(payload.state);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    dataHealth.lastSavedAt = payload.updatedAt || new Date().toISOString();
+    dataHealth.driver = "restaurado de IndexedDB";
+    $("#dataHint").textContent = "Estado restaurado do IndexedDB.";
+    render();
+  } catch (error) {
+    $("#dataHint").textContent = `Nao consegui restaurar IndexedDB: ${error?.message || "erro desconhecido"}.`;
+  }
+}
+
 function updateStorageHealth() {
   try {
     dataHealth.storageBytes = new Blob([localStorage.getItem(STORAGE_KEY) || ""]).size;
@@ -1017,6 +1035,110 @@ function parseExerciseDetails() {
   return [...records.values()].sort((a, b) => b.bestVolume - a.bestVolume);
 }
 
+function strengthMuscleGroup(name) {
+  const text = String(name || "").toLowerCase();
+  if (/supino|peito|crucifixo|crossover/.test(text)) return "Peito";
+  if (/remada|puxada|barra|costas|pulldown/.test(text)) return "Costas";
+  if (/agach|leg|terra|stiff|cadeira|mesa|panturrilha/.test(text)) return "Pernas";
+  if (/desenvolvimento|ombro|eleva/.test(text)) return "Ombros";
+  if (/rosca|triceps|bíceps|biceps/.test(text)) return "Braços";
+  return "Geral";
+}
+
+function strengthSummary() {
+  const workouts = state.workouts.filter((workout) => workout.type === "academia");
+  const week = currentWeekWorkouts().filter((workout) => workout.type === "academia");
+  const exercises = parseExerciseDetails();
+  const groups = exercises.reduce((map, item) => {
+    const group = strengthMuscleGroup(item.name);
+    map.set(group, (map.get(group) || 0) + item.count);
+    return map;
+  }, new Map());
+  const totalVolume = workouts.reduce((sum, workout) => sum + Number(workout.volume || 0), 0) || exercises.reduce((sum, item) => sum + Number(item.bestVolume || 0), 0);
+  return { workouts, week, exercises, groups: [...groups.entries()].sort((a, b) => b[1] - a[1]), totalVolume };
+}
+
+function swimSummary() {
+  const swims = state.workouts.filter((workout) => workout.type === "natacao");
+  const week = currentWeekWorkouts().filter((workout) => workout.type === "natacao");
+  const meters = swims.reduce((sum, workout) => sum + Number(workout.volume || workout.distance || 0), 0);
+  const weekMeters = week.reduce((sum, workout) => sum + Number(workout.volume || workout.distance || 0), 0);
+  const styles = new Map();
+  swims.forEach((workout) => {
+    String(`${workout.focus} ${workout.details}`).toLowerCase().split(/\W+/).forEach((word) => {
+      if (["crawl", "costas", "peito", "borboleta", "tecnica", "solto"].includes(word)) styles.set(word, (styles.get(word) || 0) + 1);
+    });
+  });
+  return { swims, week, meters, weekMeters, styles: [...styles.entries()].sort((a, b) => b[1] - a[1]) };
+}
+
+function beachSummary() {
+  const games = state.workouts.filter((workout) => workout.type === "futevolei");
+  const week = currentWeekWorkouts().filter((workout) => workout.type === "futevolei");
+  const places = new Map();
+  const partners = new Map();
+  games.forEach((workout) => {
+    if (workout.location) places.set(workout.location, (places.get(workout.location) || 0) + 1);
+    const partner = String(workout.details || workout.note || "").match(/(?:parceiro|dupla)\s+([a-zA-ZÀ-ÿ]+)/i)?.[1];
+    if (partner) partners.set(partner, (partners.get(partner) || 0) + 1);
+  });
+  const intense = games.filter((workout) => ["forte", "maximo"].includes(workout.intensity)).length;
+  return { games, week, places: [...places.entries()].sort((a, b) => b[1] - a[1]), partners: [...partners.entries()].sort((a, b) => b[1] - a[1]), intense };
+}
+
+function renderSportModules() {
+  renderStrengthModule();
+  renderSwimModule();
+  renderBeachModule();
+}
+
+function renderStrengthModule() {
+  const data = strengthSummary();
+  $("#strengthKpis").innerHTML = moduleKpis([
+    ["Sessões", data.workouts.length, `${data.week.length} esta semana`],
+    ["Exercícios", data.exercises.length, "detectados"],
+    ["Volume", Math.round(data.totalVolume), "kg estimado"],
+    ["Grupo foco", data.groups[0]?.[0] || "--", data.groups[0] ? `${data.groups[0][1]} registros` : "sem dados"]
+  ]);
+  $("#strengthProgression").innerHTML = data.exercises.length
+    ? data.exercises.slice(0, 5).map((item) => {
+      const next = item.bestWeight ? `${Math.round((item.bestWeight + 2.5) * 10) / 10}kg` : "registrar carga";
+      return `<div><strong>${item.name}</strong><span>${strengthMuscleGroup(item.name)} - melhor ${item.bestWeight || "-"}kg - volume ${Math.round(item.bestVolume)}</span><small>Próxima progressão: ${next}, mantendo RPE controlado.</small></div>`;
+    }).join("")
+    : '<p class="empty-state">Use detalhes como "supino 4x8 70kg" para destravar progressão.</p>';
+}
+
+function renderSwimModule() {
+  const data = swimSummary();
+  const avg = data.swims.length ? Math.round(data.meters / data.swims.length) : 0;
+  $("#swimKpis").innerHTML = moduleKpis([
+    ["Sessões", data.swims.length, `${data.week.length} esta semana`],
+    ["Volume", `${Math.round(data.meters)}m`, `${Math.round(data.weekMeters)}m semana`],
+    ["Média", `${avg}m`, "por sessão"],
+    ["Foco", data.styles[0]?.[0] || "--", data.styles[0] ? `${data.styles[0][1]} menções` : "sem estilo"]
+  ]);
+  $("#swimProgression").innerHTML = data.swims.length
+    ? data.swims.slice(0, 5).map((item) => `<div><strong>${item.name}</strong><span>${formatDate(item.date)} - ${item.volume || item.distance || "-"}m - ${item.duration}min</span><small>${item.details || item.note || "Adicione séries como 8x50m para detectar padrões."}</small></div>`).join("")
+    : '<p class="empty-state">Registre metragem, estilo e séries para criar evolução de natação.</p>';
+}
+
+function renderBeachModule() {
+  const data = beachSummary();
+  $("#beachKpis").innerHTML = moduleKpis([
+    ["Sessões", data.games.length, `${data.week.length} esta semana`],
+    ["Intensos", data.intense, "forte/máximo"],
+    ["Local", data.places[0]?.[0] || "--", data.places[0] ? `${data.places[0][1]} vezes` : "sem local"],
+    ["Dupla", data.partners[0]?.[0] || "--", data.partners[0] ? `${data.partners[0][1]} vezes` : "sem dupla"]
+  ]);
+  $("#beachProgression").innerHTML = data.games.length
+    ? data.games.slice(0, 5).map((item) => `<div><strong>${item.name}</strong><span>${formatDate(item.date)} - ${item.duration}min - ${item.intensity}</span><small>${item.details || item.note || "Registre dupla, placar e sensação para comparar jogos."}</small></div>`).join("")
+    : '<p class="empty-state">Registre dupla, local e resultado para criar memória de jogo.</p>';
+}
+
+function moduleKpis(items) {
+  return items.map(([label, value, hint]) => `<div><span>${label}</span><strong>${value}</strong><small>${hint}</small></div>`).join("");
+}
+
 function buildRecords() {
   const bestLoad = [...state.workouts].sort((a, b) => workoutLoad(b) - workoutLoad(a))[0];
   const bestDuration = [...state.workouts].sort((a, b) => Number(b.duration || 0) - Number(a.duration || 0))[0];
@@ -1351,6 +1473,7 @@ function renderProgress() {
     ? exercises.map((item) => `<div class="exercise-card"><strong>${item.name}</strong><small>${item.count} registros - melhor peso ${item.bestWeight || "-"}kg - melhor volume ${Math.round(item.bestVolume)}</small></div>`).join("")
     : '<p class="empty-state">Use detalhes como "supino 4x8 70kg" para detectar exercicios.</p>';
 
+  renderSportModules();
   renderRunningLab();
 }
 
@@ -2178,6 +2301,34 @@ $("#seedRunButton").addEventListener("click", () => {
   render();
 });
 
+$("#seedStrengthButton").addEventListener("click", () => {
+  const samples = [
+    { name: "Academia - upper força", date: offsetDate(-8), duration: 65, intensity: "forte", rpe: 8, volume: 8800, details: "supino 4x8 72kg\nremada 4x10 62kg\ndesenvolvimento 3x8 34kg" },
+    { name: "Academia - lower", date: offsetDate(-5), duration: 70, intensity: "forte", rpe: 8, volume: 10400, details: "agachamento 4x6 90kg\nstiff 3x8 80kg\nleg press 4x10 140kg" },
+    { name: "Academia - upper volume", date: offsetDate(-2), duration: 60, intensity: "moderado", rpe: 7, volume: 7600, details: "supino 3x10 68kg\npuxada 4x10 65kg\nrosca 3x12 16kg" }
+  ].map((item) => normalizeWorkout({ id: uid("workout"), type: "academia", status: "feito", focus: "forca", location: "academia", note: "amostra strength engine", ...item }));
+  mergeWorkouts(samples);
+  render();
+});
+
+$("#seedSwimButton").addEventListener("click", () => {
+  const samples = [
+    { name: "Natação técnica", date: offsetDate(-10), duration: 45, volume: 1500, distance: 1500, focus: "tecnica crawl", details: "400m solto\n8x50m tecnica\n300m moderado" },
+    { name: "Natação resistência", date: offsetDate(-4), duration: 55, volume: 1900, distance: 1900, focus: "crawl endurance", details: "600m solto\n6x100m crawl\n400m solto" }
+  ].map((item) => normalizeWorkout({ id: uid("workout"), type: "natacao", status: "feito", intensity: "moderado", location: "piscina", note: "amostra swim engine", ...item }));
+  mergeWorkouts(samples);
+  render();
+});
+
+$("#seedBeachButton").addEventListener("click", () => {
+  const samples = [
+    { name: "Futevôlei - jogo praia", date: offsetDate(-7), duration: 90, intensity: "forte", location: "praia", details: "dupla Rafa\n3 jogos\nresultado 2x1" },
+    { name: "Futevôlei - treino técnico", date: offsetDate(-1), duration: 75, intensity: "moderado", location: "arena", details: "dupla João\nsaque e recepção\nresultado treino" }
+  ].map((item) => normalizeWorkout({ id: uid("workout"), type: "futevolei", status: "feito", focus: "jogo", note: "amostra beach engine", ...item }));
+  mergeWorkouts(samples);
+  render();
+});
+
 $("#runPrescriptionList").addEventListener("click", (event) => {
   const button = event.target.closest("[data-run-prescription]");
   if (!button) return;
@@ -2287,6 +2438,8 @@ $("#createAutoBackupButton").addEventListener("click", () => {
   createAutoBackup("manual");
   renderBackupStatus();
 });
+
+$("#restoreIndexedDbButton").addEventListener("click", restoreStateFromIndexedDb);
 
 $("#downloadAutoBackupButton").addEventListener("click", () => {
   const backup = latestAutoBackup();

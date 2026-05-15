@@ -1587,6 +1587,57 @@ textarea:focus {
   margin-top: 22px;
 }
 
+.sport-modules-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.sport-module {
+  min-width: 0;
+}
+
+.module-kpis,
+.module-list {
+  display: grid;
+  gap: 9px;
+}
+
+.module-kpis {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-bottom: 12px;
+}
+
+.module-kpis div,
+.module-list div {
+  display: grid;
+  gap: 2px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: var(--surface-2);
+}
+
+.module-kpis span,
+.module-kpis small,
+.module-list span,
+.module-list small {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.module-kpis span {
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.module-kpis strong,
+.module-list strong {
+  color: var(--accent);
+  font-size: 0.95rem;
+}
+
 .running-kpis,
 .running-grid {
   display: grid;
@@ -2062,6 +2113,7 @@ textarea:focus {
   .hero,
   .live-grid,
   .metrics,
+  .sport-modules-grid,
   .running-kpis,
   .running-grid,
   .sport-preset-grid,
