@@ -3,6 +3,9 @@ const LEGACY_WORKOUTS_KEY = "finfit.workouts.v1";
 const AUTO_BACKUP_KEY = "finfit.autoBackups.v1";
 const ACTIVE_SESSION_KEY = "finfit.activeSession.v1";
 const APPEARANCE_KEY = "finfit.appearance.v1";
+const SPORT_FILTER_KEY = "finfit.sportFilter.v1";
+const DB_NAME = "finfit-db";
+const DB_VERSION = 1;
 
 const presets = [
   { type: "academia", label: "Academia", defaultName: "Academia - forca", duration: 60 },
@@ -55,9 +58,48 @@ let pendingImport = [];
 let pendingImportErrors = [];
 let activeSession = loadActiveSession();
 let timerInterval = null;
+let activeSportFilter = loadSportFilter();
+let dataHealth = {
+  driver: "localStorage",
+  indexedDb: "pendente",
+  lastSavedAt: "",
+  storageBytes: 0,
+  migrated: false,
+  error: ""
+};
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
+
+function loadSportFilter() {
+  const saved = localStorage.getItem(SPORT_FILTER_KEY) || "todos";
+  return saved === "todos" || presets.some((preset) => preset.type === saved) ? saved : "todos";
+}
+
+function setSportFilter(type) {
+  activeSportFilter = type === "todos" ? "todos" : normalizeType(type);
+  localStorage.setItem(SPORT_FILTER_KEY, activeSportFilter);
+  if ($("#typeFilter")) {
+    $("#typeFilter").dataset.value = activeSportFilter === "todos" ? "" : activeSportFilter;
+  }
+  render();
+}
+
+function scopedWorkouts(items = state.workouts) {
+  return activeSportFilter === "todos" ? items : items.filter((workout) => workout.type === activeSportFilter);
+}
+
+function sportIcon(type) {
+  return {
+    todos: "◎",
+    academia: "💪",
+    natacao: "🏊",
+    futevolei: "🏐",
+    corrida: "🏃",
+    mobilidade: "🧘",
+    outro: "✦"
+  }[type] || "✦";
+}
 
 function loadAppearance() {
   try {
@@ -165,7 +207,95 @@ function withDefaults(value) {
 
 function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  updateStorageHealth();
+  saveStateToIndexedDb();
   maybeCreateAutoBackup();
+}
+
+function openFinfitDb() {
+  return new Promise((resolve, reject) => {
+    if (!("indexedDB" in window)) {
+      reject(new Error("IndexedDB indisponivel"));
+      return;
+    }
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    request.onupgradeneeded = () => {
+      const db = request.result;
+      if (!db.objectStoreNames.contains("kv")) db.createObjectStore("kv");
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function idbSet(key, value) {
+  const db = await openFinfitDb();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction("kv", "readwrite");
+    tx.objectStore("kv").put(value, key);
+    tx.oncomplete = () => {
+      db.close();
+      resolve();
+    };
+    tx.onerror = () => {
+      db.close();
+      reject(tx.error);
+    };
+  });
+}
+
+async function idbGet(key) {
+  const db = await openFinfitDb();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction("kv", "readonly");
+    const request = tx.objectStore("kv").get(key);
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+    tx.oncomplete = () => db.close();
+  });
+}
+
+function saveStateToIndexedDb() {
+  const payload = { version: 1, updatedAt: new Date().toISOString(), state };
+  idbSet("state", payload)
+    .then(() => {
+      dataHealth.indexedDb = "ativo";
+      dataHealth.driver = "localStorage + IndexedDB";
+      dataHealth.lastSavedAt = payload.updatedAt;
+      dataHealth.error = "";
+      renderDataHealth();
+    })
+    .catch((error) => {
+      dataHealth.indexedDb = "erro";
+      dataHealth.error = error?.message || "Falha ao salvar IndexedDB";
+      renderDataHealth();
+    });
+}
+
+async function bootstrapDurableState() {
+  try {
+    const payload = await idbGet("state");
+    if (!payload?.state) {
+      await idbSet("state", { version: 1, updatedAt: new Date().toISOString(), state });
+      dataHealth.migrated = true;
+    }
+    dataHealth.indexedDb = "ativo";
+    dataHealth.driver = "localStorage + IndexedDB";
+    dataHealth.lastSavedAt = payload?.updatedAt || new Date().toISOString();
+  } catch (error) {
+    dataHealth.indexedDb = "indisponivel";
+    dataHealth.error = error?.message || "IndexedDB indisponivel";
+  }
+  updateStorageHealth();
+  renderDataHealth();
+}
+
+function updateStorageHealth() {
+  try {
+    dataHealth.storageBytes = new Blob([localStorage.getItem(STORAGE_KEY) || ""]).size;
+  } catch {
+    dataHealth.storageBytes = 0;
+  }
 }
 
 function loadAutoBackups() {
@@ -498,6 +628,22 @@ function renderQuickStart() {
   `).join("");
 }
 
+function renderActivityFocus() {
+  const options = [{ type: "todos", label: "Tudo" }, ...presets];
+  const active = options.find((item) => item.type === activeSportFilter) || options[0];
+  $("#activityFocusLabel").textContent = active.label;
+  $("#activityFocusGrid").innerHTML = options.map((item) => {
+    const count = item.type === "todos" ? state.workouts.length : state.workouts.filter((workout) => workout.type === item.type).length;
+    return `
+      <button type="button" class="${item.type === activeSportFilter ? "active" : ""}" data-sport-focus="${item.type}">
+        <span>${sportIcon(item.type)}</span>
+        <strong>${item.label}</strong>
+        <small>${count}</small>
+      </button>
+    `;
+  }).join("");
+}
+
 function formatClock(seconds) {
   const safe = Math.max(0, Math.floor(seconds));
   const minutes = Math.floor(safe / 60);
@@ -596,12 +742,12 @@ function renderTimer() {
 }
 
 function renderMetrics() {
-  const week = currentWeekWorkouts();
+  const week = scopedWorkouts(currentWeekWorkouts());
   const minutes = week.reduce((total, workout) => total + Number(workout.duration || 0), 0);
   const sports = new Set(week.map((workout) => workout.type));
   const load = week.reduce((sum, item) => sum + workoutLoad(item), 0);
   const score = readiness();
-  const [title, text] = recommendation();
+  const [title, text] = activeSportFilter === "todos" ? recommendation() : sportRecommendation(activeSportFilter, week);
 
   $("#todayLabel").textContent = new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long" });
   $("#readinessScore").textContent = score;
@@ -615,8 +761,19 @@ function renderMetrics() {
 }
 
 function renderWorkoutList() {
-  const ordered = [...state.workouts].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 8);
+  const ordered = scopedWorkouts([...state.workouts]).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 8);
   $("#workoutList").innerHTML = ordered.length ? ordered.map((item, index) => workoutListItem(item, index)).join("") : '<p class="empty-state">Nenhum treino registrado ainda.</p>';
+}
+
+function sportRecommendation(type, week) {
+  const label = presetLabel(type);
+  if (!week.length) return [`Semana sem ${label.toLowerCase()}.`, `O filtro esta em ${label}. Registre uma sessao ou use os exemplos para ver progresso especifico.`];
+  const minutes = week.reduce((sum, item) => sum + Number(item.duration || 0), 0);
+  const load = loadSum(week);
+  if (type === "corrida") return ["Corrida em foco.", `Nesta semana: ${week.length} sessao(oes), ${minutes}min e carga ${load}. Veja Running Engine para proxima corrida.`];
+  if (type === "academia") return ["Academia em foco.", `Nesta semana: ${week.length} sessao(oes). Use detalhes por exercicio para alimentar recordes e progressao.`];
+  if (type === "natacao") return ["Natacao em foco.", `Volume e tecnica aparecem melhor quando voce registra metragem, estilo e series.`];
+  return [`${label} em foco.`, `Nesta semana: ${week.length} sessao(oes), ${minutes}min e carga ${load}.`];
 }
 
 function workoutListItem(item, index) {
@@ -635,7 +792,7 @@ function workoutListItem(item, index) {
 }
 
 function renderWeek() {
-  const week = currentWeekWorkouts();
+  const week = scopedWorkouts(currentWeekWorkouts());
   $("#weekGrid").innerHTML = weekDays.map((day) => {
     const dayWorkouts = week.filter((workout) => new Date(`${workout.date}T12:00:00`).getDay() === day.key);
     const title = dayWorkouts.length ? dayWorkouts.map((workout) => presetLabel(workout.type)).join(" + ") : "Livre";
@@ -651,7 +808,7 @@ function filteredWorkouts() {
   const from = $("#fromFilter").value;
   const to = $("#toFilter").value;
 
-  return [...state.workouts]
+  return scopedWorkouts([...state.workouts])
     .filter((item) => !type || item.type === type)
     .filter((item) => !status || item.status === status)
     .filter((item) => !from || item.date >= from)
@@ -1228,6 +1385,17 @@ function renderBackupStatus() {
     : "Auto-backup local ainda nao criado. Um snapshot sera criado automaticamente.";
 }
 
+function renderDataHealth() {
+  const target = $("#dataHealthGrid");
+  if (!target) return;
+  const kb = Math.round((dataHealth.storageBytes / 1024) * 10) / 10;
+  target.innerHTML = `
+    <div><span>Persistencia</span><strong>${dataHealth.driver}</strong><small>${dataHealth.indexedDb}</small></div>
+    <div><span>Ultimo save</span><strong>${dataHealth.lastSavedAt ? new Date(dataHealth.lastSavedAt).toLocaleTimeString("pt-BR") : "--"}</strong><small>${dataHealth.migrated ? "migrado" : "local"}</small></div>
+    <div><span>Tamanho</span><strong>${kb}kb</strong><small>${dataHealth.error || "dados saudaveis"}</small></div>
+  `;
+}
+
 function renderUserPanel() {
   applyAppearance();
   const workoutCount = $("#userWorkoutCount");
@@ -1238,6 +1406,7 @@ function renderUserPanel() {
 
 function render() {
   saveState();
+  renderActivityFocus();
   renderPresets();
   renderQuickStart();
   renderMetrics();
@@ -1250,6 +1419,7 @@ function render() {
   renderLibrary();
   renderPreview();
   renderBackupStatus();
+  renderDataHealth();
   renderUserPanel();
   renderTimer();
 }
@@ -1682,6 +1852,11 @@ function fillSeasonForm(season) {
 
 $$("[data-page-target]").forEach((button) => button.addEventListener("click", () => setPage(button.dataset.pageTarget)));
 
+$("#activityFocusGrid").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-sport-focus]");
+  if (button) setSportFilter(button.dataset.sportFocus);
+});
+
 $("#themeToggleButton").addEventListener("click", () => {
   const current = loadAppearance();
   const next = current.theme === "dark" ? "black" : current.theme === "black" ? "light" : "dark";
@@ -2100,4 +2275,5 @@ resetBodyForm();
 resetSeasonForm();
 registerServiceWorker();
 render();
+bootstrapDurableState();
 timerInterval = window.setInterval(renderTimer, 1000);
