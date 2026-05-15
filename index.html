@@ -63,6 +63,10 @@
     </aside>
 
     <main class="shell">
+      <div class="pwa-banner" id="pwaBanner">
+        <span id="pwaStatus">Finfit pronto para uso offline.</span>
+        <button type="button" id="reloadAppButton">Atualizar</button>
+      </div>
       <section class="topbar ph" aria-label="Resumo">
         <div>
           <div class="pt" id="pageTitle">Dashboard</div>
@@ -205,6 +209,7 @@
               <textarea id="workoutDetails" rows="4" placeholder="Ex academia: supino 4x8 70kg&#10;Ex natacao: 8x50m forte, 400m solto&#10;Ex futevolei: parceiro Joao, 3 jogos, 2x1"></textarea>
               <small class="field-hint" id="modalityHint">Use linhas curtas. O Finfit usa isso para progresso e historico.</small>
             </label>
+            <div class="detail-helper wide" id="detailHelper"></div>
             <div class="form-actions">
               <button class="save-workout" type="submit" id="saveWorkoutButton">Salvar treino</button>
               <button type="button" id="saveFavoriteButton">Salvar favorito</button>
@@ -514,6 +519,8 @@
             <button type="button" id="downloadAutoBackupButton">Baixar ultimo auto-backup</button>
             <button type="button" id="createAutoBackupButton">Criar snapshot</button>
             <button type="button" id="restoreIndexedDbButton">Restaurar IndexedDB</button>
+            <button type="button" id="cleanDataButton">Limpar dados</button>
+            <button type="button" id="exportMonthlyReportButton">Relatorio mensal</button>
             <button type="button" id="replaceWithPreviewButton">Substituir com preview</button>
             <label class="file-action"><span>Importar JSON</span><input id="importJsonInput" type="file" accept="application/json,.json"></label>
             <label class="file-action"><span>Importar CSV</span><input id="importCsvInput" type="file" accept="text/csv,.csv"></label>
