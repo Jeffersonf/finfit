@@ -19,130 +19,245 @@
         </div>
       </div>
       <nav class="nav" aria-label="Principal">
-        <button class="active" type="button">Hoje</button>
-        <button type="button">Plano</button>
-        <button type="button">Historico</button>
-        <button type="button">Corpo</button>
-        <button type="button">Biblioteca</button>
+        <button class="active" type="button" data-page-target="today">Hoje</button>
+        <button type="button" data-page-target="plan">Plano</button>
+        <button type="button" data-page-target="history">Historico</button>
+        <button type="button" data-page-target="body">Corpo</button>
+        <button type="button" data-page-target="library">Biblioteca</button>
+        <button type="button" data-page-target="data">Dados</button>
       </nav>
     </aside>
 
     <main class="shell">
       <section class="topbar" aria-label="Resumo">
         <div>
-          <p class="eyebrow">sexta, 15 maio</p>
-          <h1>Treinos da semana</h1>
+          <p class="eyebrow" id="todayLabel">hoje</p>
+          <h1 id="pageTitle">Treinos da semana</h1>
         </div>
         <button class="primary-action" type="button" id="addWorkoutButton">Adicionar treino</button>
       </section>
 
-      <section class="hero">
-        <div class="hero-copy">
-          <p class="eyebrow">captura rapida</p>
-          <h2>Registre academia, natacao, futevolei ou qualquer treino em poucos toques.</h2>
-          <p>Escolha o tipo, tempo, intensidade e uma nota curta. Depois o Finfit organiza a semana, o historico e os sinais de carga para voce.</p>
-        </div>
-        <div class="readiness" aria-label="Prontidao">
-          <span>Esta semana</span>
-          <strong id="weekScore">0</strong>
-          <small id="weekScoreLabel">treinos registrados</small>
-        </div>
+      <section class="page active" id="page-today">
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow">proxima melhor acao</p>
+            <h2 id="recommendationTitle">Registre, revise e ajuste a semana.</h2>
+            <p id="recommendationText">O Finfit combina modalidades, carga, dor e energia para sugerir o proximo passo sem virar uma rede social.</p>
+          </div>
+          <div class="readiness" aria-label="Prontidao">
+            <span>Prontidao</span>
+            <strong id="readinessScore">75</strong>
+            <small id="readinessLabel">base local</small>
+          </div>
+        </section>
+
+        <section class="quick-add panel" id="quickAdd">
+          <div class="panel-header">
+            <h3>Novo treino</h3>
+            <button type="button" id="clearFormButton">Limpar</button>
+          </div>
+
+          <form class="quick-text" id="quickTextForm">
+            <input id="quickTextInput" placeholder="Ex: futevolei 90min forte hoje jogo intenso">
+            <button type="submit">Interpretar</button>
+          </form>
+
+          <div class="sport-preset-grid" id="sportPresetGrid" aria-label="Tipos de treino"></div>
+
+          <form class="workout-form" id="workoutForm">
+            <input type="hidden" id="workoutId">
+            <label>
+              <span>Nome</span>
+              <input id="workoutName" name="name" placeholder="Ex: Academia - peito e costas" required>
+            </label>
+            <label>
+              <span>Quando</span>
+              <input id="workoutDate" name="date" type="date" required>
+            </label>
+            <label>
+              <span>Duracao</span>
+              <input id="workoutDuration" name="duration" type="number" min="1" step="1" placeholder="60" required>
+            </label>
+            <label>
+              <span>Intensidade</span>
+              <select id="workoutIntensity" name="intensity">
+                <option value="leve">Leve</option>
+                <option value="moderado" selected>Moderado</option>
+                <option value="forte">Forte</option>
+                <option value="maximo">Maximo</option>
+              </select>
+            </label>
+            <label>
+              <span>Status</span>
+              <select id="workoutStatus" name="status">
+                <option value="feito" selected>Feito</option>
+                <option value="planejado">Planejado</option>
+                <option value="parcial">Parcial</option>
+                <option value="pulado">Pulado</option>
+              </select>
+            </label>
+            <label>
+              <span>RPE</span>
+              <input id="workoutRpe" type="number" min="1" max="10" step="1" placeholder="7">
+            </label>
+            <label>
+              <span>Energia</span>
+              <input id="workoutEnergy" type="number" min="1" max="10" step="1" placeholder="8">
+            </label>
+            <label>
+              <span>Dor</span>
+              <input id="workoutPain" type="number" min="0" max="10" step="1" placeholder="0">
+            </label>
+            <label>
+              <span>Distancia</span>
+              <input id="workoutDistance" type="number" min="0" step="0.1" placeholder="km ou m">
+            </label>
+            <label>
+              <span>Volume</span>
+              <input id="workoutVolume" type="number" min="0" step="1" placeholder="kg, m ou pontos">
+            </label>
+            <label>
+              <span>Foco</span>
+              <input id="workoutFocus" placeholder="peito, tecnica, cardio...">
+            </label>
+            <label>
+              <span>Local</span>
+              <input id="workoutLocation" placeholder="academia, piscina, praia...">
+            </label>
+            <label class="wide">
+              <span>Nota rapida</span>
+              <input id="workoutNote" name="note" placeholder="Ex: senti ombro, piscina boa, jogo intenso...">
+            </label>
+            <div class="form-actions">
+              <button class="save-workout" type="submit" id="saveWorkoutButton">Salvar treino</button>
+              <button type="button" id="saveFavoriteButton">Salvar favorito</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="metrics" aria-label="Metricas da semana">
+          <article><span>Sessoes</span><strong id="sessionMetric">0</strong><small>semana atual</small></article>
+          <article><span>Tempo</span><strong id="timeMetric">0min</strong><small>total registrado</small></article>
+          <article><span>Modalidades</span><strong id="sportMetric">0</strong><small>tipos diferentes</small></article>
+          <article><span>Carga</span><strong id="loadMetric">0</strong><small>min x RPE</small></article>
+        </section>
+
+        <section class="workspace">
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Historico rapido</h3>
+              <button type="button" id="seedButton">Exemplos</button>
+            </div>
+            <ol class="workout-list" id="workoutList"></ol>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Semana</h3>
+              <button type="button" id="copyWeekButton">Copiar</button>
+            </div>
+            <div class="week-grid" id="weekGrid"></div>
+          </div>
+        </section>
       </section>
 
-      <section class="quick-add panel" id="quickAdd">
-        <div class="panel-header">
-          <h3>Novo treino</h3>
-          <button type="button" id="clearFormButton">Limpar</button>
-        </div>
-        <div class="sport-preset-grid" id="sportPresetGrid" aria-label="Tipos de treino"></div>
-        <form class="workout-form" id="workoutForm">
-          <label>
-            <span>Nome</span>
-            <input id="workoutName" name="name" placeholder="Ex: Academia - peito e costas" required>
-          </label>
-          <label>
-            <span>Quando</span>
-            <input id="workoutDate" name="date" type="date" required>
-          </label>
-          <label>
-            <span>Duracao</span>
-            <input id="workoutDuration" name="duration" type="number" min="1" step="1" placeholder="60" required>
-          </label>
-          <label>
-            <span>Intensidade</span>
-            <select id="workoutIntensity" name="intensity">
-              <option value="leve">Leve</option>
-              <option value="moderado" selected>Moderado</option>
-              <option value="forte">Forte</option>
-              <option value="maximo">Maximo</option>
+      <section class="page" id="page-plan">
+        <section class="panel">
+          <div class="panel-header">
+            <h3>Plano semanal</h3>
+            <button type="button" id="createWeekPlanButton">Gerar base</button>
+          </div>
+          <div class="plan-grid" id="planGrid"></div>
+        </section>
+      </section>
+
+      <section class="page" id="page-history">
+        <section class="panel">
+          <div class="panel-header">
+            <h3>Historico</h3>
+            <button type="button" id="clearFiltersButton">Limpar filtros</button>
+          </div>
+          <div class="filter-grid">
+            <input id="searchInput" placeholder="Buscar por nome, nota, local ou foco">
+            <select id="typeFilter"><option value="">Todas modalidades</option></select>
+            <select id="statusFilter">
+              <option value="">Todos status</option>
+              <option value="feito">Feito</option>
+              <option value="planejado">Planejado</option>
+              <option value="parcial">Parcial</option>
+              <option value="pulado">Pulado</option>
             </select>
-          </label>
-          <label class="wide">
-            <span>Nota rapida</span>
-            <input id="workoutNote" name="note" placeholder="Ex: senti ombro, piscina boa, jogo intenso...">
-          </label>
-          <button class="save-workout" type="submit">Salvar treino</button>
-        </form>
-      </section>
-
-      <section class="metrics" aria-label="Metricas da semana">
-        <article>
-          <span>Sessoes</span>
-          <strong id="sessionMetric">0</strong>
-          <small>semana atual</small>
-        </article>
-        <article>
-          <span>Tempo</span>
-          <strong id="timeMetric">0min</strong>
-          <small>total registrado</small>
-        </article>
-        <article>
-          <span>Modalidades</span>
-          <strong id="sportMetric">0</strong>
-          <small>tipos diferentes</small>
-        </article>
-        <article>
-          <span>Mais recente</span>
-          <strong id="latestMetric">-</strong>
-          <small>ultimo treino</small>
-        </article>
-      </section>
-
-      <section class="workspace">
-        <div class="panel">
-          <div class="panel-header">
-            <h3>Historico rapido</h3>
-            <button type="button" id="seedButton">Exemplos</button>
+            <input id="fromFilter" type="date">
+            <input id="toFilter" type="date">
           </div>
-          <ol class="workout-list" id="workoutList"></ol>
-        </div>
-
-        <div class="panel">
-          <div class="panel-header">
-            <h3>Semana</h3>
-            <button type="button">Copiar</button>
-          </div>
-          <div class="week-grid" id="weekGrid"></div>
-        </div>
+          <div class="timeline" id="timeline"></div>
+        </section>
       </section>
 
-      <section class="data-panel panel">
-        <div class="panel-header">
-          <h3>Dados</h3>
-          <button type="button" id="downloadTemplateButton">Modelo CSV</button>
-        </div>
-        <div class="data-actions">
-          <button type="button" id="exportJsonButton">Exportar backup</button>
-          <label class="file-action">
-            <span>Importar JSON</span>
-            <input id="importJsonInput" type="file" accept="application/json,.json">
-          </label>
-          <label class="file-action">
-            <span>Importar CSV</span>
-            <input id="importCsvInput" type="file" accept="text/csv,.csv">
-          </label>
-        </div>
-        <p class="data-hint" id="dataHint">CSV aceito: date,type,name,duration,intensity,note. Ex: 2026-05-15,futevolei,Futevolei,90,forte,jogo intenso.</p>
+      <section class="page" id="page-body">
+        <section class="workspace">
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Corpo e recuperacao</h3>
+              <button type="button" id="clearBodyFormButton">Limpar</button>
+            </div>
+            <form class="body-form" id="bodyForm">
+              <input type="hidden" id="bodyId">
+              <label><span>Data</span><input id="bodyDate" type="date" required></label>
+              <label><span>Peso</span><input id="bodyWeight" type="number" min="0" step="0.1" placeholder="kg"></label>
+              <label><span>Sono</span><input id="bodySleep" type="number" min="0" max="14" step="0.5" placeholder="horas"></label>
+              <label><span>Energia</span><input id="bodyEnergy" type="number" min="1" max="10" step="1"></label>
+              <label><span>Dor</span><input id="bodyPain" type="number" min="0" max="10" step="1"></label>
+              <label class="wide"><span>Nota</span><input id="bodyNote" placeholder="ombro, joelho, cansaço, humor..."></label>
+              <button class="save-workout" type="submit">Salvar corpo</button>
+            </form>
+          </div>
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Leituras recentes</h3>
+              <button type="button" id="seedBodyButton">Exemplos</button>
+            </div>
+            <div class="body-list" id="bodyList"></div>
+          </div>
+        </section>
+      </section>
+
+      <section class="page" id="page-library">
+        <section class="workspace">
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Favoritos</h3>
+              <button type="button" id="clearFavoritesButton">Limpar</button>
+            </div>
+            <div class="favorite-grid" id="favoriteGrid"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Templates e exercicios</h3>
+              <button type="button" id="addTemplateButton">Criar template</button>
+            </div>
+            <div class="template-list" id="templateList"></div>
+          </div>
+        </section>
+      </section>
+
+      <section class="page" id="page-data">
+        <section class="data-panel panel">
+          <div class="panel-header">
+            <h3>Dados</h3>
+            <button type="button" id="downloadTemplateButton">Modelo CSV</button>
+          </div>
+          <div class="data-actions">
+            <button type="button" id="exportJsonButton">Exportar backup</button>
+            <button type="button" id="exportCsvButton">Exportar CSV</button>
+            <button type="button" id="replaceWithPreviewButton">Substituir com preview</button>
+            <label class="file-action"><span>Importar JSON</span><input id="importJsonInput" type="file" accept="application/json,.json"></label>
+            <label class="file-action"><span>Importar CSV</span><input id="importCsvInput" type="file" accept="text/csv,.csv"></label>
+            <label class="file-action"><span>Importar GPX</span><input id="importGpxInput" type="file" accept=".gpx,application/gpx+xml,text/xml"></label>
+          </div>
+          <div class="import-preview" id="importPreview"></div>
+          <p class="data-hint" id="dataHint">CSV aceito: date,type,name,duration,intensity,note,rpe,energy,pain,status,distance,volume,focus,location.</p>
+        </section>
       </section>
     </main>
 
