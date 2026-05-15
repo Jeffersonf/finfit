@@ -71,6 +71,14 @@
         <button class="primary-action btn btn-p" type="button" id="addWorkoutButton">+ Novo treino</button>
       </section>
 
+      <section class="activity-focus" aria-label="Filtro por modalidade">
+        <div class="activity-focus-head">
+          <span>Modalidade</span>
+          <strong id="activityFocusLabel">Tudo</strong>
+        </div>
+        <div class="activity-focus-grid" id="activityFocusGrid"></div>
+      </section>
+
       <section class="page active" id="page-today">
         <section class="hero">
           <div class="hero-copy">
@@ -466,6 +474,7 @@
           </div>
           <div class="import-preview" id="importPreview"></div>
           <div class="duplicate-audit" id="duplicateAudit"></div>
+          <div class="data-health-grid" id="dataHealthGrid"></div>
           <p class="data-hint" id="backupHint">Auto-backup local ainda nao calculado.</p>
           <p class="data-hint" id="dataHint">CSV aceito: date,type,name,duration,intensity,note,details,rpe,energy,pain,status,distance,volume,focus,location. Tambem entende aliases em portugues e colunas de blocos.</p>
         </section>
