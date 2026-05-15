@@ -43,6 +43,8 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [x] Criar coach privado de corrida com proxima corrida sugerida, zonas de pace e preenchimento do treino planejado.
 - [x] Tornar modalidades visiveis como hub: filtro global, resumo por esporte e acoes rapidas.
 - [x] Criar Coach Semanal com proximas acoes copiaveis e atalhos para executar.
+- [x] Criar engines 1.1 para academia, natacao e futevolei com metricas e exemplos.
+- [x] Adicionar restore manual a partir do IndexedDB local.
 - [ ] Validar no uso real por uma semana.
 - [~] Decidir se a primeira base duravel sera `localStorage`, IndexedDB, SQLite/Capacitor ou API Node.
 
@@ -124,8 +126,8 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 ## 0.3 - Modalidades de verdade
 
 - [~] Academia: detalhes por linha, volume, foco, RPE e recordes detectados; falta editor de sets dedicado.
-- [~] Natacao: detalhes por linha, metragem/volume, local e tecnica; falta editor de series dedicado.
-- [~] Futevolei: detalhes por linha, duracao, intensidade, local e observacoes; falta campos dedicados para dupla/adversario/resultado.
+- [~] Natacao: engine de metragem, media e estilos; falta editor de series dedicado.
+- [~] Futevolei: engine de locais, dupla e intensidade; falta campos dedicados para adversario/resultado.
 - [~] Corrida: distancia, tempo e percepcao; falta pace, elevacao e FC.
 - [~] Mobilidade/fisio: dor, foco corporal, tempo e observacoes; falta exercicios estruturados.
 - [~] Treino livre: campos gerais; falta campos customizaveis reais.
