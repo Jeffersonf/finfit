@@ -31,52 +31,88 @@
       <section class="topbar" aria-label="Resumo">
         <div>
           <p class="eyebrow">sexta, 15 maio</p>
-          <h1>Treino de hoje</h1>
+          <h1>Treinos da semana</h1>
         </div>
-        <button class="primary-action" type="button" id="finishWorkout">Finalizar treino</button>
+        <button class="primary-action" type="button" id="addWorkoutButton">Adicionar treino</button>
       </section>
 
       <section class="hero">
         <div class="hero-copy">
-          <p class="eyebrow">proxima melhor acao</p>
-          <h2>Upper strength + cardio leve</h2>
-          <p>Plano enxuto para manter consistencia sem atropelar recuperacao. Foco em peito, costas, ombro e 18 minutos de zona 2.</p>
+          <p class="eyebrow">captura rapida</p>
+          <h2>Registre academia, natacao, futevolei ou qualquer treino em poucos toques.</h2>
+          <p>Escolha o tipo, tempo, intensidade e uma nota curta. Depois o Finfit organiza a semana, o historico e os sinais de carga para voce.</p>
         </div>
         <div class="readiness" aria-label="Prontidao">
-          <span>Prontidao</span>
-          <strong>82</strong>
-          <small>boa para carga moderada</small>
+          <span>Esta semana</span>
+          <strong id="weekScore">0</strong>
+          <small id="weekScoreLabel">treinos registrados</small>
         </div>
+      </section>
+
+      <section class="quick-add panel" id="quickAdd">
+        <div class="panel-header">
+          <h3>Novo treino</h3>
+          <button type="button" id="clearFormButton">Limpar</button>
+        </div>
+        <div class="sport-preset-grid" id="sportPresetGrid" aria-label="Tipos de treino"></div>
+        <form class="workout-form" id="workoutForm">
+          <label>
+            <span>Nome</span>
+            <input id="workoutName" name="name" placeholder="Ex: Academia - peito e costas" required>
+          </label>
+          <label>
+            <span>Quando</span>
+            <input id="workoutDate" name="date" type="date" required>
+          </label>
+          <label>
+            <span>Duracao</span>
+            <input id="workoutDuration" name="duration" type="number" min="1" step="1" placeholder="60" required>
+          </label>
+          <label>
+            <span>Intensidade</span>
+            <select id="workoutIntensity" name="intensity">
+              <option value="leve">Leve</option>
+              <option value="moderado" selected>Moderado</option>
+              <option value="forte">Forte</option>
+              <option value="maximo">Maximo</option>
+            </select>
+          </label>
+          <label class="wide">
+            <span>Nota rapida</span>
+            <input id="workoutNote" name="note" placeholder="Ex: senti ombro, piscina boa, jogo intenso...">
+          </label>
+          <button class="save-workout" type="submit">Salvar treino</button>
+        </form>
       </section>
 
       <section class="metrics" aria-label="Metricas da semana">
         <article>
           <span>Sessoes</span>
-          <strong>4/5</strong>
+          <strong id="sessionMetric">0</strong>
           <small>semana atual</small>
         </article>
         <article>
-          <span>Volume</span>
-          <strong>18.4t</strong>
-          <small>+12% vs anterior</small>
+          <span>Tempo</span>
+          <strong id="timeMetric">0min</strong>
+          <small>total registrado</small>
         </article>
         <article>
-          <span>Cardio</span>
-          <strong>92min</strong>
-          <small>zona 2 dominante</small>
+          <span>Modalidades</span>
+          <strong id="sportMetric">0</strong>
+          <small>tipos diferentes</small>
         </article>
         <article>
-          <span>Descanso</span>
-          <strong>31h</strong>
-          <small>desde ultimo treino</small>
+          <span>Mais recente</span>
+          <strong id="latestMetric">-</strong>
+          <small>ultimo treino</small>
         </article>
       </section>
 
       <section class="workspace">
         <div class="panel">
           <div class="panel-header">
-            <h3>Plano da sessao</h3>
-            <button type="button">Editar</button>
+            <h3>Historico rapido</h3>
+            <button type="button" id="seedButton">Exemplos</button>
           </div>
           <ol class="workout-list" id="workoutList"></ol>
         </div>
