@@ -182,14 +182,14 @@ textarea:focus-visible {
   z-index: 100;
   display: flex;
   flex-direction: column;
-  width: 224px;
+  width: 196px;
   height: 100vh;
   border-right: 1px solid var(--line);
   background: var(--surface);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   box-shadow: 12px 0 34px rgba(0, 0, 0, 0.18);
-  padding: 22px 14px;
+  padding: 22px 12px;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: color-mix(in srgb, var(--accent) 30%, transparent) transparent;
@@ -210,7 +210,7 @@ textarea:focus-visible {
   align-items: center;
   gap: 0;
   font-family: var(--font-display);
-  font-size: 21px;
+  font-size: 20px;
   font-weight: 800;
   line-height: 1;
 }
@@ -245,7 +245,7 @@ textarea:focus-visible {
 }
 
 .sb-search {
-  display: flex;
+  display: none;
   align-items: center;
   gap: 8px;
   min-height: 40px;
@@ -330,7 +330,13 @@ article small,
 
 .nav {
   display: grid;
-  gap: 4px;
+  gap: 6px;
+}
+
+.nav [data-page-target="body"],
+.nav [data-page-target="library"],
+.nav [data-page-target="user"] {
+  display: none;
 }
 
 .nav button,
@@ -339,8 +345,8 @@ article small,
   align-items: center;
   gap: 10px;
   width: 100%;
-  min-height: 37px;
-  padding: 8px 10px;
+  min-height: 42px;
+  padding: 9px 11px;
   border: 1px solid transparent;
   border-radius: 12px;
   background: transparent;
@@ -386,7 +392,7 @@ article small,
 }
 
 .sidebar-utility {
-  display: grid;
+  display: none;
   flex-direction: column;
   gap: 10px;
   margin-top: 14px;
@@ -470,7 +476,7 @@ article small,
 }
 
 .made-by {
-  display: block;
+  display: none;
   margin: 0 2px 12px;
   color: var(--muted);
   font-size: 10px;
@@ -488,11 +494,11 @@ article small,
   align-items: center;
   gap: 10px;
   width: 100%;
-  min-height: 50px;
-  padding: 8px 9px;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  background: var(--surface-2);
+  min-height: 44px;
+  padding: 7px 8px;
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--accent) 7%, var(--surface-2));
   color: var(--text);
   text-align: left;
 }
@@ -500,9 +506,9 @@ article small,
 .uavatar {
   display: grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 12px;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
   background: linear-gradient(135deg, var(--accent), var(--teal));
   color: #0d0f14;
   font-size: 12px;
@@ -527,13 +533,13 @@ article small,
 }
 
 .uname {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 900;
 }
 
 .urole {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .user-hero-card {
@@ -568,7 +574,7 @@ article small,
   width: 100%;
   max-width: 1720px;
   margin: 0 auto;
-  padding: 28px 28px 96px 252px;
+  padding: 28px 28px 96px 224px;
 }
 
 .pwa-banner {
