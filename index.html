@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR" data-theme="dark" data-accent="lime">
+<html lang="pt-BR" data-theme="black" data-accent="purple">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -30,6 +30,7 @@
         <button class="nav-item" type="button" data-page-target="plan"><span class="ico">📌</span>Plano semanal</button>
         <button class="nav-item" type="button" data-page-target="history"><span class="ico">💪</span>Histórico</button>
         <button class="nav-item an" type="button" data-page-target="progress"><span class="ico">📈</span>Progresso</button>
+        <button class="nav-item" type="button" data-page-target="nutrition"><span class="ico">🍽️</span>Alimentação</button>
         <button class="nav-item" type="button" data-page-target="body"><span class="ico">🫀</span>Corpo</button>
         <button class="nav-item fn" type="button" data-page-target="library"><span class="ico">🏆</span>Biblioteca</button>
         <button class="nav-item" type="button" data-page-target="data"><span class="ico">📥</span>Dados</button>
@@ -123,7 +124,7 @@
             <button class="quick-action-card" type="button" data-page-target="plan"><strong>📌 Plano</strong><small>Semana e temporada</small></button>
             <button class="quick-action-card" type="button" data-page-target="progress"><strong>📈 Progresso</strong><small>Recordes e alertas</small></button>
             <button class="quick-action-card" type="button" data-page-target="data"><strong>📥 Importar</strong><small>CSV, GPX, TCX</small></button>
-            <button class="quick-action-card" type="button" data-page-target="user"><strong>⚙️ Visual</strong><small>Tema e cores</small></button>
+            <button class="quick-action-card" type="button" data-page-target="nutrition"><strong>🍽️ Alimentação</strong><small>Meta e calorias</small></button>
           </div>
         </section>
 
@@ -453,6 +454,55 @@
         </section>
       </section>
 
+      <section class="page" id="page-nutrition">
+        <section class="nutrition-dashboard panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">alimentação</p>
+              <h3>Diário diário</h3>
+            </div>
+            <button type="button" id="clearFoodFormButton">Limpar</button>
+          </div>
+          <div class="nutrition-kpis" id="nutritionKpis"></div>
+          <form class="food-form" id="foodForm">
+            <input type="hidden" id="foodId">
+            <label><span>Data</span><input id="foodDate" type="date" required></label>
+            <label><span>Refeição</span><select id="foodMeal"><option>Café</option><option>Almoço</option><option>Lanche</option><option>Jantar</option><option>Ceia</option></select></label>
+            <label><span>Alimento</span><select id="foodCatalogSelect"></select></label>
+            <label><span>Porções</span><input id="foodServings" type="number" min="0.25" step="0.25" value="1"></label>
+            <label><span>Calorias</span><input id="foodCalories" type="number" min="0" step="1" placeholder="kcal"></label>
+            <label><span>Proteína</span><input id="foodProtein" type="number" min="0" step="0.1" placeholder="g"></label>
+            <label><span>Carbo</span><input id="foodCarbs" type="number" min="0" step="0.1" placeholder="g"></label>
+            <label><span>Gordura</span><input id="foodFat" type="number" min="0" step="0.1" placeholder="g"></label>
+            <label class="wide"><span>Nota</span><input id="foodNote" placeholder="fome, refeição livre, pré-treino..."></label>
+            <div class="form-actions">
+              <button class="save-workout" type="submit">Adicionar alimento</button>
+            </div>
+          </form>
+          <div class="nutrition-goals">
+            <label><span>Meta kcal</span><input id="goalCalories" type="number" min="1000" step="50"></label>
+            <label><span>Meta proteína</span><input id="goalProtein" type="number" min="0" step="5"></label>
+            <label><span>Água ml</span><input id="goalWater" type="number" min="0" step="100"></label>
+            <button type="button" id="saveNutritionGoalsButton">Salvar metas</button>
+          </div>
+        </section>
+        <section class="workspace progress-secondary">
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Hoje por refeição</h3>
+              <button type="button" id="seedNutritionButton">Exemplos</button>
+            </div>
+            <div class="food-list" id="foodList"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Alimentos rápidos</h3>
+            </div>
+            <div class="food-catalog-grid" id="foodCatalogGrid"></div>
+          </div>
+        </section>
+      </section>
+
       <section class="page" id="page-body">
         <section class="workspace">
           <div class="panel">
@@ -550,25 +600,25 @@
               <label>
                 <span>Tema</span>
                 <select id="themeSelect">
-                  <option value="dark">Escuro Finanza</option>
                   <option value="black">Black</option>
+                  <option value="dark">Escuro Finanza</option>
                   <option value="light">Claro Finanza</option>
                 </select>
               </label>
               <label>
                 <span>Cor principal</span>
                 <select id="accentSelect">
+                  <option value="purple">Roxo</option>
                   <option value="lime">Lima Finanza</option>
                   <option value="teal">Verde agua</option>
-                  <option value="purple">Roxo</option>
                   <option value="amber">Amarelo</option>
                 </select>
               </label>
             </div>
             <div class="swatch-grid" aria-label="Cores rapidas">
-              <button type="button" class="swatch lime active" data-accent-choice="lime"><span></span>Lima</button>
+              <button type="button" class="swatch lime" data-accent-choice="lime"><span></span>Lima</button>
               <button type="button" class="swatch teal" data-accent-choice="teal"><span></span>Agua</button>
-              <button type="button" class="swatch purple" data-accent-choice="purple"><span></span>Roxo</button>
+              <button type="button" class="swatch purple active" data-accent-choice="purple"><span></span>Roxo</button>
               <button type="button" class="swatch amber" data-accent-choice="amber"><span></span>Amarelo</button>
             </div>
           </div>
