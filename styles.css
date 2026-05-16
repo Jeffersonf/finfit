@@ -8,15 +8,15 @@
   --red: #f5705a;
   --amber: #f5c85a;
   --green: #4ade80;
-  --radius: 20px;
-  --radius-lg: 28px;
+  --radius: 14px;
+  --radius-lg: 18px;
   --radius-pill: 99px;
-  --blur: 14px;
-  --page-gap: 22px;
-  --card-pad: 18px;
-  --shadow-soft: 0 10px 24px rgba(0, 0, 0, 0.11);
-  --shadow-card: 0 18px 46px rgba(0, 0, 0, 0.18);
-  --shadow-lift: 0 24px 64px rgba(0, 0, 0, 0.24);
+  --blur: 10px;
+  --page-gap: 16px;
+  --card-pad: 14px;
+  --shadow-soft: 0 6px 18px rgba(0, 0, 0, 0.12);
+  --shadow-card: 0 10px 28px rgba(0, 0, 0, 0.16);
+  --shadow-lift: 0 14px 34px rgba(0, 0, 0, 0.22);
 }
 
 [data-theme="dark"] {
@@ -124,8 +124,8 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-ui);
-  font-size: 15px;
-  line-height: 1.6;
+  font-size: 14px;
+  line-height: 1.5;
   display: grid;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -2318,6 +2318,321 @@ textarea:focus {
 .preview-actions button {
   border-radius: 12px;
   padding: 8px 10px;
+}
+
+/* Product calm pass: reduce visual competition and make widgets feel like one system. */
+.shell {
+  max-width: 1480px;
+  padding-top: 22px;
+}
+
+.pwa-banner {
+  margin-bottom: 12px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  box-shadow: none;
+}
+
+.topbar {
+  margin-bottom: 14px;
+}
+
+.pt {
+  font-size: 22px;
+  line-height: 1.1;
+}
+
+.ps {
+  font-size: 12px;
+}
+
+h1 {
+  font-size: clamp(1.8rem, 3vw, 3.2rem);
+}
+
+h2 {
+  margin-bottom: 10px;
+  font-size: clamp(1.35rem, 2vw, 2.15rem);
+  line-height: 1.08;
+}
+
+h3 {
+  font-size: 1rem;
+}
+
+.eyebrow,
+label span,
+.cl,
+.activity-hub-stats span,
+.module-kpis span,
+.nutrition-kpis span {
+  font-size: 0.68rem;
+  letter-spacing: 0.02em;
+}
+
+.hero {
+  min-height: 188px;
+  padding: 20px;
+  border-radius: 18px;
+  background:
+    linear-gradient(120deg, rgba(10, 11, 15, 0.96), rgba(13, 15, 21, 0.86)),
+    linear-gradient(135deg, color-mix(in srgb, var(--accent) 8%, transparent), transparent 45%);
+}
+
+.hero-copy {
+  max-width: 620px;
+}
+
+.readiness {
+  border-left-width: 3px;
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.readiness strong {
+  font-size: 3rem;
+}
+
+.activity-focus {
+  grid-template-columns: 120px minmax(0, 1fr);
+  margin: 0 0 14px;
+}
+
+.activity-focus-head,
+.activity-focus-grid button,
+.activity-hub,
+article,
+.panel,
+.box,
+.sc {
+  box-shadow: var(--shadow-soft);
+}
+
+.activity-focus-head {
+  padding: 10px 12px;
+}
+
+.activity-focus-grid {
+  grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+}
+
+.activity-focus-grid button {
+  min-height: 48px;
+  padding: 8px 10px;
+  border-radius: 13px;
+}
+
+.activity-focus-grid button span {
+  font-size: 1rem;
+}
+
+.activity-hub {
+  margin: 0 0 14px;
+  padding: 14px;
+  border-radius: 18px;
+}
+
+.activity-hub-title > span {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  font-size: 1.2rem;
+}
+
+.activity-hub-actions button {
+  min-height: 32px;
+  border-radius: 10px;
+  font-size: 0.82rem;
+}
+
+.activity-hub-stats {
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+}
+
+.activity-hub-stats div,
+.activity-specific,
+.context-last,
+.activity-category-grid button,
+.context-plan-list button,
+.module-kpis div,
+.module-list div,
+.running-card,
+.progress-card,
+.record-card,
+.exercise-card,
+.insight-card,
+.season-card,
+.period-card,
+.duplicate-card,
+.food-item,
+.food-catalog-grid button,
+.nutrition-kpis div,
+.quick-action-card,
+.workout-list li,
+.day {
+  border-color: var(--line-soft);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.activity-context {
+  padding: 10px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.activity-category-grid button,
+.context-plan-list button {
+  min-height: 58px;
+  padding: 9px;
+}
+
+.weekly-coach,
+.quick-add,
+.data-panel,
+.work-mode,
+.running-lab,
+.progress-secondary {
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.coach-action-list,
+.quick-actions-grid,
+.metrics,
+.sport-modules-grid,
+.running-kpis,
+.running-grid,
+.nutrition-kpis {
+  gap: 8px;
+}
+
+.coach-action-card {
+  min-height: 94px;
+  padding: 11px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.metrics {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  margin: 14px 0;
+}
+
+.sc {
+  padding: 14px;
+  border-radius: 14px;
+}
+
+.sc::after,
+article::after,
+.panel::after,
+.box::after {
+  opacity: 0.55;
+}
+
+.sc:hover {
+  transform: translateY(-1px);
+}
+
+.ci {
+  margin-bottom: 8px;
+  font-size: 17px;
+}
+
+.cv,
+article strong {
+  font-size: 1.45rem;
+}
+
+.cc,
+.quick-action-card small,
+.cs,
+.card-meta,
+.module-kpis small,
+.module-list small {
+  font-size: 0.78rem;
+}
+
+.panel,
+article {
+  border-radius: 14px;
+}
+
+.panel-header {
+  gap: 10px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+}
+
+.box {
+  padding: 14px;
+  border-radius: 16px;
+}
+
+.quick-actions-grid {
+  grid-template-columns: repeat(auto-fit, minmax(138px, 1fr));
+}
+
+.quick-action-card {
+  min-height: 66px;
+  padding: 11px;
+}
+
+.quick-actions-widget .bh {
+  margin-bottom: 10px;
+}
+
+.quick-actions-widget .ct {
+  font-size: 0.92rem;
+}
+
+.quick-actions-widget .cs {
+  max-width: 520px;
+}
+
+.quick-action-card strong {
+  font-size: 0.92rem;
+}
+
+.primary-action,
+.save-workout {
+  min-height: 40px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  box-shadow: none;
+}
+
+input,
+select,
+textarea {
+  min-height: 40px;
+  border-radius: 12px;
+}
+
+textarea {
+  min-height: 92px;
+}
+
+.workout-form,
+.body-form,
+.food-form,
+.season-form,
+.filter-grid {
+  gap: 12px;
+}
+
+.workspace {
+  gap: 14px;
+}
+
+[data-theme="black"] article,
+[data-theme="black"] .panel,
+[data-theme="black"] .box,
+[data-theme="black"] .sc,
+[data-theme="black"] .activity-hub {
+  box-shadow: var(--shadow-soft);
 }
 
 @media (max-width: 1100px) {
