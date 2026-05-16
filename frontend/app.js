@@ -2,7 +2,7 @@ const STORAGE_KEY = "finfit.state.v2";
 const LEGACY_WORKOUTS_KEY = "finfit.workouts.v1";
 const AUTO_BACKUP_KEY = "finfit.autoBackups.v1";
 const ACTIVE_SESSION_KEY = "finfit.activeSession.v1";
-const APPEARANCE_KEY = "finfit.appearance.v1";
+const APPEARANCE_KEY = "finfit.appearance.v2";
 const SPORT_FILTER_KEY = "finfit.sportFilter.v1";
 const DB_NAME = "finfit-db";
 const DB_VERSION = 1;
@@ -16,6 +16,74 @@ const presets = [
   { type: "outro", label: "Outro", defaultName: "Treino livre", duration: 50 }
 ];
 
+const activityContexts = {
+  academia: {
+    title: "Musculacao completa",
+    text: "Escolha o grupo muscular para ver sugestoes, historico filtrado e o que registrar no treino.",
+    categories: [
+      { id: "peito", icon: "🏋️", label: "Peito", match: /peito|supino|crucifixo|crossover|voador|paralela/i, plans: [
+        ["Peito forca", "Supino reto 5x5\nSupino inclinado 4x6\nParalela 3x8\nTriceps corda 3x12"],
+        ["Peito hipertrofia", "Supino inclinado 4x8\nCrucifixo 3x12\nCrossover 3x15\nFlexao 2xmax"]
+      ] },
+      { id: "costas", icon: "🧲", label: "Costas", match: /costas|remada|puxada|barra|pulldown|serrote/i, plans: [
+        ["Costas densidade", "Remada curvada 4x8\nPuxada aberta 4x10\nRemada baixa 3x12\nFace pull 3x15"],
+        ["Costas forca", "Barra fixa 5x5\nRemada unilateral 4x8\nPulldown 3x10\nHiperextensao 3x12"]
+      ] },
+      { id: "pernas", icon: "🦵", label: "Pernas", match: /perna|agach|leg|terra|stiff|cadeira|mesa|panturrilha|posterior|quadriceps/i, plans: [
+        ["Pernas base", "Agachamento 4x6\nLeg press 4x10\nStiff 3x8\nPanturrilha 4x12"],
+        ["Posterior e gluteo", "Terra romeno 4x8\nMesa flexora 4x10\nAvanco 3x10\nAbdutora 3x15"]
+      ] },
+      { id: "ombros", icon: "🎯", label: "Ombros", match: /ombro|desenvolvimento|eleva|lateral|posterior/i, plans: [
+        ["Ombros completo", "Desenvolvimento 4x6\nElevacao lateral 4x12\nCrucifixo inverso 3x15\nEncolhimento 3x12"]
+      ] },
+      { id: "bracos", icon: "💪", label: "Bracos", match: /braco|rosca|biceps|triceps|martelo|frances/i, plans: [
+        ["Bracos volume", "Rosca direta 4x8\nTriceps testa 4x10\nRosca martelo 3x12\nTriceps corda 3x15"]
+      ] },
+      { id: "core", icon: "🧱", label: "Core", match: /core|abdomen|prancha|abdominal|anti/i, plans: [
+        ["Core estabilidade", "Prancha 4x40s\nDead bug 3x10\nPallof press 3x12\nAbdominal reverso 3x12"]
+      ] }
+    ]
+  },
+  corrida: {
+    title: "Corrida completa",
+    text: "Separe base, longo, intensidade e recuperacao para o Finfit agir como um diario de corrida privado.",
+    categories: [
+      { id: "base", icon: "🌿", label: "Base", match: /base|z2|leve|facil|aerob/i, plans: [["Rodagem Z2", "40min leve\nPace confortavel\nRPE 4-5\nRegistrar distancia e dor"]] },
+      { id: "longo", icon: "🛣️", label: "Longo", match: /longo|longao|endurance/i, plans: [["Longo controlado", "60-75min facil\nSem sprint final\nNutrir antes\nRegistrar rota"]] },
+      { id: "ritmo", icon: "📈", label: "Ritmo", match: /ritmo|tempo|progressivo|controlado/i, plans: [["Progressivo curto", "15min facil\n3x6min moderado\n2min leve\n10min solto"]] },
+      { id: "tiros", icon: "⚡", label: "Tiros", match: /tiro|interval|vo2|400|800|forte/i, plans: [["Tiros curtos", "12min aquecer\n8x400m forte\n200m trote\n10min solto"]] },
+      { id: "recuperacao", icon: "🧘", label: "Recuperacao", match: /recuper|solto|regenerativo|leve/i, plans: [["Regenerativo", "20-30min muito leve\nSem olhar pace\nMobilidade posterior"]] }
+    ]
+  },
+  natacao: {
+    title: "Natacao por objetivo",
+    text: "Filtre tecnica, volume e ritmo para acompanhar metragem e qualidade.",
+    categories: [
+      { id: "tecnica", icon: "🌊", label: "Tecnica", match: /tecnica|educativo|respiracao|crawl/i, plans: [["Tecnica crawl", "300m solto\n8x50m educativo\n6x50m crawl\n200m solto"]] },
+      { id: "volume", icon: "📏", label: "Volume", match: /volume|endurance|resistencia|longo/i, plans: [["Volume continuo", "600m solto\n4x200m moderado\n300m solto"]] },
+      { id: "ritmo", icon: "⏱️", label: "Ritmo", match: /ritmo|forte|tiro|100/i, plans: [["Ritmo 100m", "400m solto\n8x100m ritmo\n200m leve"]] }
+    ]
+  },
+  futevolei: {
+    title: "Futevolei por contexto",
+    text: "Separe tecnica, jogo e competicao para entender dupla, local e intensidade.",
+    categories: [
+      { id: "tecnica", icon: "🎯", label: "Tecnica", match: /tecnica|saque|recepcao|ataque|defesa/i, plans: [["Tecnica fundamentos", "15min aquecer\n20min recepcao\n20min ataque\n10min saque"]] },
+      { id: "jogo", icon: "🏐", label: "Jogo", match: /jogo|partida|dupla|resultado/i, plans: [["Jogo controlado", "3 jogos\nAnotar dupla\nResultado\nPonto forte/fraco"]] },
+      { id: "competicao", icon: "🏆", label: "Competicao", match: /torneio|competicao|ranking/i, plans: [["Dia competitivo", "Aquecimento completo\nAnotar adversarios\nPlacar\nEnergia final"]] }
+    ]
+  },
+  mobilidade: {
+    title: "Mobilidade por area",
+    text: "Use como ferramenta de recuperacao para manter dor e amplitude no radar.",
+    categories: [
+      { id: "quadril", icon: "🦿", label: "Quadril", match: /quadril|gluteo|posterior/i, plans: [["Quadril livre", "90/90 3min\nFlexor 3min\nPosterior 4min\nRespiracao 3min"]] },
+      { id: "ombro", icon: "🪽", label: "Ombro", match: /ombro|escapula|toracica/i, plans: [["Ombro leve", "Toracica 5min\nRotacao externa 3x12\nAlongamento peitoral 3min"]] },
+      { id: "tornozelo", icon: "🦶", label: "Tornozelo", match: /tornozelo|panturrilha|pe/i, plans: [["Tornozelo corrida", "Mobilidade parede 4min\nPanturrilha 3min\nPe curto 3x12"]] }
+    ]
+  }
+};
+
 const weekDays = [
   { key: 1, label: "Seg" },
   { key: 2, label: "Ter" },
@@ -24,6 +92,18 @@ const weekDays = [
   { key: 5, label: "Sex" },
   { key: 6, label: "Sab" },
   { key: 0, label: "Dom" }
+];
+
+const foodCatalog = [
+  { id: "arroz-frango", name: "Arroz + frango", serving: "1 prato", calories: 520, protein: 42, carbs: 58, fat: 12 },
+  { id: "ovo", name: "Ovo inteiro", serving: "2 un", calories: 140, protein: 12, carbs: 1, fat: 10 },
+  { id: "banana", name: "Banana", serving: "1 un", calories: 90, protein: 1, carbs: 23, fat: 0 },
+  { id: "whey", name: "Whey protein", serving: "1 scoop", calories: 120, protein: 24, carbs: 3, fat: 2 },
+  { id: "aveia", name: "Aveia", serving: "40g", calories: 150, protein: 5, carbs: 27, fat: 3 },
+  { id: "iogurte", name: "Iogurte natural", serving: "170g", calories: 120, protein: 9, carbs: 12, fat: 4 },
+  { id: "macarrao", name: "Macarrao + carne", serving: "1 prato", calories: 680, protein: 38, carbs: 82, fat: 20 },
+  { id: "salada", name: "Salada completa", serving: "1 bowl", calories: 240, protein: 12, carbs: 22, fat: 12 },
+  { id: "custom", name: "Personalizado", serving: "manual", calories: 0, protein: 0, carbs: 0, fat: 0 }
 ];
 
 const baseTemplates = [
@@ -44,6 +124,11 @@ const seedState = {
     { id: "body-1", date: "2026-05-14", weight: 82.4, sleep: 7, energy: 8, pain: 1, stress: 3, nutrition: 8, mood: 8, waist: 86, chest: 102, hip: 98, painAreas: "ombro leve", note: "recuperacao boa" },
     { id: "body-2", date: "2026-05-15", weight: 82.1, sleep: 6.5, energy: 7, pain: 2, stress: 4, nutrition: 7, mood: 7, waist: 85.8, chest: 102, hip: 98, painAreas: "perna", note: "ombro ok, perna pesada" }
   ],
+  foodLogs: [
+    { id: "food-1", date: "2026-05-16", meal: "Almoço", foodId: "arroz-frango", name: "Arroz + frango", servings: 1, calories: 520, protein: 42, carbs: 58, fat: 12, note: "base pos-treino" },
+    { id: "food-2", date: "2026-05-16", meal: "Lanche", foodId: "whey", name: "Whey protein", servings: 1, calories: 120, protein: 24, carbs: 3, fat: 2, note: "" }
+  ],
+  nutritionGoals: { calories: 2400, protein: 160, water: 3000 },
   favorites: [],
   templates: baseTemplates,
   seasons: [
@@ -59,6 +144,7 @@ let pendingImportErrors = [];
 let activeSession = loadActiveSession();
 let timerInterval = null;
 let activeSportFilter = loadSportFilter();
+let activeActivityCategory = "todos";
 let dataHealth = {
   driver: "localStorage",
   indexedDb: "pendente",
@@ -78,6 +164,7 @@ function loadSportFilter() {
 
 function setSportFilter(type) {
   activeSportFilter = type === "todos" ? "todos" : normalizeType(type);
+  activeActivityCategory = "todos";
   localStorage.setItem(SPORT_FILTER_KEY, activeSportFilter);
   if ($("#typeFilter")) {
     $("#typeFilter").dataset.value = activeSportFilter === "todos" ? "" : activeSportFilter;
@@ -103,9 +190,9 @@ function sportIcon(type) {
 
 function loadAppearance() {
   try {
-    return { theme: "dark", accent: "lime", ...JSON.parse(localStorage.getItem(APPEARANCE_KEY)) };
+    return { theme: "black", accent: "purple", ...JSON.parse(localStorage.getItem(APPEARANCE_KEY)) };
   } catch {
-    return { theme: "dark", accent: "lime" };
+    return { theme: "black", accent: "purple" };
   }
 }
 
@@ -166,6 +253,19 @@ const bodyFields = {
   note: $("#bodyNote")
 };
 
+const foodFields = {
+  id: $("#foodId"),
+  date: $("#foodDate"),
+  meal: $("#foodMeal"),
+  catalog: $("#foodCatalogSelect"),
+  servings: $("#foodServings"),
+  calories: $("#foodCalories"),
+  protein: $("#foodProtein"),
+  carbs: $("#foodCarbs"),
+  fat: $("#foodFat"),
+  note: $("#foodNote")
+};
+
 const seasonFields = {
   id: $("#seasonId"),
   name: $("#seasonName"),
@@ -198,6 +298,8 @@ function withDefaults(value) {
   return {
     workouts: (value.workouts || []).map(normalizeWorkout),
     bodyLogs: (value.bodyLogs || []).map(normalizeBodyLog),
+    foodLogs: (value.foodLogs || []).map(normalizeFoodLog),
+    nutritionGoals: normalizeNutritionGoals(value.nutritionGoals || {}),
     favorites: value.favorites || [],
     templates: value.templates?.length ? value.templates : baseTemplates,
     seasons: (value.seasons || []).map(normalizeSeason),
@@ -465,6 +567,36 @@ function normalizeBodyLog(item) {
   };
 }
 
+function normalizeFoodLog(item) {
+  const catalog = foodCatalog.find((food) => food.id === item.foodId) || foodCatalog.find((food) => food.name === item.name) || foodCatalog.at(-1);
+  const servings = Math.max(0.25, Number(item.servings || item.porcoes || 1));
+  const baseCalories = Number(item.calories ?? item.calorias ?? catalog.calories);
+  const baseProtein = Number(item.protein ?? item.proteina ?? catalog.protein);
+  const baseCarbs = Number(item.carbs ?? item.carbo ?? item.carboidratos ?? catalog.carbs);
+  const baseFat = Number(item.fat ?? item.gordura ?? catalog.fat);
+  return {
+    id: item.id || uid("food"),
+    date: String(item.date || item.data || todayIso()).slice(0, 10),
+    meal: String(item.meal || item.refeicao || "Lanche").trim(),
+    foodId: String(item.foodId || catalog.id),
+    name: String(item.name || item.nome || catalog.name).trim(),
+    servings,
+    calories: Math.round((Number.isFinite(baseCalories) ? baseCalories : 0) * servings),
+    protein: Math.round(((Number.isFinite(baseProtein) ? baseProtein : 0) * servings) * 10) / 10,
+    carbs: Math.round(((Number.isFinite(baseCarbs) ? baseCarbs : 0) * servings) * 10) / 10,
+    fat: Math.round(((Number.isFinite(baseFat) ? baseFat : 0) * servings) * 10) / 10,
+    note: String(item.note || item.nota || "").trim()
+  };
+}
+
+function normalizeNutritionGoals(item) {
+  return {
+    calories: Math.max(1000, Number(item.calories || item.calorias || 2400)),
+    protein: Math.max(0, Number(item.protein || item.proteina || 160)),
+    water: Math.max(0, Number(item.water || item.agua || 3000))
+  };
+}
+
 function normalizeSeason(item) {
   const sessions = Number(item.sessionsPerWeek || item.sessions || item.sessoes || 5);
   return {
@@ -542,7 +674,7 @@ function recommendation() {
 function setPage(page) {
   $$(".page").forEach((item) => item.classList.toggle("active", item.id === `page-${page}`));
   $$("[data-page-target]").forEach((button) => button.classList.toggle("active", button.dataset.pageTarget === page));
-  const titles = { today: "Treinos da semana", plan: "Plano semanal", history: "Historico", progress: "Progresso", body: "Corpo e recuperacao", library: "Biblioteca", data: "Dados", user: "Usuario" };
+  const titles = { today: "Treinos da semana", plan: "Plano semanal", history: "Historico", progress: "Progresso", nutrition: "Alimentacao", body: "Corpo e recuperacao", library: "Biblioteca", data: "Dados", user: "Usuario" };
   $("#pageTitle").textContent = titles[page] || "Finfit";
 }
 
@@ -689,6 +821,7 @@ function renderActivityHub() {
   const last = [...items].sort((a, b) => b.date.localeCompare(a.date))[0];
   const best = [...items].sort((a, b) => workoutLoad(b) - workoutLoad(a))[0];
   const specific = activitySpecificHtml(activeSportFilter, items);
+  const context = activityContextHtml(activeSportFilter, items);
   target.innerHTML = `
     <div class="activity-hub-main">
       <div class="activity-hub-title">
@@ -711,6 +844,7 @@ function renderActivityHub() {
       <div><span>${activeSportFilter === "corrida" ? "Distancia" : activeSportFilter === "natacao" ? "Metragem" : "Ultimo"}</span><strong>${distance ? `${Math.round(distance * 10) / 10}` : last ? formatDate(last.date) : "--"}</strong><small>${last ? last.name : "sem registros"}</small></div>
     </div>
     ${specific}
+    ${context}
   `;
 }
 
@@ -736,6 +870,57 @@ function activitySpecificHtml(type, items) {
     return `<div class="activity-specific"><strong>${places.size || 0} local(is)</strong><span>Anote dupla, resultado e intensidade para descobrir combinacoes melhores.</span></div>`;
   }
   return `<div class="activity-specific"><strong>${presetLabel(type)} em foco</strong><span>O historico e a semana estao filtrados para esta modalidade.</span></div>`;
+}
+
+function activityContextHtml(type, items) {
+  const context = activityContexts[type];
+  if (!context) return "";
+  const categories = [{ id: "todos", icon: sportIcon(type), label: "Tudo", plans: [] }, ...context.categories];
+  const active = categories.find((item) => item.id === activeActivityCategory) || categories[0];
+  const activeItems = active.id === "todos" ? items : items.filter((workout) => categoryMatches(active, workout));
+  const plans = active.id === "todos" ? context.categories.flatMap((item) => item.plans).slice(0, 3) : active.plans;
+  const last = [...activeItems].sort((a, b) => b.date.localeCompare(a.date))[0];
+  return `
+    <div class="activity-context">
+      <div class="activity-context-head">
+        <div>
+          <strong>${context.title}</strong>
+          <small>${context.text}</small>
+        </div>
+        <span>${activeItems.length} registro(s)</span>
+      </div>
+      <div class="activity-category-grid">
+        ${categories.map((item) => `
+          <button type="button" class="${item.id === active.id ? "active" : ""}" data-activity-category="${item.id}">
+            <span>${item.icon}</span>
+            <strong>${item.label}</strong>
+            <small>${item.id === "todos" ? items.length : items.filter((workout) => categoryMatches(item, workout)).length}</small>
+          </button>
+        `).join("")}
+      </div>
+      <div class="activity-context-body">
+        <div class="context-last">
+          <span>Contexto selecionado</span>
+          <strong>${active.label}</strong>
+          <small>${last ? `${last.name} em ${formatDate(last.date)} - ${last.duration}min` : "Sem treino nessa categoria ainda."}</small>
+        </div>
+        <div class="context-plan-list">
+          ${plans.map(([title, detail]) => `
+            <button type="button" data-category-plan="${encodeURIComponent(JSON.stringify({ type, title, detail, focus: active.id }))}">
+              <span>recomendado</span>
+              <strong>${title}</strong>
+              <small>${detail.split(/\n/).slice(0, 2).join(" • ")}</small>
+            </button>
+          `).join("")}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function categoryMatches(category, workout) {
+  const text = `${workout.name} ${workout.focus} ${workout.note} ${workout.details}`.toLowerCase();
+  return category.match?.test(text);
 }
 
 function formatClock(seconds) {
@@ -1568,6 +1753,93 @@ function renderBody() {
   `).join("") : '<p class="empty-state">Nenhuma leitura corporal ainda.</p>';
 }
 
+function exerciseCalories(date = todayIso()) {
+  const factors = { academia: 6.5, natacao: 8, futevolei: 7, corrida: 10, mobilidade: 3, outro: 5 };
+  return state.workouts
+    .filter((workout) => workout.date === date && workout.status !== "pulado")
+    .reduce((sum, workout) => sum + Math.round(Number(workout.duration || 0) * (factors[workout.type] || 5)), 0);
+}
+
+function nutritionSummary(date = todayIso()) {
+  const items = state.foodLogs.filter((item) => item.date === date);
+  const consumed = items.reduce((sum, item) => sum + Number(item.calories || 0), 0);
+  const protein = items.reduce((sum, item) => sum + Number(item.protein || 0), 0);
+  const carbs = items.reduce((sum, item) => sum + Number(item.carbs || 0), 0);
+  const fat = items.reduce((sum, item) => sum + Number(item.fat || 0), 0);
+  const burned = exerciseCalories(date);
+  const goal = state.nutritionGoals.calories;
+  const net = consumed - burned;
+  return { items, consumed, protein, carbs, fat, burned, goal, net, remaining: goal - net };
+}
+
+function renderNutrition() {
+  if (!$("#nutritionKpis")) return;
+  const summary = nutritionSummary(foodFields.date.value || todayIso());
+  const proteinGoal = state.nutritionGoals.protein;
+  $("#nutritionKpis").innerHTML = moduleKpis([
+    ["Consumido", `${summary.consumed} kcal`, `${summary.items.length} alimento(s)`],
+    ["Gasto treino", `${summary.burned} kcal`, "estimado pelo treino do dia"],
+    ["Saldo", `${summary.net} kcal`, `${summary.remaining >= 0 ? summary.remaining : Math.abs(summary.remaining)} kcal ${summary.remaining >= 0 ? "restantes" : "acima"}`],
+    ["Proteina", `${Math.round(summary.protein)}g`, `meta ${proteinGoal}g`]
+  ]);
+  $("#foodCatalogSelect").innerHTML = foodCatalog.map((food) => `<option value="${food.id}">${food.name} - ${food.serving}</option>`).join("");
+  $("#goalCalories").value = state.nutritionGoals.calories;
+  $("#goalProtein").value = state.nutritionGoals.protein;
+  $("#goalWater").value = state.nutritionGoals.water;
+  $("#foodList").innerHTML = summary.items.length ? summary.items.map((item) => `
+    <div class="food-item">
+      <div>
+        <strong>${item.meal} - ${item.name}</strong>
+        <small>${item.servings} porcao(oes) - ${item.calories} kcal - P ${item.protein}g / C ${item.carbs}g / G ${item.fat}g</small>
+        ${item.note ? `<small>${item.note}</small>` : ""}
+      </div>
+      <button type="button" class="icon-button" data-food-action="delete" data-id="${item.id}">x</button>
+    </div>
+  `).join("") : '<p class="empty-state">Nenhum alimento registrado nesta data.</p>';
+  $("#foodCatalogGrid").innerHTML = foodCatalog.filter((food) => food.id !== "custom").map((food) => `
+    <button type="button" data-food-pick="${food.id}">
+      <strong>${food.name}</strong>
+      <span>${food.calories} kcal</span>
+      <small>${food.serving} - P ${food.protein}g / C ${food.carbs}g / G ${food.fat}g</small>
+    </button>
+  `).join("");
+}
+
+function fillFoodFromCatalog(id = foodFields.catalog.value) {
+  const food = foodCatalog.find((item) => item.id === id) || foodCatalog.at(-1);
+  foodFields.catalog.value = food.id;
+  foodFields.servings.value = 1;
+  foodFields.calories.value = food.calories || "";
+  foodFields.protein.value = food.protein || "";
+  foodFields.carbs.value = food.carbs || "";
+  foodFields.fat.value = food.fat || "";
+}
+
+function resetFoodForm() {
+  foodFields.id.value = "";
+  foodFields.date.value = todayIso();
+  foodFields.meal.value = "Lanche";
+  foodFields.note.value = "";
+  fillFoodFromCatalog(foodCatalog[0].id);
+}
+
+function foodFromForm() {
+  const catalog = foodCatalog.find((food) => food.id === foodFields.catalog.value) || foodCatalog.at(-1);
+  return normalizeFoodLog({
+    id: foodFields.id.value || uid("food"),
+    date: foodFields.date.value,
+    meal: foodFields.meal.value,
+    foodId: catalog.id,
+    name: catalog.id === "custom" ? "Personalizado" : catalog.name,
+    servings: foodFields.servings.value,
+    calories: foodFields.calories.value,
+    protein: foodFields.protein.value,
+    carbs: foodFields.carbs.value,
+    fat: foodFields.fat.value,
+    note: foodFields.note.value
+  });
+}
+
 function renderLibrary() {
   $("#favoriteGrid").innerHTML = state.favorites.length ? state.favorites.map((item) => `
     <div class="favorite-card">
@@ -1651,6 +1923,7 @@ function render() {
   renderPlan();
   renderHistory();
   renderProgress();
+  renderNutrition();
   renderBody();
   renderLibrary();
   renderPreview();
@@ -2152,6 +2425,30 @@ $("#activityFocusGrid").addEventListener("click", (event) => {
 });
 
 $("#activityHub").addEventListener("click", (event) => {
+  const categoryButton = event.target.closest("[data-activity-category]");
+  if (categoryButton) {
+    activeActivityCategory = categoryButton.dataset.activityCategory;
+    renderActivityHub();
+    return;
+  }
+  const planButton = event.target.closest("[data-category-plan]");
+  if (planButton) {
+    const plan = JSON.parse(decodeURIComponent(planButton.dataset.categoryPlan));
+    fillWorkoutForm(normalizeWorkout({
+      id: uid("workout"),
+      type: plan.type,
+      name: plan.title,
+      date: todayIso(),
+      duration: presets.find((preset) => preset.type === plan.type)?.duration || 45,
+      intensity: plan.type === "corrida" && /tiro|ritmo/i.test(plan.title) ? "forte" : "moderado",
+      status: "planejado",
+      focus: plan.focus === "todos" ? "" : plan.focus,
+      details: plan.detail,
+      note: "Recomendado pelo contexto Finfit"
+    }));
+    $("#quickAdd").scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
   const button = event.target.closest("[data-activity-action]");
   if (!button) return;
   if (button.dataset.activityAction === "new") {
@@ -2197,7 +2494,7 @@ $(".swatch-grid").addEventListener("click", (event) => {
   if (button) saveAppearance({ accent: button.dataset.accentChoice });
 });
 
-$("#resetAppearanceButton").addEventListener("click", () => saveAppearance({ theme: "dark", accent: "lime" }));
+$("#resetAppearanceButton").addEventListener("click", () => saveAppearance({ theme: "black", accent: "purple" }));
 
 $("#sidebarSearchInput").addEventListener("input", (event) => {
   setPage("history");
@@ -2477,6 +2774,47 @@ $("#seedBodyButton").addEventListener("click", () => {
   render();
 });
 
+$("#foodCatalogSelect").addEventListener("change", (event) => fillFoodFromCatalog(event.target.value));
+$("#foodDate").addEventListener("change", renderNutrition);
+$("#clearFoodFormButton").addEventListener("click", resetFoodForm);
+$("#foodForm").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const item = foodFromForm();
+  const index = state.foodLogs.findIndex((food) => food.id === item.id);
+  if (index >= 0) state.foodLogs[index] = item;
+  else state.foodLogs.push(item);
+  resetFoodForm();
+  render();
+});
+
+$("#saveNutritionGoalsButton").addEventListener("click", () => {
+  state.nutritionGoals = normalizeNutritionGoals({
+    calories: $("#goalCalories").value,
+    protein: $("#goalProtein").value,
+    water: $("#goalWater").value
+  });
+  render();
+});
+
+$("#foodList").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-food-action]");
+  if (!button) return;
+  if (button.dataset.foodAction === "delete") state.foodLogs = state.foodLogs.filter((item) => item.id !== button.dataset.id);
+  render();
+});
+
+$("#foodCatalogGrid").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-food-pick]");
+  if (!button) return;
+  fillFoodFromCatalog(button.dataset.foodPick);
+  $("#foodForm").scrollIntoView({ behavior: "smooth", block: "start" });
+});
+
+$("#seedNutritionButton").addEventListener("click", () => {
+  state.foodLogs = seedState.foodLogs.map(normalizeFoodLog);
+  render();
+});
+
 $("#createWeekPlanButton").addEventListener("click", () => {
   const season = activeSeason();
   const objective = season?.objective || "condicionamento";
@@ -2651,6 +2989,7 @@ $("#reloadAppButton").addEventListener("click", () => window.location.reload());
 applyAppearance();
 resetForm();
 resetBodyForm();
+resetFoodForm();
 resetSeasonForm();
 registerServiceWorker();
 render();

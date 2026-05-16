@@ -50,6 +50,8 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [x] Criar modelos rapidos de detalhes por modalidade no formulario.
 - [x] Exibir status PWA/offline e atualizar app com um clique.
 - [x] Refinar acabamento visual geral: hierarquia, espacamentos, grids responsivos, cards e estados de foco.
+- [x] Corrigir sidebar para rail compacta estilo Finanza, definir black/roxo como padrao e criar contextos internos por modalidade.
+- [x] Criar categoria de alimentacao com diario de alimentos, calorias, gasto estimado por treino e metas diarias.
 - [ ] Validar no uso real por uma semana.
 - [~] Decidir se a primeira base duravel sera `localStorage`, IndexedDB, SQLite/Capacitor ou API Node.
 
