@@ -49,6 +49,7 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [x] Criar limpeza de dados com deduplicacao, normalizacao e snapshot.
 - [x] Criar modelos rapidos de detalhes por modalidade no formulario.
 - [x] Exibir status PWA/offline e atualizar app com um clique.
+- [x] Refinar acabamento visual geral: hierarquia, espacamentos, grids responsivos, cards e estados de foco.
 - [ ] Validar no uso real por uma semana.
 - [~] Decidir se a primeira base duravel sera `localStorage`, IndexedDB, SQLite/Capacitor ou API Node.
 
