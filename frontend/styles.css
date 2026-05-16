@@ -182,24 +182,27 @@ textarea:focus-visible {
   z-index: 100;
   display: flex;
   flex-direction: column;
-  width: 96px;
+  width: 224px;
   height: 100vh;
   border-right: 1px solid var(--line);
   background: var(--surface);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   box-shadow: 12px 0 34px rgba(0, 0, 0, 0.18);
-  padding: 24px 12px;
+  padding: 22px 14px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--accent) 30%, transparent) transparent;
 }
 
 .logo,
 .brand {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: 10px;
   min-height: 32px;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
 
 .brand-word {
@@ -207,7 +210,7 @@ textarea:focus-visible {
   align-items: center;
   gap: 0;
   font-family: var(--font-display);
-  font-size: 18px;
+  font-size: 21px;
   font-weight: 800;
   line-height: 1;
 }
@@ -220,20 +223,16 @@ textarea:focus-visible {
   color: var(--text);
 }
 
-.brand-word span:last-child {
-  display: none;
-}
-
 .brand-actions {
-  display: none;
+  display: flex;
   gap: 6px;
 }
 
 .theme-btn {
   display: grid;
   place-items: center;
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border-radius: 9px;
   background: var(--surface-2);
   color: var(--soft);
@@ -248,10 +247,10 @@ textarea:focus-visible {
 .sb-search {
   display: flex;
   align-items: center;
-  justify-content: center;
-  min-height: 46px;
-  margin-bottom: 18px;
-  padding: 0;
+  gap: 8px;
+  min-height: 40px;
+  margin-bottom: 16px;
+  padding: 9px 44px 9px 12px;
   border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
   border-radius: 15px;
   background:
@@ -262,8 +261,8 @@ textarea:focus-visible {
 }
 
 .sb-search::after {
-  content: "";
-  display: none;
+  content: "Ctrl K";
+  display: block;
   position: absolute;
   right: 9px;
   top: 50%;
@@ -285,11 +284,18 @@ textarea:focus-visible {
 }
 
 .sb-search input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-  pointer-events: none;
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  padding: 0;
+  min-height: auto;
+  outline: none;
+  font-size: 13px;
+  font-weight: 700;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .sb-search input::placeholder {
@@ -298,7 +304,7 @@ textarea:focus-visible {
 }
 
 .nav-lbl {
-  display: none;
+  display: block;
   margin: 0 0 6px 10px;
   color: var(--muted);
   font-size: 9px;
@@ -324,22 +330,22 @@ article small,
 
 .nav {
   display: grid;
-  gap: 8px;
+  gap: 4px;
 }
 
 .nav button,
 .nav-item {
-  display: grid;
-  place-items: center;
-  gap: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   width: 100%;
-  min-height: 48px;
-  padding: 0;
+  min-height: 37px;
+  padding: 8px 10px;
   border: 1px solid transparent;
-  border-radius: 16px;
+  border-radius: 12px;
   background: transparent;
   color: var(--soft);
-  font-size: 0;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.18s;
@@ -347,9 +353,9 @@ article small,
 
 .nav .ico,
 .nav-item .ico {
-  width: auto;
+  width: 20px;
   text-align: center;
-  font-size: 19px;
+  font-size: 15px;
   line-height: 1;
 }
 
@@ -380,20 +386,20 @@ article small,
 }
 
 .sidebar-utility {
-  display: none;
+  display: grid;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 16px;
+  gap: 10px;
+  margin-top: 14px;
 }
 
 .sidebar-card {
   border: 1px solid color-mix(in srgb, var(--accent) 16%, transparent);
-  border-radius: 18px;
+  border-radius: 16px;
   background:
     linear-gradient(160deg, color-mix(in srgb, var(--accent) 8%, transparent), rgba(90, 245, 200, 0.04)),
     var(--surface-2);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  padding: 14px;
+  padding: 11px;
 }
 
 .sidebar-card-head {
@@ -405,7 +411,7 @@ article small,
 
 .sidebar-card-kicker {
   color: var(--accent);
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 900;
   letter-spacing: 0.6px;
   text-transform: uppercase;
@@ -421,8 +427,8 @@ article small,
 }
 
 .sidebar-card-edit {
-  min-height: 28px;
-  padding: 0 10px;
+  min-height: 26px;
+  padding: 0 9px;
   border-radius: 999px;
   font-size: 11px;
 }
@@ -430,14 +436,14 @@ article small,
 .sidebar-icon-shortcuts {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-  margin-top: 12px;
+  gap: 8px;
+  margin-top: 10px;
 }
 
 .sidebar-icon-shortcuts button {
-  min-height: 48px;
-  border-radius: 15px;
-  font-size: 20px;
+  min-height: 38px;
+  border-radius: 12px;
+  font-size: 17px;
 }
 
 .sidebar-mini-actions {
@@ -447,7 +453,7 @@ article small,
 }
 
 .sidebar-mini-btn {
-  min-height: 34px;
+  min-height: 32px;
   border-radius: 11px;
   font-size: 12px;
 }
@@ -460,10 +466,11 @@ article small,
 
 .sb-bottom {
   margin-top: auto;
+  padding-top: 12px;
 }
 
 .made-by {
-  display: none;
+  display: block;
   margin: 0 2px 12px;
   color: var(--muted);
   font-size: 10px;
@@ -477,11 +484,12 @@ article small,
 }
 
 .acct-btn {
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   width: 100%;
-  min-height: 48px;
-  padding: 0;
+  min-height: 50px;
+  padding: 8px 9px;
   border: 1px solid var(--line);
   border-radius: 16px;
   background: var(--surface-2);
@@ -509,87 +517,13 @@ article small,
 }
 
 .acct-copy {
-  display: none;
+  display: block;
+  flex: 1;
+  min-width: 0;
 }
 
 .acct-btn > span {
-  display: none;
-}
-
-@media (min-width: 901px) {
-  .sidebar:hover,
-  .sidebar:focus-within {
-    width: 236px;
-    align-items: stretch;
-    padding: 24px 16px;
-  }
-
-  .sidebar:hover .brand,
-  .sidebar:focus-within .brand {
-    justify-content: space-between;
-  }
-
-  .sidebar:hover .brand-word span:last-child,
-  .sidebar:focus-within .brand-word span:last-child,
-  .sidebar:hover .brand-actions,
-  .sidebar:focus-within .brand-actions,
-  .sidebar:hover .sidebar-utility,
-  .sidebar:focus-within .sidebar-utility {
-    display: flex;
-  }
-
-  .sidebar:hover .sb-search,
-  .sidebar:focus-within .sb-search {
-    justify-content: flex-start;
-    gap: 8px;
-    padding: 10px 12px;
-  }
-
-  .sidebar:hover .sb-search input,
-  .sidebar:focus-within .sb-search input {
-    position: static;
-    flex: 1;
-    width: auto;
-    height: auto;
-    min-height: auto;
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  .sidebar:hover .nav-item,
-  .sidebar:focus-within .nav-item,
-  .sidebar:hover .nav button,
-  .sidebar:focus-within .nav button {
-    display: flex;
-    justify-content: flex-start;
-    gap: 10px;
-    min-height: 39px;
-    padding: 9px 12px;
-    font-size: 13px;
-  }
-
-  .sidebar:hover .made-by,
-  .sidebar:focus-within .made-by {
-    display: block;
-  }
-
-  .sidebar:hover .acct-btn,
-  .sidebar:focus-within .acct-btn {
-    display: flex;
-    gap: 10px;
-    padding: 9px 10px;
-  }
-
-  .sidebar:hover .acct-copy,
-  .sidebar:focus-within .acct-copy {
-    display: block;
-    flex: 1;
-  }
-
-  .sidebar:hover .acct-btn > span,
-  .sidebar:focus-within .acct-btn > span {
-    display: inline;
-  }
+  display: inline;
 }
 
 .uname {
@@ -634,7 +568,7 @@ article small,
   width: 100%;
   max-width: 1720px;
   margin: 0 auto;
-  padding: 28px 28px 96px 124px;
+  padding: 28px 28px 96px 252px;
 }
 
 .pwa-banner {
