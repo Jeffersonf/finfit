@@ -2597,7 +2597,8 @@ article {
 }
 
 .daily-check {
-  margin: 14px 0 16px;
+  margin: 0 0 14px;
+  border-color: color-mix(in srgb, var(--accent) 18%, transparent);
 }
 
 .daily-check-grid,
@@ -2665,6 +2666,15 @@ article {
 .daily-summary-grid span {
   font-weight: 900;
   text-transform: uppercase;
+}
+
+#page-today .hero {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+#page-today .weekly-coach {
+  margin-top: 0;
 }
 
 .primary-action,
