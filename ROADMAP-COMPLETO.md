@@ -56,6 +56,7 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [x] Criar painel simples na dashboard para marcar treinos feitos hoje e ver dados imediatos do dia.
 - [x] Salvar versao `v1.1.0-pre-sport-ui` antes do passe visual esportivo.
 - [x] Fazer redesign completo do shell visual: sidebar esportiva compacta, topbar de arena, paineis unificados e telas internas com linguagem de performance.
+- [x] Refatorar CSS acumulado: reduzir de 87 KB para uma folha limpa de 22 KB, trocar paleta para grafite/laranja/verde e remover camadas pesadas de override.
 - [ ] Validar no uso real por uma semana.
 - [~] Decidir se a primeira base duravel sera `localStorage`, IndexedDB, SQLite/Capacitor ou API Node.
 
