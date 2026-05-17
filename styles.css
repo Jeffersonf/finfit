@@ -3812,3 +3812,879 @@ textarea {
     animation-iteration-count: 1 !important;
   }
 }
+
+/* Complete redesign pass: sport product shell, unified panels, dense training UI. */
+:root {
+  --sport-bg: #03020a;
+  --sport-ink: #f7f4ff;
+  --sport-muted: rgba(247, 244, 255, 0.58);
+  --sport-panel: rgba(13, 10, 24, 0.92);
+  --sport-panel-2: rgba(19, 15, 34, 0.86);
+  --sport-line: rgba(171, 142, 255, 0.18);
+  --sport-line-strong: rgba(171, 142, 255, 0.42);
+  --sport-green: #c8f55a;
+  --sport-purple: #a78bfa;
+  --sport-cyan: #5af5c8;
+  --sport-danger: #f5705a;
+  --sport-radius: 10px;
+}
+
+html[data-theme="black"] {
+  --bg: var(--sport-bg);
+  --bg2: #070411;
+  --surface: var(--sport-panel);
+  --surface-2: var(--sport-panel-2);
+  --surface-solid: #0b0715;
+  --line: var(--sport-line);
+  --line-soft: rgba(255, 255, 255, 0.06);
+  --text: var(--sport-ink);
+  --muted: var(--sport-muted);
+  --soft: rgba(247, 244, 255, 0.82);
+  --accent: var(--sport-purple);
+  --teal: var(--sport-green);
+  --radius: var(--sport-radius);
+  --radius-lg: 14px;
+  --shadow-soft: none;
+  --shadow-card: none;
+  --shadow-lift: 0 16px 38px rgba(0, 0, 0, 0.32);
+  --grad-bg:
+    linear-gradient(180deg, #05020d 0%, #080415 46%, #03020a 100%);
+}
+
+html[data-theme="black"][data-accent="lime"] {
+  --accent: var(--sport-green);
+  --teal: var(--sport-purple);
+}
+
+html[data-theme="black"][data-accent="teal"] {
+  --accent: var(--sport-cyan);
+  --teal: var(--sport-purple);
+}
+
+body {
+  min-height: 100vh;
+  background:
+    linear-gradient(90deg, rgba(167, 139, 250, 0.055), transparent 26%),
+    linear-gradient(180deg, #05020d, #03020a 58%, #000);
+}
+
+body::before {
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.014) 1px, transparent 1px);
+  background-size: 56px 56px;
+  opacity: 0.42;
+}
+
+button,
+input,
+select,
+textarea {
+  letter-spacing: 0;
+}
+
+button {
+  border-radius: 10px;
+  border-color: rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+button:hover {
+  border-color: var(--sport-line-strong);
+  background: rgba(167, 139, 250, 0.1);
+}
+
+input,
+select,
+textarea {
+  border-color: rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.045);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--sport-line-strong);
+  background: rgba(255, 255, 255, 0.065);
+}
+
+.sidebar {
+  width: 104px;
+  padding: 18px 10px;
+  border-right-color: rgba(167, 139, 250, 0.2);
+  background:
+    linear-gradient(180deg, rgba(20, 14, 36, 0.96), rgba(7, 4, 15, 0.96)),
+    #080411;
+  box-shadow: none;
+}
+
+.brand {
+  display: grid;
+  justify-items: center;
+  gap: 9px;
+  margin-bottom: 18px;
+}
+
+.brand-word {
+  display: grid;
+  width: 64px;
+  height: 64px;
+  place-items: center;
+  border: 1px solid rgba(167, 139, 250, 0.28);
+  border-radius: 18px;
+  background:
+    linear-gradient(145deg, rgba(167, 139, 250, 0.22), rgba(200, 245, 90, 0.08)),
+    rgba(255, 255, 255, 0.04);
+  font-size: 17px;
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+.brand-word span:first-child,
+.brand-word span:last-child {
+  color: var(--text);
+}
+
+.brand-actions {
+  gap: 7px;
+}
+
+.theme-btn {
+  width: 31px;
+  height: 31px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.nav-lbl,
+.sb-search,
+.sidebar-utility,
+.sb-bottom,
+.nav [data-page-target="body"],
+.nav [data-page-target="library"],
+.nav [data-page-target="user"] {
+  display: none;
+}
+
+.nav {
+  gap: 8px;
+}
+
+.nav button,
+.nav-item {
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+  min-height: 70px;
+  padding: 9px 4px;
+  border-radius: 16px;
+  color: rgba(247, 244, 255, 0.6);
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1.12;
+  text-align: center;
+}
+
+.nav .ico,
+.nav-item .ico {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.045);
+  font-size: 15px;
+}
+
+.nav button:hover,
+.nav-item:hover {
+  border-color: rgba(167, 139, 250, 0.24);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.nav button.active,
+.nav-item.active,
+.nav-item.fn.active,
+.nav-item.an.active {
+  border-color: rgba(200, 245, 90, 0.42);
+  background:
+    linear-gradient(145deg, rgba(167, 139, 250, 0.22), rgba(200, 245, 90, 0.1));
+  color: var(--text);
+}
+
+.nav button.active .ico,
+.nav-item.active .ico {
+  background: var(--sport-green);
+  color: #11130a;
+}
+
+.shell {
+  max-width: 1660px;
+  padding: 18px 22px 72px 126px;
+}
+
+.pwa-banner {
+  min-height: 34px;
+  margin-bottom: 10px;
+  padding: 7px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  margin: -18px -22px 14px;
+  padding: 16px 22px 12px;
+  border-bottom: 1px solid rgba(167, 139, 250, 0.14);
+  background: rgba(3, 2, 10, 0.86);
+  backdrop-filter: blur(18px) saturate(150%);
+}
+
+.pt {
+  font-family: var(--font-display);
+  font-size: clamp(1.45rem, 2.6vw, 2.55rem);
+  font-weight: 800;
+}
+
+.ps {
+  color: var(--sport-muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.primary-action,
+.save-workout,
+.form-actions .save-workout {
+  border: 0;
+  background: linear-gradient(135deg, var(--sport-purple), #7c3aed);
+  color: white;
+  font-weight: 900;
+}
+
+.primary-action:hover,
+.save-workout:hover {
+  background: linear-gradient(135deg, #b49cff, #8b5cf6);
+  transform: translateY(-1px);
+}
+
+.activity-focus,
+.sport-selector {
+  grid-template-columns: 168px minmax(0, 1fr);
+  margin-bottom: 10px;
+}
+
+.sport-selector .activity-focus-head,
+.sport-selector .activity-focus-grid button,
+.activity-hub {
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.sport-selector .activity-focus-head {
+  min-height: 62px;
+}
+
+.sport-selector .activity-focus-head strong {
+  font-size: 1.18rem;
+}
+
+.sport-selector .activity-focus-grid {
+  grid-template-columns: repeat(6, minmax(108px, 1fr));
+}
+
+.sport-selector .activity-focus-grid button {
+  min-height: 62px;
+  padding: 9px;
+}
+
+.sport-selector .activity-focus-grid button span {
+  font-size: 1.08rem;
+}
+
+.sport-selector .activity-focus-grid button.active {
+  background:
+    linear-gradient(135deg, rgba(167, 139, 250, 0.26), rgba(200, 245, 90, 0.08)),
+    rgba(255, 255, 255, 0.055);
+}
+
+.activity-hub {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(280px, 1.1fr);
+  gap: 12px;
+  align-items: stretch;
+  padding: 12px;
+}
+
+.activity-hub-main {
+  align-items: stretch;
+}
+
+.activity-hub-title {
+  min-width: 0;
+}
+
+.activity-hub-title > span {
+  width: 42px;
+  height: 42px;
+}
+
+.activity-hub-actions {
+  align-content: center;
+}
+
+.activity-hub-actions button {
+  min-height: 34px;
+  border-radius: 10px;
+}
+
+.activity-hub-stats {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.activity-hub-stats div,
+.activity-specific,
+.context-last,
+.activity-category-grid button,
+.context-plan-list button,
+.module-kpis div,
+.module-list div,
+.running-card,
+.progress-card,
+.record-card,
+.exercise-card,
+.insight-card,
+.season-card,
+.period-card,
+.duplicate-card,
+.food-item,
+.food-catalog-grid button,
+.nutrition-kpis div,
+.nutrition-goals,
+.quick-action-card,
+.workout-list li,
+.day,
+.timeline-item,
+.body-item,
+.favorite-card,
+.template-card {
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  border-radius: 10px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.02)),
+    rgba(9, 7, 17, 0.78);
+  box-shadow: none;
+}
+
+article,
+.panel,
+.box,
+.sc {
+  border-color: rgba(255, 255, 255, 0.075);
+  border-radius: 14px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.046), rgba(255, 255, 255, 0.018)),
+    rgba(9, 7, 17, 0.86);
+  box-shadow: none;
+}
+
+article::after,
+.panel::after,
+.box::after,
+.sc::after,
+.sc::before {
+  display: none;
+}
+
+.panel-header {
+  min-height: 38px;
+  margin-bottom: 12px;
+  padding-bottom: 9px;
+  border-bottom-color: rgba(167, 139, 250, 0.14);
+}
+
+.panel-header h3,
+.ct,
+h3 {
+  font-family: var(--font-display);
+  font-size: 1rem;
+}
+
+.eyebrow,
+label span,
+.cl,
+.ct,
+.activity-hub-stats span,
+.module-kpis span,
+.nutrition-kpis span {
+  color: rgba(247, 244, 255, 0.52);
+  font-size: 0.66rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.training-cockpit {
+  grid-template-columns: minmax(0, 1.55fr) minmax(320px, 0.72fr);
+  gap: 12px;
+}
+
+.training-cockpit .daily-check {
+  min-height: 640px;
+  padding: 15px;
+  border: 1px solid rgba(167, 139, 250, 0.22);
+  border-radius: 16px;
+  background:
+    linear-gradient(135deg, rgba(167, 139, 250, 0.18), transparent 36%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.018)),
+    #090614;
+}
+
+.training-cockpit .daily-check::before {
+  opacity: 0.55;
+}
+
+.daily-check-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.daily-check-grid button {
+  min-height: 118px;
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.02)),
+    rgba(255, 255, 255, 0.025);
+}
+
+.daily-check-grid button span {
+  border-radius: 11px;
+}
+
+.daily-check-grid button.done {
+  border-color: rgba(200, 245, 90, 0.58);
+  background:
+    linear-gradient(145deg, rgba(200, 245, 90, 0.18), rgba(167, 139, 250, 0.14)),
+    rgba(255, 255, 255, 0.05);
+}
+
+.daily-summary-grid,
+.daily-analysis-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.daily-summary-grid div {
+  min-height: 94px;
+  border-radius: 11px;
+}
+
+.daily-summary-grid strong,
+.activity-hub-stats strong,
+.nutrition-kpis strong,
+.module-kpis strong,
+.cv {
+  font-family: var(--font-display);
+}
+
+.daily-week-strip div {
+  border-radius: 9px;
+}
+
+.daily-side-checks {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.daily-food-grid,
+.daily-body-grid,
+.daily-favorite-grid,
+.sport-insight-grid {
+  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+}
+
+.daily-food-grid button,
+.daily-body-grid button,
+.daily-favorite-grid button,
+.next-action-grid button {
+  min-height: 62px;
+}
+
+.daily-timeline button {
+  min-height: 58px;
+}
+
+.training-cockpit .hero {
+  align-items: stretch;
+  border: 1px solid rgba(167, 139, 250, 0.18);
+  border-radius: 14px;
+}
+
+.training-cockpit .hero h2 {
+  font-size: 1.2rem;
+}
+
+.training-cockpit .weekly-coach,
+.training-cockpit .quick-actions-widget,
+.training-cockpit .quick-add,
+.training-cockpit .work-mode {
+  border-radius: 14px;
+}
+
+.training-cockpit .quick-add,
+.training-cockpit .work-mode {
+  grid-column: 1 / -1;
+}
+
+.quick-actions-grid {
+  gap: 8px;
+}
+
+.quick-action-card.primary {
+  border-color: rgba(200, 245, 90, 0.42);
+  background: rgba(200, 245, 90, 0.1);
+}
+
+.metrics,
+.running-kpis,
+.nutrition-kpis,
+.module-kpis {
+  gap: 8px;
+}
+
+.metrics .sc,
+.running-kpis .sc,
+.profile-stats article {
+  min-height: 104px;
+  border-left: 3px solid rgba(167, 139, 250, 0.58);
+}
+
+.ci {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.cv,
+article strong {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.workspace,
+.progress-secondary {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+}
+
+.quick-add,
+.data-panel,
+.work-mode,
+.running-lab,
+.nutrition-dashboard {
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+.workout-form,
+.body-form,
+.food-form,
+.season-form,
+.filter-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.quick-text {
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.sport-preset-grid,
+.quick-start-grid,
+.plan-grid,
+.periodization-grid,
+.progress-grid,
+.record-grid,
+.exercise-grid,
+.favorite-grid,
+.template-list,
+.data-health-grid {
+  gap: 8px;
+}
+
+.sport-preset,
+.quick-start-grid button,
+.timer-controls button,
+.data-actions button,
+.file-action,
+.form-actions button,
+.panel-header button,
+.timeline-actions button,
+.card-actions button {
+  border-radius: 10px;
+}
+
+.live-grid {
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 10px;
+}
+
+.timer-face,
+.rest-face {
+  border-color: rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background:
+    linear-gradient(145deg, rgba(167, 139, 250, 0.12), rgba(200, 245, 90, 0.045)),
+    rgba(255, 255, 255, 0.035);
+}
+
+.timer-face strong,
+.rest-face strong {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 5vw, 4rem);
+}
+
+.workout-list,
+.timeline,
+.food-list,
+.body-list,
+.insight-list,
+.season-list,
+.module-list,
+.run-prescription-list,
+.pace-zone-list {
+  display: grid;
+  gap: 8px;
+}
+
+.workout-list li,
+.timeline-item,
+.food-item,
+.body-item,
+.insight-card,
+.record-card,
+.exercise-card,
+.season-card,
+.period-card,
+.running-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.workout-list li::before,
+.timeline-item::before,
+.food-item::before,
+.body-item::before,
+.insight-card::before,
+.record-card::before,
+.exercise-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: rgba(167, 139, 250, 0.54);
+}
+
+.nutrition-dashboard {
+  padding: 16px;
+}
+
+.nutrition-kpis {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.nutrition-kpis div {
+  min-height: 98px;
+  border-left: 3px solid rgba(200, 245, 90, 0.52);
+}
+
+.nutrition-goals {
+  align-items: end;
+  margin-top: 10px;
+}
+
+.food-catalog-grid {
+  gap: 8px;
+}
+
+.food-catalog-grid button {
+  min-height: 72px;
+}
+
+.sport-modules-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.sport-module {
+  min-height: 280px;
+}
+
+.running-lab {
+  padding: 16px;
+}
+
+.running-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.running-card.wide-running {
+  grid-column: span 2;
+}
+
+.running-card {
+  min-height: 160px;
+}
+
+.data-actions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.data-actions button,
+.file-action {
+  min-height: 46px;
+}
+
+.user-panel,
+.data-panel {
+  max-width: none;
+}
+
+.appearance-grid,
+.swatch-grid,
+.profile-stats {
+  gap: 8px;
+}
+
+.swatch {
+  min-height: 48px;
+}
+
+.profile-chip {
+  padding: 5px 9px;
+  border: 1px solid rgba(200, 245, 90, 0.32);
+  border-radius: 999px;
+  color: var(--sport-green);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+@media (max-width: 1320px) {
+  .activity-hub {
+    grid-template-columns: 1fr;
+  }
+
+  .activity-hub-stats,
+  .sport-selector .activity-focus-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .training-cockpit {
+    grid-template-columns: 1fr;
+  }
+
+  .training-cockpit .daily-check {
+    min-height: 0;
+  }
+
+  .sport-modules-grid,
+  .running-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 980px) {
+  .sidebar {
+    width: auto;
+    min-height: 74px;
+    padding: 0 6px calc(6px + env(safe-area-inset-bottom));
+    border-right: 0;
+    border-top: 1px solid rgba(167, 139, 250, 0.2);
+  }
+
+  .brand,
+  .nav-lbl,
+  .sb-search,
+  .sidebar-utility,
+  .sb-bottom {
+    display: none;
+  }
+
+  .nav {
+    display: flex;
+    gap: 2px;
+    overflow-x: auto;
+  }
+
+  .nav button,
+  .nav-item {
+    min-width: 72px;
+    min-height: 66px;
+    border-radius: 12px;
+  }
+
+  .shell {
+    padding: 14px 12px calc(94px + env(safe-area-inset-bottom));
+  }
+
+  .topbar {
+    margin: -14px -12px 12px;
+    padding: 13px 12px 10px;
+  }
+
+  .activity-focus,
+  .sport-selector,
+  .activity-hub,
+  .training-cockpit,
+  .workspace,
+  .progress-secondary,
+  .live-grid,
+  .workout-form,
+  .body-form,
+  .food-form,
+  .season-form,
+  .filter-grid,
+  .quick-text,
+  .nutrition-goals {
+    grid-template-columns: 1fr;
+  }
+
+  .sport-selector .activity-focus-grid {
+    display: flex;
+    grid-template-columns: none;
+    overflow-x: auto;
+  }
+
+  .sport-selector .activity-focus-grid button {
+    min-width: 136px;
+  }
+
+  .daily-check-grid,
+  .daily-summary-grid,
+  .daily-analysis-grid,
+  .daily-side-checks,
+  .next-action-grid,
+  .nutrition-kpis,
+  .activity-hub-stats,
+  .training-cockpit .quick-actions-grid,
+  .training-cockpit .metrics,
+  .sport-modules-grid,
+  .running-grid,
+  .data-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .daily-check-grid button {
+    min-height: 78px;
+  }
+
+  .running-card.wide-running {
+    grid-column: auto;
+  }
+}
