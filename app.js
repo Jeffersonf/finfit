@@ -153,6 +153,7 @@ let activeSession = loadActiveSession();
 let timerInterval = null;
 let activeSportFilter = loadSportFilter();
 let activeActivityCategory = "todos";
+let selectedDailyWorkoutId = "";
 let dataHealth = {
   driver: "localStorage",
   indexedDb: "pendente",
@@ -1056,12 +1057,17 @@ function dailyCheckWorkout(item) {
 function renderDailyCheck() {
   const grid = $("#dailyCheckGrid");
   const summary = $("#dailySummaryGrid");
-  if (!grid || !summary) return;
+  const quickEdit = $("#dailyQuickEdit");
+  const timeline = $("#dailyTimeline");
+  const weekStrip = $("#dailyWeekStrip");
+  if (!grid || !summary || !quickEdit || !timeline || !weekStrip) return;
   const done = todayWorkouts();
   const nutrition = nutritionSummary(todayIso());
   const minutes = done.reduce((sum, workout) => sum + Number(workout.duration || 0), 0);
   const load = done.reduce((sum, workout) => sum + workoutLoad(workout), 0);
   const burned = exerciseCalories(todayIso());
+  if (selectedDailyWorkoutId && !state.workouts.some((workout) => workout.id === selectedDailyWorkoutId)) selectedDailyWorkoutId = "";
+  const selected = state.workouts.find((workout) => workout.id === selectedDailyWorkoutId) || done.at(-1);
   grid.innerHTML = dailyCheckItems.map((item) => {
     const checked = done.some((workout) => workout.type === item.type);
     return `
@@ -1078,6 +1084,40 @@ function renderDailyCheck() {
     ["Gasto", `${burned} kcal`, "estimado"],
     ["Alimentacao", `${nutrition.consumed} kcal`, `${nutrition.remaining >= 0 ? nutrition.remaining : Math.abs(nutrition.remaining)} kcal ${nutrition.remaining >= 0 ? "livres" : "acima"}`]
   ].map(([label, value, hint]) => `<div><span>${label}</span><strong>${value}</strong><small>${hint}</small></div>`).join("");
+  weekStrip.innerHTML = weekDays.map((day) => {
+    const date = dateForCurrentWeekday(day.key);
+    const items = state.workouts.filter((workout) => workout.date === date && workout.status !== "pulado");
+    const isToday = date === todayIso();
+    return `<div class="${isToday ? "today" : ""} ${items.length ? "done" : ""}"><span>${day.label}</span><strong>${items.length}</strong><small>${items.reduce((sum, item) => sum + Number(item.duration || 0), 0)}min</small></div>`;
+  }).join("");
+  quickEdit.innerHTML = selected ? `
+    <div class="daily-edit-head">
+      <div>
+        <span>Editar rapido</span>
+        <strong>${selected.name}</strong>
+      </div>
+      <button type="button" data-daily-select="${selected.id}">Abrir completo</button>
+    </div>
+    <div class="daily-edit-form">
+      <label><span>Tempo</span><input id="dailyEditDuration" type="number" min="1" step="1" value="${Number(selected.duration || 0)}"></label>
+      <label><span>Intensidade</span><select id="dailyEditIntensity">
+        ${["leve", "moderado", "forte", "maximo"].map((value) => `<option value="${value}" ${selected.intensity === value ? "selected" : ""}>${value}</option>`).join("")}
+      </select></label>
+      <label><span>RPE</span><input id="dailyEditRpe" type="number" min="1" max="10" step="1" value="${selected.rpe || intensityToRpe(selected.intensity)}"></label>
+      <label class="wide"><span>Nota</span><input id="dailyEditNote" value="${escapeAttr(selected.note || "")}" placeholder="como foi?"></label>
+      <button type="button" class="save-workout" id="dailyEditSaveButton">Salvar ajuste</button>
+    </div>
+  ` : '<p class="empty-state">Marque um treino acima para ajustar tempo, intensidade e nota.</p>';
+  timeline.innerHTML = done.length ? `
+    <div class="daily-section-title">Hoje registrado</div>
+    ${done.map((workout) => `
+      <button type="button" class="${workout.id === selected?.id ? "active" : ""}" data-daily-focus="${workout.id}">
+        <span>${sportIcon(workout.type)}</span>
+        <strong>${workout.name}</strong>
+        <small>${workout.duration}min - ${workout.intensity} - carga ${workoutLoad(workout)}</small>
+      </button>
+    `).join("")}
+  ` : '<p class="empty-state">Nada registrado hoje ainda. Marque o primeiro item acima.</p>';
 }
 
 function toggleDailyCheck(id) {
@@ -1091,7 +1131,9 @@ function toggleDailyCheck(id) {
   } else if (sameTypeAlreadyLogged) {
     return;
   } else {
-    upsertWorkout(dailyCheckWorkout(item));
+    const workout = dailyCheckWorkout(item);
+    selectedDailyWorkoutId = workout.id;
+    upsertWorkout(workout);
   }
   render();
 }
@@ -1100,7 +1142,36 @@ function undoLastTodayWorkout() {
   const last = todayWorkouts().at(-1);
   if (!last) return;
   state.workouts = state.workouts.filter((workout) => workout.id !== last.id);
+  selectedDailyWorkoutId = "";
   render();
+}
+
+function dateForCurrentWeekday(dayKey) {
+  const today = new Date();
+  const monday = new Date(today);
+  const day = monday.getDay() || 7;
+  monday.setDate(monday.getDate() - day + 1);
+  const date = new Date(monday);
+  const offset = dayKey === 0 ? 6 : dayKey - 1;
+  date.setDate(monday.getDate() + offset);
+  return date.toISOString().slice(0, 10);
+}
+
+function escapeAttr(value) {
+  return String(value).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function dailyRecommendation() {
+  const done = todayWorkouts();
+  const body = latestBodyLog();
+  const load = loadSum(done);
+  const nutrition = nutritionSummary(todayIso());
+  if (!done.length) return ["Marque o primeiro treino do dia.", "Depois disso o Finfit mostra carga, gasto estimado e a proxima acao com mais contexto."];
+  if (body?.pain >= 5) return ["Hoje pede cuidado.", `Voce ja registrou ${done.length} treino(s), mas a dor recente esta ${body.pain}/10. Melhor fechar com recuperacao.`];
+  if (load >= 700) return ["Carga alta para hoje.", `Carga ${load}. Se ainda for treinar, prefira mobilidade ou tecnica leve.`];
+  if (nutrition.consumed && nutrition.remaining < 0) return ["Dia acima da meta alimentar.", `Treino marcado, mas o saldo passou ${Math.abs(nutrition.remaining)} kcal da meta. Ajuste a proxima refeicao sem drama.`];
+  if (done.some((workout) => workout.type === "academia") && !done.some((workout) => workout.type === "mobilidade")) return ["Feche com mobilidade curta.", "Academia ja entrou hoje. Dez minutos de mobilidade deixam a recuperacao mais legivel."];
+  return ["Dia em movimento.", `${done.length} treino(s), ${done.reduce((sum, item) => sum + Number(item.duration || 0), 0)}min e carga ${load}. Continue registrando o essencial.`];
 }
 
 function renderMetrics() {
@@ -1109,7 +1180,7 @@ function renderMetrics() {
   const sports = new Set(week.map((workout) => workout.type));
   const load = week.reduce((sum, item) => sum + workoutLoad(item), 0);
   const score = readiness();
-  const [title, text] = activeSportFilter === "todos" ? recommendation() : sportRecommendation(activeSportFilter, week);
+  const [title, text] = activeSportFilter === "todos" ? dailyRecommendation() : sportRecommendation(activeSportFilter, week);
 
   $("#todayLabel").textContent = new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long" });
   $("#readinessScore").textContent = score;
@@ -2601,6 +2672,32 @@ $("#dailyCheckGrid").addEventListener("click", (event) => {
 });
 
 $("#dailyUndoButton").addEventListener("click", undoLastTodayWorkout);
+
+$("#dailyCheckPanel").addEventListener("click", (event) => {
+  const focusButton = event.target.closest("[data-daily-focus]");
+  if (focusButton) {
+    selectedDailyWorkoutId = focusButton.dataset.dailyFocus;
+    renderDailyCheck();
+    return;
+  }
+  const fullButton = event.target.closest("[data-daily-select]");
+  if (fullButton) {
+    const workout = state.workouts.find((item) => item.id === fullButton.dataset.dailySelect);
+    if (workout) fillWorkoutForm(workout);
+    return;
+  }
+  if (event.target.closest("#dailyEditSaveButton")) {
+    const workout = state.workouts.find((item) => item.id === selectedDailyWorkoutId) || todayWorkouts().at(-1);
+    if (!workout) return;
+    workout.duration = numberOrBlank($("#dailyEditDuration").value) || workout.duration;
+    workout.intensity = $("#dailyEditIntensity").value;
+    workout.rpe = numberOrBlank($("#dailyEditRpe").value);
+    workout.note = $("#dailyEditNote").value.trim();
+    upsertWorkout(normalizeWorkout(workout));
+    selectedDailyWorkoutId = workout.id;
+    render();
+  }
+});
 
 $("#sportPresetGrid").addEventListener("click", (event) => {
   const button = event.target.closest("[data-type]");
