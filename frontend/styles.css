@@ -2609,7 +2609,9 @@ article {
 .daily-body-grid,
 .daily-favorite-grid,
 .daily-analysis-grid,
-.next-action-grid {
+.next-action-grid,
+.sport-insight-grid,
+.private-feed {
   display: grid;
   gap: 8px;
 }
@@ -2722,7 +2724,8 @@ article {
 .daily-food-grid,
 .daily-body-grid,
 .daily-favorite-grid,
-.daily-analysis-grid {
+.daily-analysis-grid,
+.sport-insight-grid {
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
 }
 
@@ -2781,7 +2784,18 @@ article {
   background: rgba(255, 255, 255, 0.03);
 }
 
+.sport-insight-grid div,
+.private-feed div {
+  display: grid;
+  gap: 2px;
+  padding: 10px;
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
 .daily-analysis-grid span,
+.sport-insight-grid span,
 .next-action-grid span {
   color: var(--muted);
   font-size: 0.72rem;
@@ -2789,14 +2803,36 @@ article {
   text-transform: uppercase;
 }
 
-.daily-analysis-grid strong {
+.daily-analysis-grid strong,
+.sport-insight-grid strong,
+.private-feed strong {
   display: block;
   color: var(--accent);
 }
 
-.daily-analysis-grid small {
+.daily-analysis-grid small,
+.sport-insight-grid small,
+.private-feed small,
+.private-feed em {
   color: var(--muted);
   font-size: 0.78rem;
+}
+
+.private-feed {
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+}
+
+.private-feed div {
+  grid-template-columns: auto 1fr;
+  align-items: start;
+}
+
+.private-feed span {
+  grid-row: span 3;
+}
+
+.private-feed em {
+  font-style: normal;
 }
 
 .next-action-grid {

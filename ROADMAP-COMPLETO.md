@@ -96,9 +96,9 @@ Objetivo desta fase: transformar o Finfit em um produto simples de abrir todo di
 - [x] Criar resumo diario: carga, calorias, dor, sono e consistencia.
 - [x] Criar resumo semanal: sessoes por modalidade, carga total, dias ativos e alerta de excesso.
 - [x] Criar comparacao simples com semana anterior.
-- [ ] Criar insights por modalidade apenas quando houver dados suficientes.
+- [x] Criar insights por modalidade apenas quando houver dados suficientes.
 - [x] Criar "proxima melhor acao" com 3 opcoes: treinar, recuperar ou registrar dado faltante.
-- [ ] Criar feed pessoal privado: ultimas atividades com PR, carga e nota.
+- [x] Criar feed pessoal privado: ultimas atividades com PR, carga e nota.
 
 ### Fase 4 - Modalidades completas
 

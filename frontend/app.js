@@ -1345,6 +1345,8 @@ function dailyAnalysisHtml() {
   const loadDelta = previous.load ? Math.round(((current.load - previous.load) / previous.load) * 100) : 0;
   const todayLoad = loadSum(todayWorkouts());
   const actions = nextActionOptions(current, previous, todayLoad);
+  const sportInsights = qualifiedSportInsights();
+  const feed = privateActivityFeed();
   return `
     <div class="daily-section-title">Analise simples</div>
     <div class="daily-analysis-grid">
@@ -1362,6 +1364,25 @@ function dailyAnalysisHtml() {
         </button>
       `).join("")}
     </div>
+    ${sportInsights.length ? `
+      <div class="daily-section-title">Insights por modalidade</div>
+      <div class="sport-insight-grid">
+        ${sportInsights.map((item) => `<div><span>${item.tag}</span><strong>${item.title}</strong><small>${item.text}</small></div>`).join("")}
+      </div>
+    ` : ""}
+    ${feed.length ? `
+      <div class="daily-section-title">Feed pessoal</div>
+      <div class="private-feed">
+        ${feed.map((item) => `
+          <div>
+            <span>${sportIcon(item.type)}</span>
+            <strong>${item.title}</strong>
+            <small>${item.meta}</small>
+            ${item.note ? `<em>${item.note}</em>` : ""}
+          </div>
+        `).join("")}
+      </div>
+    ` : ""}
   `;
 }
 
@@ -1375,6 +1396,76 @@ function nextActionOptions(current, previous, todayLoad) {
   if (missingBody || missingFood) actions.push({ tag: "Registrar", title: missingBody ? "Check-in de corpo" : "Check-in de comida", text: "Falta dado basico para o coach ler o dia direito.", action: missingBody ? "body" : "food" });
   actions.push({ tag: "Analisar", title: "Ver progresso", text: "Abra progresso para conferir recordes, carga e modalidades.", action: "progress" });
   return actions.slice(0, 3);
+}
+
+function qualifiedSportInsights() {
+  const insights = [];
+  const runs = runningWorkouts(42);
+  if (runs.length >= 3) {
+    const summary = runningSummary();
+    insights.push({
+      tag: "Corrida",
+      title: `${Math.round(summary.distance28 * 10) / 10}km em 28d`,
+      text: summary.avgPace ? `Pace medio ${formatPace(summary.avgPace)}/km. ${runningInsights()[0]?.[1] || "Base mensuravel."}` : "Registre distancia para liberar pace e zonas."
+    });
+  }
+  const strength = strengthSummary();
+  if (strength.workouts.length >= 3 && strength.exercises.length >= 2) {
+    const main = strength.exercises[0];
+    insights.push({
+      tag: "Musculacao",
+      title: `${strength.exercises.length} exercicios detectados`,
+      text: `${main.name}: melhor ${main.bestWeight || "-"}kg, volume ${Math.round(main.bestVolume)}. Grupo foco: ${strength.groups[0]?.[0] || "geral"}.`
+    });
+  }
+  const swim = swimSummary();
+  if (swim.swims.length >= 2 && swim.meters > 0) {
+    insights.push({
+      tag: "Natacao",
+      title: `${Math.round(swim.meters)}m registrados`,
+      text: `Media ${Math.round(swim.meters / swim.swims.length)}m por sessao. Foco mais comum: ${swim.styles[0]?.[0] || "sem estilo"}.`
+    });
+  }
+  const beach = beachSummary();
+  if (beach.games.length >= 2) {
+    insights.push({
+      tag: "Futevolei",
+      title: `${beach.games.length} sessoes`,
+      text: `Local mais comum: ${beach.places[0]?.[0] || "sem local"}. Intensos: ${beach.intense}.`
+    });
+  }
+  return insights.slice(0, 4);
+}
+
+function privateActivityFeed() {
+  return [...state.workouts]
+    .filter((workout) => workout.status !== "pulado")
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, 6)
+    .map((workout) => {
+      const pr = personalBestLabel(workout);
+      return {
+        type: workout.type,
+        title: workout.name,
+        meta: `${formatDate(workout.date)} - ${workout.duration}min - carga ${workoutLoad(workout)}${pr ? ` - ${pr}` : ""}`,
+        note: workout.note || workout.focus || ""
+      };
+    });
+}
+
+function personalBestLabel(workout) {
+  const before = state.workouts.filter((item) => item.id !== workout.id && item.type === workout.type && item.date <= workout.date);
+  if (Number(workout.distance || 0) > 0) {
+    const best = Math.max(0, ...before.map((item) => Number(item.distance || 0)));
+    if (Number(workout.distance) >= best && best > 0) return "PR distancia";
+  }
+  if (Number(workout.volume || 0) > 0) {
+    const best = Math.max(0, ...before.map((item) => Number(item.volume || 0)));
+    if (Number(workout.volume) >= best && best > 0) return "PR volume";
+  }
+  const bestLoad = Math.max(0, ...before.map(workoutLoad));
+  if (workoutLoad(workout) >= bestLoad && bestLoad > 0) return "maior carga";
+  return "";
 }
 
 function renderMetrics() {
