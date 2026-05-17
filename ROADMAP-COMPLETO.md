@@ -57,6 +57,84 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [ ] Validar no uso real por uma semana.
 - [~] Decidir se a primeira base duravel sera `localStorage`, IndexedDB, SQLite/Capacitor ou API Node.
 
+## Plano mestre - Design e funcionalidades
+
+Objetivo desta fase: transformar o Finfit em um produto simples de abrir todo dia, marcar o que foi feito e entender o que isso muda no treino, corpo e alimentacao. Tudo que nao ajudar esse ciclo deve ficar em segundo plano.
+
+### Principios de design
+
+- [ ] Dashboard primeiro como painel de acao: marcar treino, ver resumo do dia e decidir proximo passo.
+- [ ] Reduzir a sensacao de app cheio: menos cards simultaneos, menos texto explicativo e mais estados claros.
+- [ ] Usar hierarquia fixa: titulo pequeno, acao principal evidente, dados em blocos compactos e detalhes sob demanda.
+- [ ] Manter sidebar curta: apenas areas principais; atalhos e configuracoes ficam dentro da dashboard ou usuario.
+- [ ] Padronizar todos os widgets com os mesmos tamanhos de padding, borda, raio, sombra e tipografia.
+- [ ] Criar uma tela mobile realmente propria, com o painel de hoje como primeira dobra.
+- [ ] Separar "registrar" de "analisar": registro deve ser imediato; analise deve aparecer depois do dado salvo.
+- [ ] Remover ou esconder qualquer modulo que nao tenha dado suficiente para ser util.
+
+### Fase 1 - Dashboard util
+
+- [x] Criar painel para marcar treinos feitos hoje.
+- [ ] Permitir editar rapido duracao/intensidade logo apos marcar um treino.
+- [ ] Mostrar "hoje" como linha do tempo simples: treino, comida, corpo e notas.
+- [ ] Transformar recomendacao em uma frase curta baseada no que foi marcado hoje.
+- [ ] Criar estado vazio forte: quando nao ha dado, mostrar 2 ou 3 acoes claras, nao dashboards vazios.
+- [ ] Mover acoes rapidas secundarias para uma area colapsavel ou para suas paginas.
+- [ ] Mostrar semana em 7 dias com checks, carga e descanso, sem excesso de texto.
+
+### Fase 2 - Registro rapido completo
+
+- [ ] Criar modal/inline edit apos check-in: tempo, RPE, dor, nota e detalhe opcional.
+- [ ] Criar presets por modalidade com duracao e intensidade editaveis.
+- [ ] Criar check-in de alimentacao simples: refeicao, alimento rapido e calorias.
+- [ ] Criar check-in de corpo simples: sono, dor, energia e peso.
+- [ ] Permitir desfazer/editar qualquer item do dia sem ir para Historico.
+- [ ] Criar "favoritos de hoje": treinos ou refeicoes repetidos com um clique.
+
+### Fase 3 - Analise que ajuda
+
+- [ ] Criar resumo diario: carga, calorias, dor, sono e consistencia.
+- [ ] Criar resumo semanal: sessoes por modalidade, carga total, dias ativos e alerta de excesso.
+- [ ] Criar comparacao simples com semana anterior.
+- [ ] Criar insights por modalidade apenas quando houver dados suficientes.
+- [ ] Criar "proxima melhor acao" com 3 opcoes: treinar, recuperar ou registrar dado faltante.
+- [ ] Criar feed pessoal privado: ultimas atividades com PR, carga e nota.
+
+### Fase 4 - Modalidades completas
+
+- [ ] Musculacao: grupos musculares, exercicios, series, reps, carga, volume e recomendacoes por grupo.
+- [ ] Corrida: distancia, pace, elevacao, zonas, longao, tiros, base, fadiga e rotas.
+- [ ] Natacao: metragem, estilo, series, ritmo e tecnica.
+- [ ] Futevolei: jogo, tecnica, dupla, local, placar e intensidade.
+- [ ] Mobilidade: area do corpo, dor antes/depois e progresso de recuperacao.
+- [ ] Alimentacao: metas diarias, macros, alimentos frequentes, saldo com gasto de treino e historico.
+
+### Fase 5 - Integracoes
+
+- [ ] Definir backend/serverless minimo para integracoes que precisam de segredo.
+- [ ] Integrar Strava por OAuth2 e importar atividades.
+- [ ] Sincronizar novas atividades por webhook.
+- [ ] Importar Garmin/Coros/Polar via arquivos enquanto nao houver integracao direta.
+- [ ] Criar tela "Conexoes" em Dados.
+- [ ] Criar normalizador unico para atividades externas.
+
+### Fase 6 - Produto polido
+
+- [ ] Criar design system interno: tokens, botoes, cards, tabelas, listas, formularios e estados vazios.
+- [ ] Revisar todos os textos da interface para ficarem curtos, humanos e consistentes.
+- [ ] Testar desktop e mobile com screenshots antes de cada publicacao grande.
+- [ ] Criar onboarding simples: objetivo, modalidades, peso opcional, meta de alimentacao e frequencia semanal.
+- [ ] Criar backup/exportacao guiada para nao depender de lembrar onde fica Dados.
+- [ ] Definir o que vira 1.1: dashboard util, registro rapido completo e primeira analise semanal.
+
+### O que nao fazer agora
+
+- [-] Criar rede social, curtidas ou feed publico.
+- [-] Copiar visual, marca ou telas proprietarias do Strava.
+- [-] Adicionar graficos complexos antes do registro diario estar bom.
+- [-] Criar muitas configuracoes antes de validar uso real.
+- [-] Trocar a base de dados antes de fechar o fluxo principal.
+
 ## Como importar informacoes
 
 ### Strava - Integracao e inspiracao
