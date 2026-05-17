@@ -692,7 +692,7 @@ function recommendation() {
 function setPage(page) {
   $$(".page").forEach((item) => item.classList.toggle("active", item.id === `page-${page}`));
   $$("[data-page-target]").forEach((button) => button.classList.toggle("active", button.dataset.pageTarget === page));
-  const titles = { today: "Treinos da semana", plan: "Plano semanal", history: "Historico", progress: "Progresso", nutrition: "Alimentacao", body: "Corpo e recuperacao", library: "Biblioteca", data: "Dados", user: "Usuario" };
+  const titles = { today: "Arena de treino", plan: "Plano", history: "Diario", progress: "Performance", nutrition: "Nutri", body: "Corpo e recuperacao", library: "Biblioteca", data: "Dados", user: "Usuario" };
   $("#pageTitle").textContent = titles[page] || "Finfit";
 }
 
