@@ -53,6 +53,7 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [x] Corrigir sidebar para rail compacta estilo Finanza, definir black/roxo como padrao e criar contextos internos por modalidade.
 - [x] Criar categoria de alimentacao com diario de alimentos, calorias, gasto estimado por treino e metas diarias.
 - [x] Reduzir ruido visual geral: tipografia menor, widgets mais densos, menos sombra/glow e hierarquia mais consistente.
+- [x] Criar painel simples na dashboard para marcar treinos feitos hoje e ver dados imediatos do dia.
 - [ ] Validar no uso real por uma semana.
 - [~] Decidir se a primeira base duravel sera `localStorage`, IndexedDB, SQLite/Capacitor ou API Node.
 

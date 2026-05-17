@@ -106,6 +106,14 @@ const foodCatalog = [
   { id: "custom", name: "Personalizado", serving: "manual", calories: 0, protein: 0, carbs: 0, fat: 0 }
 ];
 
+const dailyCheckItems = [
+  { id: "academia", type: "academia", icon: "💪", label: "Musculacao", duration: 60, intensity: "moderado", focus: "geral" },
+  { id: "corrida", type: "corrida", icon: "🏃", label: "Corrida", duration: 35, intensity: "moderado", focus: "base" },
+  { id: "natacao", type: "natacao", icon: "🏊", label: "Natacao", duration: 45, intensity: "moderado", focus: "tecnica" },
+  { id: "futevolei", type: "futevolei", icon: "🏐", label: "Futevolei", duration: 90, intensity: "forte", focus: "jogo" },
+  { id: "mobilidade", type: "mobilidade", icon: "🧘", label: "Mobilidade", duration: 20, intensity: "leve", focus: "recuperacao" }
+];
+
 const baseTemplates = [
   { id: "tpl-upper", name: "Upper strength", type: "academia", detail: "Supino, remada, desenvolvimento, puxada e acessorios." },
   { id: "tpl-swim", name: "Natacao tecnica", type: "natacao", detail: "Aquecimento, educativos, tiros curtos e soltura." },
@@ -1020,6 +1028,81 @@ function renderTimer() {
   $("#startPauseButton").textContent = activeSession?.running ? "Pausar" : "Iniciar";
 }
 
+function todayWorkouts() {
+  const today = todayIso();
+  return state.workouts.filter((workout) => workout.date === today && workout.status !== "pulado");
+}
+
+function dailyCheckKey(item) {
+  return `checkin:${todayIso()}:${item.type}`;
+}
+
+function dailyCheckWorkout(item) {
+  return normalizeWorkout({
+    id: uid("workout"),
+    type: item.type,
+    name: item.label,
+    date: todayIso(),
+    duration: item.duration,
+    intensity: item.intensity,
+    status: "feito",
+    rpe: intensityToRpe(item.intensity),
+    focus: item.focus,
+    note: "Marcado no painel de hoje",
+    details: dailyCheckKey(item)
+  });
+}
+
+function renderDailyCheck() {
+  const grid = $("#dailyCheckGrid");
+  const summary = $("#dailySummaryGrid");
+  if (!grid || !summary) return;
+  const done = todayWorkouts();
+  const nutrition = nutritionSummary(todayIso());
+  const minutes = done.reduce((sum, workout) => sum + Number(workout.duration || 0), 0);
+  const load = done.reduce((sum, workout) => sum + workoutLoad(workout), 0);
+  const burned = exerciseCalories(todayIso());
+  grid.innerHTML = dailyCheckItems.map((item) => {
+    const checked = done.some((workout) => workout.type === item.type);
+    return `
+      <button type="button" class="${checked ? "done" : ""}" data-daily-check="${item.id}">
+        <span>${item.icon}</span>
+        <strong>${item.label}</strong>
+        <small>${checked ? "registrado hoje" : `${item.duration}min padrao`}</small>
+      </button>
+    `;
+  }).join("");
+  summary.innerHTML = [
+    ["Treinos", done.length, `${minutes}min hoje`],
+    ["Carga", load, load ? "min x RPE" : "sem carga"],
+    ["Gasto", `${burned} kcal`, "estimado"],
+    ["Alimentacao", `${nutrition.consumed} kcal`, `${nutrition.remaining >= 0 ? nutrition.remaining : Math.abs(nutrition.remaining)} kcal ${nutrition.remaining >= 0 ? "livres" : "acima"}`]
+  ].map(([label, value, hint]) => `<div><span>${label}</span><strong>${value}</strong><small>${hint}</small></div>`).join("");
+}
+
+function toggleDailyCheck(id) {
+  const item = dailyCheckItems.find((entry) => entry.id === id);
+  if (!item) return;
+  const key = dailyCheckKey(item);
+  const existing = state.workouts.find((workout) => workout.date === todayIso() && workout.type === item.type && String(workout.details || "").includes(key));
+  const sameTypeAlreadyLogged = state.workouts.some((workout) => workout.date === todayIso() && workout.type === item.type);
+  if (existing) {
+    state.workouts = state.workouts.filter((workout) => workout.id !== existing.id);
+  } else if (sameTypeAlreadyLogged) {
+    return;
+  } else {
+    upsertWorkout(dailyCheckWorkout(item));
+  }
+  render();
+}
+
+function undoLastTodayWorkout() {
+  const last = todayWorkouts().at(-1);
+  if (!last) return;
+  state.workouts = state.workouts.filter((workout) => workout.id !== last.id);
+  render();
+}
+
 function renderMetrics() {
   const week = scopedWorkouts(currentWeekWorkouts());
   const minutes = week.reduce((total, workout) => total + Number(workout.duration || 0), 0);
@@ -1916,6 +1999,7 @@ function render() {
   renderActivityFocus();
   renderPresets();
   renderQuickStart();
+  renderDailyCheck();
   renderMetrics();
   renderWeeklyCoach();
   renderWorkoutList();
@@ -2510,6 +2594,13 @@ $("#sidebarLiveWorkout").addEventListener("click", () => {
 });
 $("#dashboardQuickWorkout").addEventListener("click", () => $("#addWorkoutButton").click());
 $("#dashboardQuickLive").addEventListener("click", () => $("#sidebarLiveWorkout").click());
+
+$("#dailyCheckGrid").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-daily-check]");
+  if (button) toggleDailyCheck(button.dataset.dailyCheck);
+});
+
+$("#dailyUndoButton").addEventListener("click", undoLastTodayWorkout);
 
 $("#sportPresetGrid").addEventListener("click", (event) => {
   const button = event.target.closest("[data-type]");
