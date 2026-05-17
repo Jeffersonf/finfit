@@ -54,6 +54,7 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [x] Criar categoria de alimentacao com diario de alimentos, calorias, gasto estimado por treino e metas diarias.
 - [x] Reduzir ruido visual geral: tipografia menor, widgets mais densos, menos sombra/glow e hierarquia mais consistente.
 - [x] Criar painel simples na dashboard para marcar treinos feitos hoje e ver dados imediatos do dia.
+- [x] Salvar versao `v1.1.0-pre-sport-ui` antes do passe visual esportivo.
 - [ ] Validar no uso real por uma semana.
 - [~] Decidir se a primeira base duravel sera `localStorage`, IndexedDB, SQLite/Capacitor ou API Node.
 
@@ -71,6 +72,7 @@ Objetivo desta fase: transformar o Finfit em um produto simples de abrir todo di
 - [ ] Criar uma tela mobile realmente propria, com o painel de hoje como primeira dobra.
 - [ ] Separar "registrar" de "analisar": registro deve ser imediato; analise deve aparecer depois do dado salvo.
 - [ ] Remover ou esconder qualquer modulo que nao tenha dado suficiente para ser util.
+- [x] Fazer passe visual esportivo na primeira tela: seletor de modalidade forte, placar diario, semana em trilha e cards com cara de treino.
 
 ### Fase 1 - Dashboard util
 
