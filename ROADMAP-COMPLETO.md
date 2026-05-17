@@ -102,8 +102,8 @@ Objetivo desta fase: transformar o Finfit em um produto simples de abrir todo di
 
 ### Fase 4 - Modalidades completas
 
-- [ ] Musculacao: grupos musculares, exercicios, series, reps, carga, volume e recomendacoes por grupo.
-- [ ] Corrida: distancia, pace, elevacao, zonas, longao, tiros, base, fadiga e rotas.
+- [~] Musculacao: grupos musculares, exercicios, series, reps, carga, volume e recomendacoes por grupo.
+- [~] Corrida: distancia, pace, elevacao, zonas, longao, tiros, base, fadiga e rotas.
 - [ ] Natacao: metragem, estilo, series, ritmo e tecnica.
 - [ ] Futevolei: jogo, tecnica, dupla, local, placar e intensidade.
 - [ ] Mobilidade: area do corpo, dor antes/depois e progresso de recuperacao.
