@@ -86,8 +86,8 @@ Objetivo desta fase: transformar o Finfit em um produto simples de abrir todo di
 
 - [ ] Criar modal/inline edit apos check-in: tempo, RPE, dor, nota e detalhe opcional.
 - [ ] Criar presets por modalidade com duracao e intensidade editaveis.
-- [ ] Criar check-in de alimentacao simples: refeicao, alimento rapido e calorias.
-- [ ] Criar check-in de corpo simples: sono, dor, energia e peso.
+- [x] Criar check-in de alimentacao simples: refeicao, alimento rapido e calorias.
+- [x] Criar check-in de corpo simples: sono, dor, energia e peso.
 - [ ] Permitir desfazer/editar qualquer item do dia sem ir para Historico.
 - [ ] Criar "favoritos de hoje": treinos ou refeicoes repetidos com um clique.
 
