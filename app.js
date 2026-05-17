@@ -1079,7 +1079,8 @@ function renderDailyCheck() {
   const weekStrip = $("#dailyWeekStrip");
   const foodGrid = $("#dailyFoodGrid");
   const bodyGrid = $("#dailyBodyGrid");
-  if (!grid || !summary || !quickEdit || !timeline || !weekStrip || !foodGrid || !bodyGrid) return;
+  const analysis = $("#dailyAnalysis");
+  if (!grid || !summary || !quickEdit || !timeline || !weekStrip || !foodGrid || !bodyGrid || !analysis) return;
   const done = todayWorkouts();
   const foods = todayFoodLogs();
   const bodyLog = todayBodyLog();
@@ -1186,6 +1187,7 @@ function renderDailyCheck() {
     <div class="daily-section-title">Hoje registrado</div>
     ${timelineItems.join("")}
   ` : `${favoritesHtml}<p class="empty-state">Nada registrado hoje ainda. Marque treino, comida ou corpo acima.</p>`;
+  analysis.innerHTML = dailyAnalysisHtml();
 }
 
 function toggleDailyCheck(id) {
@@ -1314,6 +1316,65 @@ function dailyRecommendation() {
   if (nutrition.consumed && nutrition.remaining < 0) return ["Dia acima da meta alimentar.", `Treino marcado, mas o saldo passou ${Math.abs(nutrition.remaining)} kcal da meta. Ajuste a proxima refeicao sem drama.`];
   if (done.some((workout) => workout.type === "academia") && !done.some((workout) => workout.type === "mobilidade")) return ["Feche com mobilidade curta.", "Academia ja entrou hoje. Dez minutos de mobilidade deixam a recuperacao mais legivel."];
   return ["Dia em movimento.", `${done.length} treino(s), ${done.reduce((sum, item) => sum + Number(item.duration || 0), 0)}min e carga ${load}. Continue registrando o essencial.`];
+}
+
+function periodSummary(workouts, bodyLogs = [], foodLogs = []) {
+  const activeDays = new Set(workouts.map((item) => item.date)).size;
+  const load = loadSum(workouts);
+  const minutes = workouts.reduce((sum, item) => sum + Number(item.duration || 0), 0);
+  const calories = foodLogs.reduce((sum, item) => sum + Number(item.calories || 0), 0);
+  const avgPain = bodyLogs.length ? bodyLogs.reduce((sum, item) => sum + Number(item.pain || 0), 0) / bodyLogs.length : 0;
+  const avgSleep = bodyLogs.length ? bodyLogs.reduce((sum, item) => sum + Number(item.sleep || 0), 0) / bodyLogs.length : 0;
+  return { activeDays, load, minutes, calories, avgPain, avgSleep };
+}
+
+function dailyAnalysisHtml() {
+  const today = todayIso();
+  const week = currentWeekWorkouts();
+  const prev = previousWeekWorkouts();
+  const weekStart = weekWindow(0).start.toISOString().slice(0, 10);
+  const weekEnd = weekWindow(0).end.toISOString().slice(0, 10);
+  const prevStart = weekWindow(-1).start.toISOString().slice(0, 10);
+  const prevEnd = weekWindow(-1).end.toISOString().slice(0, 10);
+  const bodyWeek = state.bodyLogs.filter((item) => item.date >= weekStart && item.date < weekEnd);
+  const bodyPrev = state.bodyLogs.filter((item) => item.date >= prevStart && item.date < prevEnd);
+  const foodWeek = state.foodLogs.filter((item) => item.date >= weekStart && item.date < weekEnd);
+  const foodToday = state.foodLogs.filter((item) => item.date === today);
+  const current = periodSummary(week, bodyWeek, foodWeek);
+  const previous = periodSummary(prev, bodyPrev, []);
+  const loadDelta = previous.load ? Math.round(((current.load - previous.load) / previous.load) * 100) : 0;
+  const todayLoad = loadSum(todayWorkouts());
+  const actions = nextActionOptions(current, previous, todayLoad);
+  return `
+    <div class="daily-section-title">Analise simples</div>
+    <div class="daily-analysis-grid">
+      <div><span>Hoje</span><strong>${todayWorkouts().length} treino(s)</strong><small>${todayLoad} carga - ${foodToday.reduce((sum, item) => sum + Number(item.calories || 0), 0)} kcal</small></div>
+      <div><span>Semana</span><strong>${current.activeDays}/7 dias</strong><small>${current.minutes}min - carga ${current.load}</small></div>
+      <div><span>Vs anterior</span><strong>${previous.load ? `${loadDelta > 0 ? "+" : ""}${loadDelta}%` : "--"}</strong><small>${previous.load ? `carga anterior ${previous.load}` : "sem base anterior"}</small></div>
+      <div><span>Recuperacao</span><strong>${current.avgSleep ? `${Math.round(current.avgSleep * 10) / 10}h` : "--"}</strong><small>dor media ${Math.round(current.avgPain * 10) / 10}</small></div>
+    </div>
+    <div class="next-action-grid">
+      ${actions.map((item) => `
+        <button type="button" data-next-action="${item.action}">
+          <span>${item.tag}</span>
+          <strong>${item.title}</strong>
+          <small>${item.text}</small>
+        </button>
+      `).join("")}
+    </div>
+  `;
+}
+
+function nextActionOptions(current, previous, todayLoad) {
+  const body = latestBodyLog();
+  const missingBody = !todayBodyLog();
+  const missingFood = !todayFoodLogs().length;
+  const actions = [];
+  if (todayLoad < 250 && !(body?.pain >= 5)) actions.push({ tag: "Treinar", title: "Sessao curta", text: "Marque musculacao, corrida leve ou mobilidade para criar rastro hoje.", action: "train" });
+  if (body?.pain >= 5 || todayLoad > 650 || (previous.load && current.load > previous.load * 1.35)) actions.push({ tag: "Recuperar", title: "Baixar impacto", text: "Carga/dor pedem mobilidade, sono e treino tecnico.", action: "recover" });
+  if (missingBody || missingFood) actions.push({ tag: "Registrar", title: missingBody ? "Check-in de corpo" : "Check-in de comida", text: "Falta dado basico para o coach ler o dia direito.", action: missingBody ? "body" : "food" });
+  actions.push({ tag: "Analisar", title: "Ver progresso", text: "Abra progresso para conferir recordes, carga e modalidades.", action: "progress" });
+  return actions.slice(0, 3);
 }
 
 function renderMetrics() {
@@ -2816,6 +2877,19 @@ $("#dailyCheckGrid").addEventListener("click", (event) => {
 $("#dailyUndoButton").addEventListener("click", undoLastTodayWorkout);
 
 $("#dailyCheckPanel").addEventListener("click", (event) => {
+  const nextButton = event.target.closest("[data-next-action]");
+  if (nextButton) {
+    const action = nextButton.dataset.nextAction;
+    if (action === "train") {
+      setPreset("academia");
+      $("#quickAdd").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    if (action === "recover") addDailyBody("cansado");
+    if (action === "body") addDailyBody("ok");
+    if (action === "food") addDailyFood("banana");
+    if (action === "progress") setPage("progress");
+    return;
+  }
   const favoriteButton = event.target.closest("[data-daily-favorite]");
   if (favoriteButton) {
     applyTodayFavorite(favoriteButton.dataset.dailyFavorite);
