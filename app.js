@@ -114,6 +114,15 @@ const dailyCheckItems = [
   { id: "mobilidade", type: "mobilidade", icon: "🧘", label: "Mobilidade", duration: 20, intensity: "leve", focus: "recuperacao" }
 ];
 
+const dailyFoodItems = ["banana", "whey", "ovo", "arroz-frango"];
+
+const dailyBodyItems = [
+  { id: "sono", label: "Sono bom", patch: { sleep: 7.5, energy: 8, pain: 1, stress: 3, mood: 8 } },
+  { id: "cansado", label: "Cansado", patch: { sleep: 5.5, energy: 4, pain: 2, stress: 6, mood: 5 } },
+  { id: "dor", label: "Com dor", patch: { energy: 5, pain: 6, stress: 4, mood: 5, painAreas: "registrar area" } },
+  { id: "ok", label: "Corpo ok", patch: { sleep: 7, energy: 7, pain: 0, stress: 3, mood: 7 } }
+];
+
 const baseTemplates = [
   { id: "tpl-upper", name: "Upper strength", type: "academia", detail: "Supino, remada, desenvolvimento, puxada e acessorios." },
   { id: "tpl-swim", name: "Natacao tecnica", type: "natacao", detail: "Aquecimento, educativos, tiros curtos e soltura." },
@@ -1034,6 +1043,14 @@ function todayWorkouts() {
   return state.workouts.filter((workout) => workout.date === today && workout.status !== "pulado");
 }
 
+function todayFoodLogs() {
+  return state.foodLogs.filter((item) => item.date === todayIso());
+}
+
+function todayBodyLog() {
+  return state.bodyLogs.find((item) => item.date === todayIso());
+}
+
 function dailyCheckKey(item) {
   return `checkin:${todayIso()}:${item.type}`;
 }
@@ -1060,8 +1077,12 @@ function renderDailyCheck() {
   const quickEdit = $("#dailyQuickEdit");
   const timeline = $("#dailyTimeline");
   const weekStrip = $("#dailyWeekStrip");
-  if (!grid || !summary || !quickEdit || !timeline || !weekStrip) return;
+  const foodGrid = $("#dailyFoodGrid");
+  const bodyGrid = $("#dailyBodyGrid");
+  if (!grid || !summary || !quickEdit || !timeline || !weekStrip || !foodGrid || !bodyGrid) return;
   const done = todayWorkouts();
+  const foods = todayFoodLogs();
+  const bodyLog = todayBodyLog();
   const nutrition = nutritionSummary(todayIso());
   const minutes = done.reduce((sum, workout) => sum + Number(workout.duration || 0), 0);
   const load = done.reduce((sum, workout) => sum + workoutLoad(workout), 0);
@@ -1090,6 +1111,17 @@ function renderDailyCheck() {
     const isToday = date === todayIso();
     return `<div class="${isToday ? "today" : ""} ${items.length ? "done" : ""}"><span>${day.label}</span><strong>${items.length}</strong><small>${items.reduce((sum, item) => sum + Number(item.duration || 0), 0)}min</small></div>`;
   }).join("");
+  foodGrid.innerHTML = dailyFoodItems.map((id) => {
+    const food = foodCatalog.find((item) => item.id === id);
+    if (!food) return "";
+    return `<button type="button" data-daily-food="${food.id}"><strong>${food.name}</strong><small>${food.calories} kcal - ${food.serving}</small></button>`;
+  }).join("") + '<button type="button" data-page-target="nutrition"><strong>Completo</strong><small>abrir diario</small></button>';
+  bodyGrid.innerHTML = dailyBodyItems.map((item) => `
+    <button type="button" class="${bodyLog && bodyLog.note?.includes(item.label) ? "done" : ""}" data-daily-body="${item.id}">
+      <strong>${item.label}</strong>
+      <small>${bodyLog ? `energia ${bodyLog.energy || "-"} / dor ${bodyLog.pain || 0}` : "registrar agora"}</small>
+    </button>
+  `).join("") + '<button type="button" data-page-target="body"><strong>Completo</strong><small>sono, peso, medidas</small></button>';
   quickEdit.innerHTML = selected ? `
     <div class="daily-edit-head">
       <div>
@@ -1108,16 +1140,33 @@ function renderDailyCheck() {
       <button type="button" class="save-workout" id="dailyEditSaveButton">Salvar ajuste</button>
     </div>
   ` : '<p class="empty-state">Marque um treino acima para ajustar tempo, intensidade e nota.</p>';
-  timeline.innerHTML = done.length ? `
-    <div class="daily-section-title">Hoje registrado</div>
-    ${done.map((workout) => `
+  const timelineItems = [
+    ...done.map((workout) => `
       <button type="button" class="${workout.id === selected?.id ? "active" : ""}" data-daily-focus="${workout.id}">
         <span>${sportIcon(workout.type)}</span>
         <strong>${workout.name}</strong>
         <small>${workout.duration}min - ${workout.intensity} - carga ${workoutLoad(workout)}</small>
       </button>
-    `).join("")}
-  ` : '<p class="empty-state">Nada registrado hoje ainda. Marque o primeiro item acima.</p>';
+    `),
+    ...foods.map((food) => `
+      <button type="button" data-page-target="nutrition">
+        <span>🍽️</span>
+        <strong>${food.meal} - ${food.name}</strong>
+        <small>${food.calories} kcal - P ${food.protein}g / C ${food.carbs}g / G ${food.fat}g</small>
+      </button>
+    `),
+    bodyLog ? `
+      <button type="button" data-page-target="body">
+        <span>🫀</span>
+        <strong>Corpo registrado</strong>
+        <small>sono ${bodyLog.sleep || "-"}h - energia ${bodyLog.energy || "-"} - dor ${bodyLog.pain || 0}</small>
+      </button>
+    ` : ""
+  ].filter(Boolean);
+  timeline.innerHTML = timelineItems.length ? `
+    <div class="daily-section-title">Hoje registrado</div>
+    ${timelineItems.join("")}
+  ` : '<p class="empty-state">Nada registrado hoje ainda. Marque treino, comida ou corpo acima.</p>';
 }
 
 function toggleDailyCheck(id) {
@@ -1146,6 +1195,43 @@ function undoLastTodayWorkout() {
   render();
 }
 
+function addDailyFood(id) {
+  const food = foodCatalog.find((item) => item.id === id);
+  if (!food) return;
+  state.foodLogs.push(normalizeFoodLog({
+    id: uid("food"),
+    date: todayIso(),
+    meal: new Date().getHours() < 11 ? "Café" : new Date().getHours() < 15 ? "Almoço" : new Date().getHours() < 19 ? "Lanche" : "Jantar",
+    foodId: food.id,
+    name: food.name,
+    servings: 1,
+    calories: food.calories,
+    protein: food.protein,
+    carbs: food.carbs,
+    fat: food.fat,
+    note: "Marcado no painel de hoje"
+  }));
+  render();
+}
+
+function addDailyBody(id) {
+  const item = dailyBodyItems.find((entry) => entry.id === id);
+  if (!item) return;
+  const existing = todayBodyLog();
+  const next = normalizeBodyLog({
+    ...(existing || {}),
+    id: existing?.id || uid("body"),
+    date: todayIso(),
+    nutrition: existing?.nutrition || 7,
+    ...item.patch,
+    note: [`Check-in rapido: ${item.label}`, existing?.note].filter(Boolean).join(" - ")
+  });
+  const index = state.bodyLogs.findIndex((log) => log.id === next.id);
+  if (index >= 0) state.bodyLogs[index] = next;
+  else state.bodyLogs.push(next);
+  render();
+}
+
 function dateForCurrentWeekday(dayKey) {
   const today = new Date();
   const monday = new Date(today);
@@ -1166,7 +1252,8 @@ function dailyRecommendation() {
   const body = latestBodyLog();
   const load = loadSum(done);
   const nutrition = nutritionSummary(todayIso());
-  if (!done.length) return ["Marque o primeiro treino do dia.", "Depois disso o Finfit mostra carga, gasto estimado e a proxima acao com mais contexto."];
+  if (!done.length && !todayFoodLogs().length && !todayBodyLog()) return ["Marque o primeiro dado do dia.", "Treino, comida ou corpo: qualquer check-in ja deixa o Finfit mais util."];
+  if (!done.length) return ["Ainda falta treino hoje.", "Alimentacao/corpo ja ajudam, mas marque um treino para calcular carga e gasto."];
   if (body?.pain >= 5) return ["Hoje pede cuidado.", `Voce ja registrou ${done.length} treino(s), mas a dor recente esta ${body.pain}/10. Melhor fechar com recuperacao.`];
   if (load >= 700) return ["Carga alta para hoje.", `Carga ${load}. Se ainda for treinar, prefira mobilidade ou tecnica leve.`];
   if (nutrition.consumed && nutrition.remaining < 0) return ["Dia acima da meta alimentar.", `Treino marcado, mas o saldo passou ${Math.abs(nutrition.remaining)} kcal da meta. Ajuste a proxima refeicao sem drama.`];
@@ -2674,6 +2761,16 @@ $("#dailyCheckGrid").addEventListener("click", (event) => {
 $("#dailyUndoButton").addEventListener("click", undoLastTodayWorkout);
 
 $("#dailyCheckPanel").addEventListener("click", (event) => {
+  const foodButton = event.target.closest("[data-daily-food]");
+  if (foodButton) {
+    addDailyFood(foodButton.dataset.dailyFood);
+    return;
+  }
+  const bodyButton = event.target.closest("[data-daily-body]");
+  if (bodyButton) {
+    addDailyBody(bodyButton.dataset.dailyBody);
+    return;
+  }
   const focusButton = event.target.closest("[data-daily-focus]");
   if (focusButton) {
     selectedDailyWorkoutId = focusButton.dataset.dailyFocus;

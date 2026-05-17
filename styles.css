@@ -2604,7 +2604,9 @@ article {
 .daily-check-grid,
 .daily-summary-grid,
 .daily-week-strip,
-.daily-timeline {
+.daily-timeline,
+.daily-food-grid,
+.daily-body-grid {
   display: grid;
   gap: 8px;
 }
@@ -2705,6 +2707,48 @@ article {
 
 .daily-week-strip strong {
   font-size: 1rem;
+}
+
+.daily-side-checks {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.daily-food-grid,
+.daily-body-grid {
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+}
+
+.daily-food-grid button,
+.daily-body-grid button {
+  display: grid;
+  gap: 2px;
+  min-height: 54px;
+  padding: 9px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.025);
+  text-align: left;
+}
+
+.daily-food-grid button:hover,
+.daily-body-grid button:hover,
+.daily-body-grid button.done {
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.daily-food-grid strong,
+.daily-body-grid strong {
+  display: block;
+  font-size: 0.86rem;
+}
+
+.daily-food-grid small,
+.daily-body-grid small {
+  color: var(--muted);
+  font-size: 0.76rem;
 }
 
 .daily-quick-edit {
@@ -3025,6 +3069,7 @@ textarea {
 
   .activity-context-body,
   .daily-edit-form,
+  .daily-side-checks,
   .nutrition-goals {
     grid-template-columns: 1fr;
   }
