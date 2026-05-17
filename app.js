@@ -220,7 +220,7 @@ function applyAppearance(appearance = loadAppearance()) {
   document.documentElement.dataset.theme = theme;
   document.documentElement.dataset.accent = accent;
   const meta = $("#themeColorMeta");
-  if (meta) meta.content = theme === "light" ? "#f4f7ef" : theme === "black" ? "#000000" : "#08090d";
+  if (meta) meta.content = theme === "light" ? "#f3f5f2" : theme === "black" ? "#07090c" : "#0a0d12";
   const themeButton = $("#themeToggleButton");
   if (themeButton) themeButton.textContent = theme === "light" ? "🌙" : theme === "black" ? "☀️" : "⚫";
   const themeSelect = $("#themeSelect");
