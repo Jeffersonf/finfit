@@ -59,6 +59,18 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 
 ## Como importar informacoes
 
+### Strava - Integracao e inspiracao
+
+- [~] Norte: ser um Strava pessoal/privado, copiando a clareza de registro, feed de atividades, segmentos pessoais e analises, sem copiar marca, layout proprietario ou rede social.
+- [ ] Criar backend/serverless para OAuth2 do Strava com `client_secret` fora do navegador.
+- [ ] Pedir escopos minimos: leitura de atividades e dados privados apenas se o usuario quiser importar tudo.
+- [ ] Importar atividades via API e salvar como treinos Finfit normalizados.
+- [ ] Usar webhooks do Strava para sincronizar novas atividades sem depender de importacao manual.
+- [ ] Criar "feed pessoal" no Finfit: atividade recente, esforco relativo local, PRs pessoais, notas e proximas acoes.
+- [ ] Criar "segmentos privados": comparar rotas parecidas importadas por GPX/TCX/Strava sem publicar nada.
+- [ ] Criar mapeamento Strava -> Finfit: corrida, pedal/cardio, natacao, academia/treino, caminhada e outros.
+- [ ] Criar tela de conexoes em Dados com status da conta, ultimo sync, revogar conexao e importar historico.
+
 ### Camada 1 - Agora
 
 - [x] Exportar backup JSON proprio do Finfit.
