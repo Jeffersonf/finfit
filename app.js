@@ -1084,6 +1084,7 @@ function renderDailyCheck() {
   const foods = todayFoodLogs();
   const bodyLog = todayBodyLog();
   const nutrition = nutritionSummary(todayIso());
+  const favoriteItems = buildTodayFavorites();
   const minutes = done.reduce((sum, workout) => sum + Number(workout.duration || 0), 0);
   const load = done.reduce((sum, workout) => sum + workoutLoad(workout), 0);
   const burned = exerciseCalories(todayIso());
@@ -1122,6 +1123,17 @@ function renderDailyCheck() {
       <small>${bodyLog ? `energia ${bodyLog.energy || "-"} / dor ${bodyLog.pain || 0}` : "registrar agora"}</small>
     </button>
   `).join("") + '<button type="button" data-page-target="body"><strong>Completo</strong><small>sono, peso, medidas</small></button>';
+  const favoritesHtml = favoriteItems.length ? `
+    <div class="daily-section-title">Favoritos de hoje</div>
+    <div class="daily-favorite-grid">
+      ${favoriteItems.map((item) => `
+        <button type="button" data-daily-favorite="${item.kind}:${item.id}">
+          <strong>${item.label}</strong>
+          <small>${item.hint}</small>
+        </button>
+      `).join("")}
+    </div>
+  ` : "";
   quickEdit.innerHTML = selected ? `
     <div class="daily-edit-head">
       <div>
@@ -1146,6 +1158,10 @@ function renderDailyCheck() {
         <span>${sportIcon(workout.type)}</span>
         <strong>${workout.name}</strong>
         <small>${workout.duration}min - ${workout.intensity} - carga ${workoutLoad(workout)}</small>
+        <em>
+          <b data-daily-edit-workout="${workout.id}">editar</b>
+          <b data-daily-remove-workout="${workout.id}">remover</b>
+        </em>
       </button>
     `),
     ...foods.map((food) => `
@@ -1153,6 +1169,7 @@ function renderDailyCheck() {
         <span>🍽️</span>
         <strong>${food.meal} - ${food.name}</strong>
         <small>${food.calories} kcal - P ${food.protein}g / C ${food.carbs}g / G ${food.fat}g</small>
+        <em><b data-daily-remove-food="${food.id}">remover</b></em>
       </button>
     `),
     bodyLog ? `
@@ -1160,13 +1177,15 @@ function renderDailyCheck() {
         <span>🫀</span>
         <strong>Corpo registrado</strong>
         <small>sono ${bodyLog.sleep || "-"}h - energia ${bodyLog.energy || "-"} - dor ${bodyLog.pain || 0}</small>
+        <em><b data-daily-remove-body="${bodyLog.id}">remover</b></em>
       </button>
     ` : ""
   ].filter(Boolean);
   timeline.innerHTML = timelineItems.length ? `
+    ${favoritesHtml}
     <div class="daily-section-title">Hoje registrado</div>
     ${timelineItems.join("")}
-  ` : '<p class="empty-state">Nada registrado hoje ainda. Marque treino, comida ou corpo acima.</p>';
+  ` : `${favoritesHtml}<p class="empty-state">Nada registrado hoje ainda. Marque treino, comida ou corpo acima.</p>`;
 }
 
 function toggleDailyCheck(id) {
@@ -1192,6 +1211,42 @@ function undoLastTodayWorkout() {
   if (!last) return;
   state.workouts = state.workouts.filter((workout) => workout.id !== last.id);
   selectedDailyWorkoutId = "";
+  render();
+}
+
+function buildTodayFavorites() {
+  const workoutFavorites = state.favorites.slice(0, 3).map((item) => ({
+    kind: "workout",
+    id: item.id,
+    label: item.name,
+    hint: `${presetLabel(item.type)} - ${item.duration}min`
+  }));
+  const foodFavorites = dailyFoodItems.slice(0, 3).map((id) => {
+    const food = foodCatalog.find((item) => item.id === id);
+    return food && { kind: "food", id: food.id, label: food.name, hint: `${food.calories} kcal - ${food.serving}` };
+  }).filter(Boolean);
+  return [...workoutFavorites, ...foodFavorites].slice(0, 6);
+}
+
+function applyTodayFavorite(value) {
+  const [kind, id] = value.split(":");
+  if (kind === "food") {
+    addDailyFood(id);
+    return;
+  }
+  const favorite = state.favorites.find((item) => item.id === id);
+  if (!favorite) return;
+  const workout = normalizeWorkout({ ...favorite, id: uid("workout"), date: todayIso(), status: "feito", note: favorite.note || "Favorito de hoje" });
+  selectedDailyWorkoutId = workout.id;
+  upsertWorkout(workout);
+  render();
+}
+
+function removeDailyItem(kind, id) {
+  if (kind === "workout") state.workouts = state.workouts.filter((item) => item.id !== id);
+  if (kind === "food") state.foodLogs = state.foodLogs.filter((item) => item.id !== id);
+  if (kind === "body") state.bodyLogs = state.bodyLogs.filter((item) => item.id !== id);
+  if (selectedDailyWorkoutId === id) selectedDailyWorkoutId = "";
   render();
 }
 
@@ -2761,6 +2816,40 @@ $("#dailyCheckGrid").addEventListener("click", (event) => {
 $("#dailyUndoButton").addEventListener("click", undoLastTodayWorkout);
 
 $("#dailyCheckPanel").addEventListener("click", (event) => {
+  const favoriteButton = event.target.closest("[data-daily-favorite]");
+  if (favoriteButton) {
+    applyTodayFavorite(favoriteButton.dataset.dailyFavorite);
+    return;
+  }
+  const removeWorkout = event.target.closest("[data-daily-remove-workout]");
+  if (removeWorkout) {
+    event.preventDefault();
+    event.stopPropagation();
+    removeDailyItem("workout", removeWorkout.dataset.dailyRemoveWorkout);
+    return;
+  }
+  const removeFood = event.target.closest("[data-daily-remove-food]");
+  if (removeFood) {
+    event.preventDefault();
+    event.stopPropagation();
+    removeDailyItem("food", removeFood.dataset.dailyRemoveFood);
+    return;
+  }
+  const removeBody = event.target.closest("[data-daily-remove-body]");
+  if (removeBody) {
+    event.preventDefault();
+    event.stopPropagation();
+    removeDailyItem("body", removeBody.dataset.dailyRemoveBody);
+    return;
+  }
+  const editWorkout = event.target.closest("[data-daily-edit-workout]");
+  if (editWorkout) {
+    event.preventDefault();
+    event.stopPropagation();
+    selectedDailyWorkoutId = editWorkout.dataset.dailyEditWorkout;
+    renderDailyCheck();
+    return;
+  }
   const foodButton = event.target.closest("[data-daily-food]");
   if (foodButton) {
     addDailyFood(foodButton.dataset.dailyFood);

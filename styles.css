@@ -2606,7 +2606,8 @@ article {
 .daily-week-strip,
 .daily-timeline,
 .daily-food-grid,
-.daily-body-grid {
+.daily-body-grid,
+.daily-favorite-grid {
   display: grid;
   gap: 8px;
 }
@@ -2717,12 +2718,14 @@ article {
 }
 
 .daily-food-grid,
-.daily-body-grid {
+.daily-body-grid,
+.daily-favorite-grid {
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
 }
 
 .daily-food-grid button,
-.daily-body-grid button {
+.daily-body-grid button,
+.daily-favorite-grid button {
   display: grid;
   gap: 2px;
   min-height: 54px;
@@ -2734,19 +2737,22 @@ article {
 
 .daily-food-grid button:hover,
 .daily-body-grid button:hover,
-.daily-body-grid button.done {
+.daily-body-grid button.done,
+.daily-favorite-grid button:hover {
   border-color: color-mix(in srgb, var(--accent) 30%, transparent);
   background: color-mix(in srgb, var(--accent) 8%, transparent);
 }
 
 .daily-food-grid strong,
-.daily-body-grid strong {
+.daily-body-grid strong,
+.daily-favorite-grid strong {
   display: block;
   font-size: 0.86rem;
 }
 
 .daily-food-grid small,
-.daily-body-grid small {
+.daily-body-grid small,
+.daily-favorite-grid small {
   color: var(--muted);
   font-size: 0.76rem;
 }
@@ -2815,6 +2821,28 @@ article {
 .daily-timeline button small {
   color: var(--muted);
   font-size: 0.78rem;
+}
+
+.daily-timeline button em {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-style: normal;
+}
+
+.daily-timeline button b {
+  padding: 3px 6px;
+  border: 1px solid var(--line-soft);
+  border-radius: 999px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.daily-timeline button b:hover {
+  border-color: color-mix(in srgb, var(--accent) 34%, transparent);
+  color: var(--accent);
 }
 
 #page-today .hero {
@@ -3081,6 +3109,11 @@ textarea {
 
   .daily-timeline button {
     grid-template-columns: auto 1fr;
+  }
+
+  .daily-timeline button em {
+    grid-column: 2;
+    justify-content: flex-start;
   }
 
   .pwa-banner {
