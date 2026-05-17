@@ -75,12 +75,12 @@ Objetivo desta fase: transformar o Finfit em um produto simples de abrir todo di
 ### Fase 1 - Dashboard util
 
 - [x] Criar painel para marcar treinos feitos hoje.
-- [ ] Permitir editar rapido duracao/intensidade logo apos marcar um treino.
-- [ ] Mostrar "hoje" como linha do tempo simples: treino, comida, corpo e notas.
-- [ ] Transformar recomendacao em uma frase curta baseada no que foi marcado hoje.
+- [x] Permitir editar rapido duracao/intensidade logo apos marcar um treino.
+- [x] Mostrar "hoje" como linha do tempo simples: treino, comida, corpo e notas.
+- [x] Transformar recomendacao em uma frase curta baseada no que foi marcado hoje.
 - [ ] Criar estado vazio forte: quando nao ha dado, mostrar 2 ou 3 acoes claras, nao dashboards vazios.
 - [ ] Mover acoes rapidas secundarias para uma area colapsavel ou para suas paginas.
-- [ ] Mostrar semana em 7 dias com checks, carga e descanso, sem excesso de texto.
+- [x] Mostrar semana em 7 dias com checks, carga e descanso, sem excesso de texto.
 
 ### Fase 2 - Registro rapido completo
 

@@ -2602,7 +2602,9 @@ article {
 }
 
 .daily-check-grid,
-.daily-summary-grid {
+.daily-summary-grid,
+.daily-week-strip,
+.daily-timeline {
   display: grid;
   gap: 8px;
 }
@@ -2666,6 +2668,109 @@ article {
 .daily-summary-grid span {
   font-weight: 900;
   text-transform: uppercase;
+}
+
+.daily-week-strip {
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  margin: 10px 0;
+}
+
+.daily-week-strip div {
+  display: grid;
+  gap: 1px;
+  min-height: 48px;
+  padding: 8px;
+  border: 1px solid var(--line-soft);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.daily-week-strip div.today {
+  border-color: color-mix(in srgb, var(--accent) 32%, transparent);
+}
+
+.daily-week-strip div.done strong {
+  color: var(--accent);
+}
+
+.daily-week-strip span,
+.daily-week-strip small,
+.daily-edit-head span,
+.daily-section-title {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.daily-week-strip strong {
+  font-size: 1rem;
+}
+
+.daily-quick-edit {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line-soft);
+}
+
+.daily-edit-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.daily-edit-head strong {
+  display: block;
+}
+
+.daily-edit-head button {
+  min-height: 32px;
+  padding: 0 10px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.daily-edit-form {
+  display: grid;
+  grid-template-columns: 110px 140px 90px minmax(180px, 1fr) auto;
+  gap: 8px;
+  align-items: end;
+}
+
+.daily-timeline {
+  margin-top: 12px;
+}
+
+.daily-section-title {
+  margin-top: 2px;
+}
+
+.daily-timeline button {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.025);
+  text-align: left;
+}
+
+.daily-timeline button.active {
+  border-color: color-mix(in srgb, var(--accent) 32%, transparent);
+  background: color-mix(in srgb, var(--accent) 9%, transparent);
+}
+
+.daily-timeline button strong {
+  display: block;
+}
+
+.daily-timeline button small {
+  color: var(--muted);
+  font-size: 0.78rem;
 }
 
 #page-today .hero {
@@ -2919,8 +3024,18 @@ textarea {
   }
 
   .activity-context-body,
+  .daily-edit-form,
   .nutrition-goals {
     grid-template-columns: 1fr;
+  }
+
+  .daily-week-strip {
+    grid-template-columns: repeat(7, minmax(58px, 1fr));
+    overflow-x: auto;
+  }
+
+  .daily-timeline button {
+    grid-template-columns: auto 1fr;
   }
 
   .pwa-banner {
