@@ -2607,7 +2607,9 @@ article {
 .daily-timeline,
 .daily-food-grid,
 .daily-body-grid,
-.daily-favorite-grid {
+.daily-favorite-grid,
+.daily-analysis-grid,
+.next-action-grid {
   display: grid;
   gap: 8px;
 }
@@ -2719,13 +2721,15 @@ article {
 
 .daily-food-grid,
 .daily-body-grid,
-.daily-favorite-grid {
+.daily-favorite-grid,
+.daily-analysis-grid {
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
 }
 
 .daily-food-grid button,
 .daily-body-grid button,
-.daily-favorite-grid button {
+.daily-favorite-grid button,
+.next-action-grid button {
   display: grid;
   gap: 2px;
   min-height: 54px;
@@ -2738,23 +2742,65 @@ article {
 .daily-food-grid button:hover,
 .daily-body-grid button:hover,
 .daily-body-grid button.done,
-.daily-favorite-grid button:hover {
+.daily-favorite-grid button:hover,
+.next-action-grid button:hover {
   border-color: color-mix(in srgb, var(--accent) 30%, transparent);
   background: color-mix(in srgb, var(--accent) 8%, transparent);
 }
 
 .daily-food-grid strong,
 .daily-body-grid strong,
-.daily-favorite-grid strong {
+.daily-favorite-grid strong,
+.next-action-grid strong {
   display: block;
   font-size: 0.86rem;
 }
 
 .daily-food-grid small,
 .daily-body-grid small,
-.daily-favorite-grid small {
+.daily-favorite-grid small,
+.next-action-grid small {
   color: var(--muted);
   font-size: 0.76rem;
+}
+
+.daily-analysis {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line-soft);
+}
+
+.daily-analysis-grid {
+  margin-bottom: 10px;
+}
+
+.daily-analysis-grid div {
+  padding: 10px;
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.daily-analysis-grid span,
+.next-action-grid span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.daily-analysis-grid strong {
+  display: block;
+  color: var(--accent);
+}
+
+.daily-analysis-grid small {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.next-action-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .daily-quick-edit {
@@ -3098,6 +3144,7 @@ textarea {
   .activity-context-body,
   .daily-edit-form,
   .daily-side-checks,
+  .next-action-grid,
   .nutrition-goals {
     grid-template-columns: 1fr;
   }
