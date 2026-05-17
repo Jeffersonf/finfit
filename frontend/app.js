@@ -220,7 +220,7 @@ function applyAppearance(appearance = loadAppearance()) {
   document.documentElement.dataset.theme = theme;
   document.documentElement.dataset.accent = accent;
   const meta = $("#themeColorMeta");
-  if (meta) meta.content = theme === "light" ? "#f4f5f7" : "#f4f5f7";
+  if (meta) meta.content = theme === "black" ? "#0b0d10" : theme === "dark" ? "#10141a" : "#efeee9";
   const themeButton = $("#themeToggleButton");
   if (themeButton) themeButton.textContent = theme === "light" ? "🌙" : theme === "black" ? "☀️" : "⚫";
   const themeSelect = $("#themeSelect");
@@ -692,7 +692,7 @@ function recommendation() {
 function setPage(page) {
   $$(".page").forEach((item) => item.classList.toggle("active", item.id === `page-${page}`));
   $$("[data-page-target]").forEach((button) => button.classList.toggle("active", button.dataset.pageTarget === page));
-  const titles = { today: "Arena de treino", plan: "Plano", history: "Diario", progress: "Performance", nutrition: "Nutri", body: "Corpo e recuperacao", library: "Biblioteca", data: "Dados", user: "Usuario" };
+  const titles = { today: "Diario de atleta", plan: "Plano", history: "Diario", progress: "Performance", nutrition: "Nutri", body: "Corpo e recuperacao", library: "Biblioteca", data: "Dados", user: "Usuario" };
   $("#pageTitle").textContent = titles[page] || "Finfit";
 }
 
