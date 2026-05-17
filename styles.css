@@ -2596,6 +2596,77 @@ article {
   font-size: 0.92rem;
 }
 
+.daily-check {
+  margin: 14px 0 16px;
+}
+
+.daily-check-grid,
+.daily-summary-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.daily-check-grid {
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  margin-bottom: 10px;
+}
+
+.daily-check-grid button {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: 9px;
+  row-gap: 1px;
+  min-height: 58px;
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.035);
+  text-align: left;
+}
+
+.daily-check-grid button span {
+  grid-row: span 2;
+  font-size: 1.15rem;
+}
+
+.daily-check-grid button strong,
+.daily-summary-grid strong {
+  display: block;
+}
+
+.daily-check-grid button small,
+.daily-summary-grid small,
+.daily-summary-grid span {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.daily-check-grid button.done {
+  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.daily-check-grid button.done strong,
+.daily-summary-grid strong {
+  color: var(--accent);
+}
+
+.daily-summary-grid {
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+}
+
+.daily-summary-grid div {
+  padding: 10px;
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.daily-summary-grid span {
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
 .primary-action,
 .save-workout {
   min-height: 40px;
