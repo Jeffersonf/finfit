@@ -707,10 +707,10 @@ function setPreset(type) {
 
 function modalityHint(type) {
   const hints = {
-    academia: "Uma linha por exercicio: supino 4x8 70kg. Isso alimenta recordes por exercicio.",
+    academia: "Uma linha por exercicio: supino 4x8 70kg. Use foco como peito/costas/pernas para recomendacoes por grupo.",
     natacao: "Use blocos com metragem: 8x50m tecnica, 400m solto. O volume entra no progresso.",
     futevolei: "Registre parceiro, quantidade de jogos, resultado e sensacao do corpo.",
-    corrida: "Distancia, pace, zona ou terreno ajudam a comparar progresso.",
+    corrida: "Registre distancia, pace/zona, terreno, RPE e dor. Isso alimenta zonas, carga, longao e segmentos privados.",
     mobilidade: "Anote regioes, dor antes/depois e foco corporal.",
     outro: "Use linhas curtas com o que voce quer lembrar depois."
   };
@@ -799,10 +799,10 @@ function renderQuickStart() {
 
 function renderDetailHelper() {
   const helpers = {
-    academia: ["supino 4x8 70kg\nremada 4x10 60kg\ndesenvolvimento 3x8 32kg", "agachamento 4x6 90kg\nstiff 3x8 80kg\nleg press 4x10 140kg"],
+    academia: ["supino reto 4x8 70kg\nsupino inclinado 3x10 56kg\ncrucifixo 3x12 18kg\ntriceps corda 3x12", "agachamento 4x6 90kg\nstiff 3x8 80kg\nleg press 4x10 140kg\npanturrilha 4x12", "puxada aberta 4x10 65kg\nremada baixa 4x10 60kg\nface pull 3x15\nrosca direta 3x10 16kg"],
     natacao: ["400m solto\n8x50m tecnica\n300m moderado", "600m crawl\n6x100m ritmo\n200m solto"],
     futevolei: ["dupla Joao\n3 jogos\nresultado 2x1\nponto forte: saque", "treino tecnico\nrecepcao e ataque\nsensacao: leve"],
-    corrida: ["Z2 facil\npace alvo 6:30-7:10/km\nterreno plano", "progressivo\n3x6min controlado\n2min leve"],
+    corrida: ["Z2 facil\npace alvo 6:30-7:10/km\nterreno plano\nRPE 4-5\ndor 0-2", "progressivo\n15min facil\n3x6min controlado\n2min leve\n10min solto", "tiros\n12min aquecer\n8x400m forte\n200m trote\n10min solto"],
     mobilidade: ["quadril 10min\ntoracica 8min\nombro 6min\ndor antes/depois", "respiracao 5min\nalongamento posterior\nmobilidade tornozelo"],
     outro: ["objetivo:\nblocos:\nsensacao:"]
   };
@@ -896,7 +896,7 @@ function activityContextHtml(type, items) {
   const categories = [{ id: "todos", icon: sportIcon(type), label: "Tudo", plans: [] }, ...context.categories];
   const active = categories.find((item) => item.id === activeActivityCategory) || categories[0];
   const activeItems = active.id === "todos" ? items : items.filter((workout) => categoryMatches(active, workout));
-  const plans = active.id === "todos" ? context.categories.flatMap((item) => item.plans).slice(0, 3) : active.plans;
+  const plans = contextualPlans(type, active, items, context);
   const last = [...activeItems].sort((a, b) => b.date.localeCompare(a.date))[0];
   return `
     <div class="activity-context">
@@ -934,6 +934,34 @@ function activityContextHtml(type, items) {
       </div>
     </div>
   `;
+}
+
+function contextualPlans(type, active, items, context) {
+  const basePlans = active.id === "todos" ? context.categories.flatMap((item) => item.plans).slice(0, 3) : active.plans;
+  if (type === "academia") return strengthContextPlans(active, items, basePlans);
+  if (type === "corrida") return runningContextPlans(active, basePlans);
+  return basePlans;
+}
+
+function strengthContextPlans(active, items, basePlans) {
+  const group = active.id === "todos" ? "geral" : active.label.toLowerCase();
+  const groupExercises = parseExerciseDetails().filter((exercise) => active.id === "todos" || strengthMuscleGroup(exercise.name).toLowerCase() === active.label.toLowerCase());
+  const last = [...items].filter((workout) => active.id === "todos" || categoryMatches(active, workout)).sort((a, b) => b.date.localeCompare(a.date))[0];
+  const nextLoad = groupExercises[0]?.bestWeight ? `${Math.round((groupExercises[0].bestWeight + 2.5) * 10) / 10}kg` : "carga moderada";
+  const smart = [
+    [`${active.label} progressao`, `${groupExercises[0]?.name || `exercicio principal ${group}`}: 4x6-8 ${nextLoad}\nAcessorio 3x10-12\nFinalizador leve 2x15\nRPE alvo 7-8`],
+    [`${active.label} controle`, `${last ? `Repetir base de ${formatDate(last.date)}` : "Escolher 3 exercicios"}\nManter tecnica limpa\nRegistrar series, reps e carga\nAnotar dor/articulacao`]
+  ];
+  return [...smart, ...basePlans].slice(0, 4);
+}
+
+function runningContextPlans(active, basePlans) {
+  const prescriptions = runPrescriptions().map((item) => [`Corrida - ${item.title}`, `${item.detail}\nMotivo: ${item.reason}\nRegistrar distancia, RPE e dor`]);
+  const zones = paceZones().slice(0, 2).map((zone) => [`Zona ${zone.label}`, `${formatPace(zone.range[0])}-${formatPace(zone.range[1])}/km\n${zone.note}\nRegistrar terreno e sensacao`]);
+  if (active.id === "tiros") return [["Tiros controlados", "12min aquecer\n6-8x400m forte\n200m trote\n10min solto\nRegistrar pace medio"]].concat(zones).slice(0, 4);
+  if (active.id === "longo") return [["Longo privado", "Aumentar no maximo 10-12% do maior longo recente\nRPE 5-6\nSem sprint final\nRegistrar rota"]].concat(prescriptions).slice(0, 4);
+  if (active.id === "recuperacao") return [["Regenerativo real", "20-30min muito leve\nSem olhar pace\nMobilidade posterior\nDor antes/depois"]].concat(basePlans).slice(0, 4);
+  return [...prescriptions, ...basePlans].slice(0, 4);
 }
 
 function categoryMatches(category, workout) {
@@ -2883,6 +2911,7 @@ $("#activityHub").addEventListener("click", (event) => {
   const planButton = event.target.closest("[data-category-plan]");
   if (planButton) {
     const plan = JSON.parse(decodeURIComponent(planButton.dataset.categoryPlan));
+    const distanceMatch = plan.detail.match(/(\d+(?:[.,]\d+)?)\s*km/i);
     fillWorkoutForm(normalizeWorkout({
       id: uid("workout"),
       type: plan.type,
@@ -2892,6 +2921,7 @@ $("#activityHub").addEventListener("click", (event) => {
       intensity: plan.type === "corrida" && /tiro|ritmo/i.test(plan.title) ? "forte" : "moderado",
       status: "planejado",
       focus: plan.focus === "todos" ? "" : plan.focus,
+      distance: distanceMatch ? Number(distanceMatch[1].replace(",", ".")) : "",
       details: plan.detail,
       note: "Recomendado pelo contexto Finfit"
     }));
