@@ -2936,6 +2936,524 @@ article {
   margin-top: 0;
 }
 
+/* Sport UI pass: make the first screen feel like training, not an admin dashboard. */
+[data-theme="black"] {
+  --bg: #020106;
+  --bg2: #07050f;
+  --surface: rgba(10, 8, 18, 0.94);
+  --surface-2: rgba(18, 14, 29, 0.86);
+  --surface-solid: #090711;
+  --line: rgba(174, 135, 255, 0.16);
+  --line-soft: rgba(255, 255, 255, 0.055);
+  --accent: #a78bfa;
+  --teal: #c8f55a;
+  --shadow-soft: 0 10px 24px rgba(0, 0, 0, 0.2);
+  --shadow-card: 0 18px 44px rgba(0, 0, 0, 0.34);
+  --grad-bg:
+    linear-gradient(180deg, rgba(11, 7, 22, 0.98), #020106 44%, #000 100%);
+}
+
+[data-theme="black"][data-accent="purple"] {
+  --accent: #a78bfa;
+  --teal: #c8f55a;
+}
+
+.training-cockpit {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.75fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.training-cockpit .daily-check {
+  grid-row: span 3;
+}
+
+.sport-selector {
+  position: relative;
+  grid-template-columns: 174px minmax(0, 1fr);
+  gap: 8px;
+  margin: 0 0 12px;
+  padding: 0;
+}
+
+.sport-selector .activity-focus-head,
+.sport-selector .activity-focus-grid button,
+.activity-hub,
+.training-cockpit .daily-check,
+.training-cockpit .hero,
+.training-cockpit .weekly-coach,
+.training-cockpit .quick-actions-widget,
+.training-cockpit .quick-add,
+.training-cockpit .live-panel,
+.training-cockpit .metrics .sc {
+  border-color: rgba(167, 139, 250, 0.16);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.018)),
+    var(--surface);
+  box-shadow: none;
+}
+
+.sport-selector .activity-focus-head {
+  position: relative;
+  overflow: hidden;
+  padding: 13px 14px;
+  border-radius: 14px;
+}
+
+.sport-selector .activity-focus-head::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: var(--accent);
+}
+
+.sport-selector .activity-focus-head span {
+  color: rgba(255, 255, 255, 0.54);
+}
+
+.sport-selector .activity-focus-head strong {
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 1.08rem;
+  letter-spacing: 0;
+}
+
+.sport-selector .activity-focus-grid {
+  grid-template-columns: repeat(auto-fit, minmax(126px, 1fr));
+  gap: 8px;
+}
+
+.sport-selector .activity-focus-grid button {
+  position: relative;
+  overflow: hidden;
+  min-height: 58px;
+  border-radius: 14px;
+  isolation: isolate;
+}
+
+.sport-selector .activity-focus-grid button::before {
+  content: "";
+  position: absolute;
+  left: 9px;
+  right: 9px;
+  bottom: 7px;
+  height: 3px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.sport-selector .activity-focus-grid button::after {
+  content: "";
+  position: absolute;
+  left: 9px;
+  bottom: 7px;
+  width: 34%;
+  height: 3px;
+  border-radius: 99px;
+  background: rgba(167, 139, 250, 0.42);
+}
+
+.sport-selector .activity-focus-grid button strong {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+}
+
+.sport-selector .activity-focus-grid button small {
+  font-size: 0.66rem;
+}
+
+.sport-selector .activity-focus-grid button.active {
+  border-color: rgba(167, 139, 250, 0.72);
+  background:
+    linear-gradient(135deg, rgba(167, 139, 250, 0.24), rgba(200, 245, 90, 0.055)),
+    rgba(15, 11, 26, 0.96);
+}
+
+.sport-selector .activity-focus-grid button.active::after {
+  width: calc(100% - 18px);
+  background: var(--teal);
+}
+
+.activity-hub {
+  position: relative;
+  overflow: hidden;
+  margin: 0 0 14px;
+  padding: 14px;
+  border-radius: 16px;
+}
+
+.activity-hub::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(167, 139, 250, 0.16), transparent 34%),
+    repeating-linear-gradient(90deg, transparent 0 38px, rgba(255, 255, 255, 0.025) 38px 39px);
+}
+
+.activity-hub > * {
+  position: relative;
+}
+
+.activity-hub-title > span {
+  border: 1px solid rgba(167, 139, 250, 0.26);
+  border-radius: 12px;
+  background: rgba(167, 139, 250, 0.14);
+}
+
+.activity-hub-title h3,
+.training-cockpit .panel-header h3 {
+  font-family: var(--font-display);
+  letter-spacing: 0;
+}
+
+.activity-hub-stats div {
+  position: relative;
+  overflow: hidden;
+  min-height: 60px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.activity-hub-stats div::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 8px;
+  height: 3px;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--accent), rgba(200, 245, 90, 0.72));
+  opacity: 0.75;
+}
+
+.training-cockpit .daily-check {
+  position: relative;
+  overflow: hidden;
+  padding: 16px;
+  border-radius: 18px;
+  background:
+    linear-gradient(145deg, rgba(167, 139, 250, 0.16), rgba(200, 245, 90, 0.035) 44%, rgba(255, 255, 255, 0.018)),
+    #07050f;
+}
+
+.training-cockpit .daily-check::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 44px, rgba(255, 255, 255, 0.025) 44px 45px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 160px);
+}
+
+.training-cockpit .daily-check > * {
+  position: relative;
+}
+
+.training-cockpit .daily-check .panel-header {
+  margin-bottom: 14px;
+  border-bottom-color: rgba(167, 139, 250, 0.17);
+}
+
+.training-cockpit .daily-check .eyebrow,
+.daily-section-title,
+.daily-week-strip span,
+.daily-analysis-grid span,
+.sport-insight-grid span,
+.next-action-grid span {
+  color: rgba(255, 255, 255, 0.54);
+}
+
+.daily-check-grid {
+  grid-template-columns: repeat(5, minmax(96px, 1fr));
+  gap: 7px;
+}
+
+.daily-check-grid button {
+  position: relative;
+  grid-template-columns: 1fr;
+  align-content: space-between;
+  min-height: 112px;
+  padding: 11px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.045);
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+.daily-check-grid button span {
+  grid-row: auto;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 1.15rem;
+}
+
+.daily-check-grid button strong {
+  color: var(--text);
+  font-size: 0.86rem;
+  text-transform: uppercase;
+}
+
+.daily-check-grid button small {
+  min-height: 28px;
+  font-size: 0.72rem;
+  line-height: 1.25;
+}
+
+.daily-check-grid button::after {
+  content: "";
+  height: 3px;
+  width: 42%;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.daily-check-grid button.done {
+  border-color: rgba(200, 245, 90, 0.55);
+  background:
+    linear-gradient(145deg, rgba(200, 245, 90, 0.18), rgba(167, 139, 250, 0.13)),
+    rgba(255, 255, 255, 0.05);
+}
+
+.daily-check-grid button.done::after {
+  width: 100%;
+  background: var(--teal);
+}
+
+.daily-check-grid button.done strong,
+.daily-summary-grid strong {
+  color: var(--text);
+}
+
+.daily-summary-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.daily-summary-grid div {
+  position: relative;
+  overflow: hidden;
+  min-height: 88px;
+  padding: 12px;
+  border-radius: 12px;
+  border-color: rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.daily-summary-grid div::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 10px;
+  height: 4px;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--accent), var(--teal));
+  opacity: 0.76;
+}
+
+.daily-summary-grid span {
+  color: rgba(255, 255, 255, 0.52);
+}
+
+.daily-summary-grid strong {
+  margin-top: 4px;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.daily-summary-grid small {
+  margin-bottom: 8px;
+}
+
+.daily-week-strip {
+  gap: 6px;
+  margin: 12px 0;
+}
+
+.daily-week-strip div {
+  position: relative;
+  min-height: 70px;
+  padding: 9px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.032);
+}
+
+.daily-week-strip div::after {
+  content: "";
+  position: absolute;
+  left: 9px;
+  right: 9px;
+  bottom: 7px;
+  height: 4px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.daily-week-strip div.done::after {
+  background: var(--teal);
+}
+
+.daily-week-strip div.today {
+  border-color: rgba(167, 139, 250, 0.68);
+  background: rgba(167, 139, 250, 0.12);
+}
+
+.daily-side-checks {
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.daily-food-grid,
+.daily-body-grid,
+.daily-favorite-grid {
+  grid-template-columns: repeat(auto-fit, minmax(136px, 1fr));
+}
+
+.daily-food-grid button,
+.daily-body-grid button,
+.daily-favorite-grid button,
+.next-action-grid button,
+.daily-timeline button,
+.daily-analysis-grid div,
+.sport-insight-grid div,
+.private-feed div {
+  border-color: rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.032);
+}
+
+.daily-timeline button {
+  border-left: 3px solid rgba(167, 139, 250, 0.34);
+}
+
+.daily-timeline button.active {
+  border-color: rgba(167, 139, 250, 0.68);
+  border-left-color: var(--teal);
+  background: rgba(167, 139, 250, 0.1);
+}
+
+.daily-analysis {
+  border-top-color: rgba(167, 139, 250, 0.16);
+}
+
+.daily-analysis-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.daily-analysis-grid strong,
+.sport-insight-grid strong,
+.private-feed strong {
+  color: var(--text);
+}
+
+.next-action-grid button:hover,
+.daily-food-grid button:hover,
+.daily-body-grid button:hover,
+.daily-favorite-grid button:hover {
+  border-color: rgba(167, 139, 250, 0.48);
+  background: rgba(167, 139, 250, 0.1);
+}
+
+.daily-quick-edit {
+  border-top-color: rgba(167, 139, 250, 0.16);
+}
+
+.daily-edit-form {
+  grid-template-columns: 86px 122px 72px minmax(140px, 1fr) auto;
+}
+
+.training-cockpit .hero {
+  min-height: 0;
+  padding: 15px;
+  border-radius: 16px;
+  grid-template-columns: 1fr auto;
+  background:
+    linear-gradient(135deg, rgba(167, 139, 250, 0.16), rgba(255, 255, 255, 0.02)),
+    #080711;
+}
+
+.training-cockpit .hero h2 {
+  font-size: 1.15rem;
+  line-height: 1.12;
+}
+
+.training-cockpit .hero-copy p:last-child {
+  max-width: 420px;
+  font-size: 0.82rem;
+}
+
+.training-cockpit .readiness {
+  min-width: 112px;
+  padding: 11px;
+  border-left: 0;
+  border-top: 3px solid var(--teal);
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.training-cockpit .readiness strong {
+  font-size: 2.25rem;
+}
+
+.training-cockpit .weekly-coach,
+.training-cockpit .quick-actions-widget,
+.training-cockpit .quick-add,
+.training-cockpit .live-panel {
+  padding: 14px;
+  border-radius: 16px;
+}
+
+.training-cockpit .coach-action-list {
+  gap: 7px;
+}
+
+.training-cockpit .coach-action-card,
+.training-cockpit .quick-action-card,
+.training-cockpit .sc {
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.training-cockpit .quick-actions-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.training-cockpit .quick-action-card {
+  min-height: 58px;
+}
+
+.training-cockpit .quick-action-card strong {
+  font-size: 0.84rem;
+}
+
+.training-cockpit .quick-action-card small {
+  font-size: 0.72rem;
+}
+
+.training-cockpit .metrics {
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.training-cockpit .metrics .sc {
+  min-height: 102px;
+  border-left: 3px solid rgba(167, 139, 250, 0.56);
+}
+
+.training-cockpit .metrics .cv {
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+}
+
 .primary-action,
 .save-workout {
   min-height: 40px;
@@ -2975,10 +3493,34 @@ textarea {
   box-shadow: var(--shadow-soft);
 }
 
+[data-theme="black"] .sport-selector .activity-focus-head,
+[data-theme="black"] .sport-selector .activity-focus-grid button,
+[data-theme="black"] .training-cockpit .daily-check,
+[data-theme="black"] .training-cockpit .hero,
+[data-theme="black"] .training-cockpit .weekly-coach,
+[data-theme="black"] .training-cockpit .quick-actions-widget,
+[data-theme="black"] .training-cockpit .quick-add,
+[data-theme="black"] .training-cockpit .live-panel,
+[data-theme="black"] .training-cockpit .metrics .sc {
+  box-shadow: none;
+}
+
 @media (max-width: 1100px) {
   .sport-preset-grid,
   .plan-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .training-cockpit {
+    grid-template-columns: 1fr;
+  }
+
+  .training-cockpit .daily-check {
+    grid-row: auto;
+  }
+
+  .training-cockpit .hero {
+    grid-template-columns: 1fr auto;
   }
 
   .activity-focus {
@@ -2994,6 +3536,16 @@ textarea {
   .body-form,
   .food-form,
   .filter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .daily-check-grid {
+    grid-template-columns: repeat(auto-fit, minmax(122px, 1fr));
+  }
+
+  .daily-summary-grid,
+  .daily-analysis-grid,
+  .training-cockpit .metrics {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -3088,7 +3640,10 @@ textarea {
 
   .topbar,
   .activity-focus,
+  .sport-selector,
+  .training-cockpit,
   .hero,
+  .training-cockpit .hero,
   .live-grid,
   .metrics,
   .sport-modules-grid,
@@ -3108,6 +3663,44 @@ textarea {
   .timer-controls,
   .quick-text,
   .timeline-item {
+    grid-template-columns: 1fr;
+  }
+
+  .sport-selector .activity-focus-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .daily-check-grid,
+  .daily-summary-grid,
+  .daily-analysis-grid,
+  .next-action-grid,
+  .training-cockpit .quick-actions-grid,
+  .training-cockpit .metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .daily-check-grid button {
+    min-height: 74px;
+    grid-template-columns: auto 1fr;
+    align-content: center;
+  }
+
+  .daily-check-grid button span {
+    grid-row: span 2;
+  }
+
+  .daily-check-grid button::after {
+    grid-column: 1 / -1;
+  }
+
+  .daily-week-strip {
+    overflow-x: auto;
+    grid-template-columns: repeat(7, minmax(74px, 1fr));
+    padding-bottom: 2px;
+  }
+
+  .daily-side-checks,
+  .daily-edit-form {
     grid-template-columns: 1fr;
   }
 
