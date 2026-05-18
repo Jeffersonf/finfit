@@ -2221,9 +2221,15 @@ function renderPlan() {
             ${sports.map((sport) => {
               const workout = state.workouts.find((item) => item.date === date && item.type === sport.type && item.status !== "pulado");
               const status = workout?.status || "";
-              const mark = status === "feito" ? "✓" : status === "planejado" ? "□" : "+";
               const label = status === "feito" ? "feito" : status === "planejado" ? "planejado" : "livre";
-              return `<button type="button" class="${status || "empty"}" data-plan-cell="${date}:${sport.type}" title="${sport.label} ${label}">${mark}<small>${label}</small></button>`;
+              const stateIcon = status === "feito" ? "✓" : status === "planejado" ? "•" : "+";
+              return `
+                <button type="button" class="${status || "empty"}" data-plan-cell="${date}:${sport.type}" title="${sport.label} ${label}">
+                  <span class="plan-state">${stateIcon}</span>
+                  <strong>${status ? presetLabel(sport.type) : "Adicionar"}</strong>
+                  <small>${label}</small>
+                </button>
+              `;
             }).join("")}
           </div>
         `;

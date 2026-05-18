@@ -142,7 +142,7 @@ label span,
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 18px;
-  height: 52px;
+  height: 60px;
   padding: 0 clamp(16px, 3vw, 44px);
   border-bottom: 1px solid var(--line);
   background: var(--nav-bg);
@@ -203,15 +203,18 @@ label span,
   justify-content: center;
   min-width: 0;
   height: 100%;
-  gap: 0;
+  gap: 6px;
 }
 
 .nav button,
 .nav-item {
-  min-height: 58px;
-  padding: 0 14px;
-  border: 0;
-  border-radius: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 999px;
   background: transparent;
   color: var(--soft);
   font-size: 0.88rem;
@@ -219,19 +222,32 @@ label span,
 }
 
 .nav .ico {
-  display: none;
+  display: inline-block;
+  font-size: 0.95rem;
+  filter: grayscale(0.25);
+  opacity: 0.78;
 }
 
 .nav button.active,
 .nav-item.active {
   color: var(--text);
-  box-shadow: inset 0 -2px 0 var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent) 16%, transparent), transparent),
+    var(--surface-2);
+  box-shadow: none;
+}
+
+.nav button.active .ico,
+.nav-item.active .ico {
+  opacity: 1;
+  filter: none;
 }
 
 .shell {
   width: min(100% - 32px, 1440px);
   margin: 0 auto;
-  padding: 72px 0 56px;
+  padding: 80px 0 56px;
 }
 
 .pwa-banner {
@@ -1085,18 +1101,45 @@ article strong {
 
 .plan-row > button {
   display: grid;
-  place-items: center;
+  grid-template-columns: auto minmax(0, 1fr);
   align-content: center;
-  gap: 1px;
+  align-items: center;
+  gap: 4px 8px;
+  padding: 8px 10px;
   color: var(--muted);
-  font-size: 1.15rem;
-  font-weight: 650;
+  font-size: 0.84rem;
+  font-weight: 500;
+  text-align: left;
 }
 
 .plan-row > button small {
+  grid-column: 2;
   font-size: 0.64rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
+}
+
+.plan-row > button strong {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 0.86rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.plan-state {
+  display: grid;
+  grid-row: 1 / span 2;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 700;
 }
 
 .plan-row > :last-child {
@@ -1115,9 +1158,15 @@ article strong {
 .plan-row button.planejado {
   color: var(--accent-3);
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--accent-3) 15%, transparent), transparent),
+    linear-gradient(90deg, color-mix(in srgb, var(--accent-3) 15%, transparent), transparent 70%),
     var(--surface-2);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent-3) 42%, transparent);
+  box-shadow: inset 3px 0 0 color-mix(in srgb, var(--accent-3) 82%, transparent);
+}
+
+.plan-row button.planejado .plan-state {
+  border-color: color-mix(in srgb, var(--accent-3) 70%, var(--line));
+  background: color-mix(in srgb, var(--accent-3) 18%, transparent);
+  color: var(--accent-3);
 }
 
 .plan-row button.feito {
@@ -1128,8 +1177,43 @@ article strong {
   box-shadow: inset 0 0 0 1px color-mix(in srgb, #fff 24%, transparent);
 }
 
+.plan-row button.feito strong {
+  color: #fff;
+}
+
+.plan-row button.feito .plan-state {
+  border-color: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+}
+
 .plan-row button.feito small {
   color: rgba(255, 255, 255, 0.78);
+}
+
+.periodization-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.period-card {
+  display: grid;
+  gap: 3px;
+  min-height: 58px;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+}
+
+.period-card strong {
+  font-size: 0.82rem;
+}
+
+.period-card small {
+  font-size: 0.72rem;
 }
 
 .plan-day {

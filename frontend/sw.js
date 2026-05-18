@@ -1,11 +1,11 @@
-const CACHE_NAME = "finfit-cache-v49";
+const CACHE_NAME = "finfit-cache-v50";
 const APP_SHELL = [
   "./",
   "./index.html",
-  "./themes.css?v=49",
-  "./styles.css?v=49",
-  "./catalogs.js?v=49",
-  "./app.js?v=49",
+  "./themes.css?v=50",
+  "./styles.css?v=50",
+  "./catalogs.js?v=50",
+  "./app.js?v=50",
   "./manifest.webmanifest",
   "./icon.svg",
   "./offline.html"
