@@ -52,6 +52,27 @@
   --shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
+[data-theme="black"] {
+  --bg: #101010;
+  --surface: #181818;
+  --surface-2: #202020;
+  --surface-3: #2a2a2a;
+  --line: rgba(255, 255, 255, 0.09);
+  --line-strong: rgba(255, 255, 255, 0.16);
+  --text: #f3f0ea;
+  --soft: rgba(243, 240, 234, 0.72);
+  --muted: rgba(243, 240, 234, 0.5);
+  --nav-bg: rgba(16, 16, 16, 0.96);
+}
+
+[data-theme="dark"] {
+  --bg: #202020;
+  --surface: #2a2a2a;
+  --surface-2: #303030;
+  --surface-3: #3a3a3a;
+  --nav-bg: rgba(42, 42, 42, 0.96);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -1067,6 +1088,31 @@ html[data-page="xp"] .topbar {
   .brand,
   .logo-actions {
     display: none;
+  }
+
+  .brand {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 160;
+    display: flex;
+  }
+
+  .brand-word {
+    display: none;
+  }
+
+  .logo-actions {
+    display: flex;
+    gap: 6px;
+  }
+
+  .theme-btn {
+    width: 38px;
+    height: 38px;
+    min-height: 38px;
+    background: var(--surface);
+    box-shadow: var(--shadow-subtle);
   }
 
   .nav {

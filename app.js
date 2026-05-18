@@ -2,7 +2,7 @@ const STORAGE_KEY = "finfit.state.v2";
 const LEGACY_WORKOUTS_KEY = "finfit.workouts.v1";
 const AUTO_BACKUP_KEY = "finfit.autoBackups.v1";
 const ACTIVE_SESSION_KEY = "finfit.activeSession.v1";
-const APPEARANCE_KEY = "finfit.appearance.v4";
+const APPEARANCE_KEY = "finfit.appearance.v5";
 const SPORT_FILTER_KEY = "finfit.sportFilter.v1";
 const DB_NAME = "finfit-db";
 const DB_VERSION = 1;
@@ -209,9 +209,9 @@ function sportIcon(type) {
 function loadAppearance() {
   try {
     const saved = JSON.parse(localStorage.getItem(APPEARANCE_KEY));
-    return { theme: "light", accent: "purple", ...saved };
+    return { theme: "black", accent: "purple", ...saved };
   } catch {
-    return { theme: "light", accent: "purple" };
+    return { theme: "black", accent: "purple" };
   }
 }
 
@@ -221,7 +221,7 @@ function applyAppearance(appearance = loadAppearance()) {
   document.documentElement.dataset.theme = theme;
   document.documentElement.dataset.accent = accent;
   const meta = $("#themeColorMeta");
-  if (meta) meta.content = theme === "black" ? "#0b0d10" : theme === "dark" ? "#10141a" : "#efeee9";
+  if (meta) meta.content = theme === "black" ? "#171717" : theme === "dark" ? "#202020" : "#f4f4f1";
   const themeButton = $("#themeToggleButton");
   if (themeButton) themeButton.textContent = theme === "light" ? "🌙" : theme === "black" ? "☀️" : "⚫";
   const themeSelect = $("#themeSelect");
@@ -3103,7 +3103,7 @@ $(".swatch-grid").addEventListener("click", (event) => {
   if (button) saveAppearance({ accent: button.dataset.accentChoice });
 });
 
-$("#resetAppearanceButton").addEventListener("click", () => saveAppearance({ theme: "light", accent: "purple" }));
+$("#resetAppearanceButton").addEventListener("click", () => saveAppearance({ theme: "black", accent: "purple" }));
 
 $("#sidebarSearchInput").addEventListener("input", (event) => {
   setPage("history");
