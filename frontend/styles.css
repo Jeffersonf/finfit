@@ -10,7 +10,12 @@ body {
   margin: 0;
   min-height: 100vh;
   overflow-x: hidden;
-  background: var(--bg);
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    radial-gradient(circle at 82% -10%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 30%),
+    var(--bg);
+  background-size: 64px 64px, 64px 64px, auto, auto;
   color: var(--text);
   font-family: var(--font-ui);
   font-size: 13px;
@@ -152,7 +157,7 @@ label span,
 
 .brand-word {
   display: inline-flex;
-  color: var(--accent);
+  color: var(--text);
   font-size: 21px;
   font-style: italic;
   font-weight: 650;
@@ -161,6 +166,10 @@ label span,
 }
 
 .brand-word span {
+  color: inherit;
+}
+
+.brand-word span:first-child {
   color: var(--accent);
 }
 
@@ -310,6 +319,30 @@ article,
   border-radius: var(--radius);
   background: var(--surface);
   box-shadow: var(--shadow-subtle);
+  outline: 1px solid rgba(255, 255, 255, 0.015);
+}
+
+.sport-glyph {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent) 18%, transparent), transparent),
+    var(--surface-2);
+  color: var(--accent);
+}
+
+.sport-glyph svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .panel,
@@ -354,7 +387,11 @@ article,
 }
 
 .activity-focus-grid button {
-  min-width: 118px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  min-width: 132px;
   min-height: 46px;
   padding: 8px 12px;
   border: 0;
@@ -369,7 +406,7 @@ article,
 }
 
 .activity-focus-grid button span {
-  display: none;
+  display: inline-grid;
 }
 
 .activity-focus-grid button strong {
@@ -383,7 +420,18 @@ article,
 
 .activity-focus-grid button.active {
   color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--accent) 18%, transparent), transparent),
+    var(--surface-2);
+}
+
+.activity-focus-grid button.active .sport-glyph,
+.daily-check-grid button.done .sport-glyph,
+.daily-timeline button.active .sport-glyph,
+.private-feed > div .sport-glyph {
+  border-color: color-mix(in srgb, var(--accent) 70%, var(--line));
+  background: var(--accent);
+  color: #fff;
 }
 
 .activity-hub {
@@ -579,7 +627,7 @@ article strong {
 
 .daily-check-grid button {
   display: grid;
-  grid-template-columns: 30px minmax(0, 1fr);
+  grid-template-columns: 36px minmax(0, 1fr);
   align-content: start;
   min-height: 96px;
   padding: 12px;
@@ -597,9 +645,13 @@ article strong {
   background: var(--surface);
 }
 
+.daily-check-grid button > span {
+  border: 0;
+  background: transparent;
+}
+
 .daily-check-grid button.done span {
   border-color: var(--accent);
-  background: var(--accent);
 }
 
 .daily-check-grid button strong {
@@ -742,7 +794,7 @@ article strong {
   height: 118px;
   border-bottom: 1px solid var(--line);
   background:
-    linear-gradient(135deg, transparent 0 20%, color-mix(in srgb, var(--accent) 85%, transparent) 20% 23%, transparent 23% 45%, color-mix(in srgb, var(--accent) 85%, transparent) 45% 48%, transparent 48%),
+    linear-gradient(135deg, transparent 0 20%, color-mix(in srgb, var(--accent) 90%, transparent) 20% 24%, transparent 24% 45%, color-mix(in srgb, var(--accent-3) 90%, transparent) 45% 49%, transparent 49%),
     linear-gradient(90deg, color-mix(in srgb, var(--surface-3) 70%, transparent) 1px, transparent 1px),
     linear-gradient(0deg, color-mix(in srgb, var(--surface-3) 70%, transparent) 1px, transparent 1px),
     var(--surface-2);
@@ -1037,7 +1089,8 @@ article strong {
   align-content: center;
   gap: 1px;
   color: var(--muted);
-  font-size: 1rem;
+  font-size: 1.15rem;
+  font-weight: 650;
 }
 
 .plan-row > button small {
@@ -1060,13 +1113,23 @@ article strong {
 }
 
 .plan-row button.planejado {
-  color: var(--soft);
-  background: color-mix(in srgb, var(--accent) 7%, transparent);
+  color: var(--accent-3);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--accent-3) 15%, transparent), transparent),
+    var(--surface-2);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent-3) 42%, transparent);
 }
 
 .plan-row button.feito {
-  color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 13%, transparent);
+  color: #fff;
+  background:
+    linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent-3) 70%, var(--accent))),
+    var(--accent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, #fff 24%, transparent);
+}
+
+.plan-row button.feito small {
+  color: rgba(255, 255, 255, 0.78);
 }
 
 .plan-day {

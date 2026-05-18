@@ -73,15 +73,16 @@ function scopedWorkouts(items = state.workouts) {
 }
 
 function sportIcon(type) {
-  return {
-    todos: "ALL",
-    academia: "GYM",
-    natacao: "SWM",
-    futevolei: "FTV",
-    corrida: "RUN",
-    mobilidade: "MOB",
-    outro: "GEN"
-  }[type] || "GEN";
+  const icons = {
+    todos: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>',
+    academia: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10v4M7 8v8M17 8v8M21 10v4M7 12h10"/></svg>',
+    natacao: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16c2 0 2-1.5 4-1.5S10 16 12 16s2-1.5 4-1.5S18 16 20 16M6 11c2.5-3 5.5-4 9-3l3 1M9 8l4 5"/></svg>',
+    futevolei: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M4.5 10h15M8 5.5c2 4 2 9 0 13M16 5.5c-2 4-2 9 0 13"/></svg>',
+    corrida: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 5.5a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6ZM10 9l3-2 3 2M13 7l-2 5 4 2M11 12l-3 3M15 14l2 5M8 19h3"/></svg>',
+    mobilidade: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM5 20h14M8 20l4-7 4 7M7 10c3 2 7 2 10 0M12 5v8"/></svg>',
+    outro: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.4 6.2L21 12l-6.6 2.8L12 21l-2.4-6.2L3 12l6.6-2.8L12 3Z"/></svg>'
+  };
+  return `<span class="sport-glyph sport-${type || "outro"}">${icons[type] || icons.outro}</span>`;
 }
 
 function loadAppearance() {
@@ -1129,7 +1130,7 @@ function renderDailyCheck() {
     const checked = done.some((workout) => workout.type === item.type);
     return `
       <button type="button" class="${checked ? "done" : ""}" data-daily-check="${item.id}">
-        <span>${item.icon}</span>
+        <span>${sportIcon(item.type)}</span>
         <strong>${item.label}</strong>
         <small>${checked ? "registrado hoje" : `${item.duration}min padrao`}</small>
         <em><b>+${missionXpForQuickItem(item)} XP</b><b>${item.intensity}</b></em>
