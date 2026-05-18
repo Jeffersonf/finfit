@@ -61,6 +61,7 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [x] Criar direcao visual mais proxima de Strava/Nike/Hevy: tema escuro real, claro off-white com profundidade, fonte Inter e dashboard como diario de atleta.
 - [x] Suavizar tipografia: remover Inter Tight, reduzir pesos 800/900, diminuir uppercase e aproximar de app esportivo premium.
 - [x] Adicionar camada de missoes do atleta: XP diario, ofensiva semanal, progresso por etapas e recompensas nos check-ins.
+- [x] Refazer direcao visual para tirar a cara de Discord: tema claro como padrao, nav desktop sem emojis, off-white editorial e cards menos "chat".
 - [ ] Validar no uso real por uma semana.
 - [~] Decidir se a primeira base duravel sera `localStorage`, IndexedDB, SQLite/Capacitor ou API Node.
 
