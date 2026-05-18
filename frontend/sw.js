@@ -1,9 +1,9 @@
-const CACHE_NAME = "finfit-cache-v43";
+const CACHE_NAME = "finfit-cache-v44";
 const APP_SHELL = [
   "./",
   "./index.html",
-  "./styles.css?v=43",
-  "./app.js?v=43",
+  "./styles.css?v=44",
+  "./app.js?v=44",
   "./manifest.webmanifest",
   "./icon.svg",
   "./offline.html"
