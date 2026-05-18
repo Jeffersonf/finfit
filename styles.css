@@ -1583,6 +1583,8 @@ article strong {
 /* Strava-like calm pass: simpler surfaces, less visual weight, clearer hierarchy. */
 :root,
 [data-theme="light"] {
+  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --bg: #f6f6f2;
   --bg-2: #f6f6f2;
   --surface: #ffffff;
@@ -1655,6 +1657,19 @@ article,
   border-color: var(--line);
   border-radius: var(--radius);
   box-shadow: none;
+}
+
+html:not([data-page="today"]) .activity-focus,
+html:not([data-page="today"]) .activity-hub {
+  display: none;
+}
+
+html[data-page="xp"] .topbar,
+html[data-page="progress"] .topbar,
+html[data-page="nutrition"] .topbar,
+html[data-page="history"] .topbar,
+html[data-page="plan"] .topbar {
+  margin-bottom: 14px;
 }
 
 .panel,
@@ -1790,6 +1805,92 @@ article strong {
   display: none;
 }
 
+.xp-page {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.xp-dashboard {
+  display: grid;
+  gap: 14px;
+}
+
+.xp-hero {
+  display: grid;
+  gap: 8px;
+  padding: 18px;
+  border-radius: var(--radius);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent) 12%, transparent), transparent 62%),
+    var(--surface-2);
+}
+
+.xp-hero span,
+.xp-hero small {
+  color: var(--muted);
+}
+
+.xp-hero strong {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 720;
+  letter-spacing: -0.04em;
+}
+
+.xp-week {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.xp-week div,
+.xp-list div:not(.daily-section-title) {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.xp-week div.done {
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--line));
+}
+
+.xp-week span,
+.xp-week small,
+.xp-list small {
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+
+.xp-list {
+  display: grid;
+  gap: 8px;
+}
+
+.xp-list div:not(.daily-section-title) {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.xp-list div:not(.daily-section-title) span {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--line-strong);
+  border-radius: 50%;
+}
+
+.xp-list div.done span {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.xp-list em {
+  color: var(--accent);
+  font-style: normal;
+  font-weight: 650;
+}
+
 @media (max-width: 980px) {
   .sidebar {
     inset: auto 10px 10px;
@@ -1807,6 +1908,11 @@ article strong {
 
   .training-cockpit {
     grid-template-columns: 1fr;
+  }
+
+  .xp-week {
+    grid-template-columns: repeat(7, minmax(64px, 1fr));
+    overflow-x: auto;
   }
 }
 

@@ -493,6 +493,15 @@ function uid(prefix) {
   return `${prefix}-${crypto.randomUUID()}`;
 }
 
+function groupBy(items, key) {
+  return items.reduce((groups, item) => {
+    const value = item[key] || "outro";
+    groups[value] = groups[value] || [];
+    groups[value].push(item);
+    return groups;
+  }, {});
+}
+
 function numberOrBlank(value) {
   const parsed = Number(value);
   return Number.isFinite(parsed) && value !== "" && value !== null && value !== undefined ? parsed : "";
@@ -691,9 +700,10 @@ function recommendation() {
 }
 
 function setPage(page) {
+  document.documentElement.dataset.page = page;
   $$(".page").forEach((item) => item.classList.toggle("active", item.id === `page-${page}`));
   $$("[data-page-target]").forEach((button) => button.classList.toggle("active", button.dataset.pageTarget === page));
-  const titles = { today: "Diario de atleta", plan: "Plano", history: "Diario", progress: "Performance", nutrition: "Nutri", body: "Corpo e recuperacao", library: "Biblioteca", data: "Dados", user: "Usuario" };
+  const titles = { today: "Diario de atleta", xp: "XP do atleta", plan: "Plano", history: "Diario", progress: "Performance", nutrition: "Nutri", body: "Corpo e recuperacao", library: "Biblioteca", data: "Dados", user: "Usuario" };
   $("#pageTitle").textContent = titles[page] || "Finfit";
 }
 
@@ -1122,6 +1132,62 @@ function missionBoardHtml(done, foods, bodyLog) {
       <span>Ofensiva</span>
       <strong>${stats.streak}/7</strong>
       <small>dias ativos na semana</small>
+    </div>
+  `;
+}
+
+function renderXpDashboard() {
+  const target = $("#xpDashboard");
+  if (!target) return;
+  const done = todayWorkouts();
+  const foods = todayFoodLogs();
+  const bodyLog = todayBodyLog();
+  const stats = dailyMissionStats(done, foods, bodyLog);
+  const weekActive = weekDays.map((day) => {
+    const date = dateForCurrentWeekday(day.key);
+    const sessions = state.workouts.filter((workout) => workout.date === date && workout.status !== "pulado");
+    return { ...day, sessions, xp: sessions.reduce((sum, workout) => sum + missionXpForWorkout(workout), 0) };
+  });
+  const topTypes = Object.entries(groupBy(state.workouts, "type"))
+    .map(([type, workouts]) => ({ type, xp: workouts.reduce((sum, workout) => sum + missionXpForWorkout(workout), 0), total: workouts.length }))
+    .sort((a, b) => b.xp - a.xp)
+    .slice(0, 5);
+  const todayMissions = [
+    ...dailyCheckItems.map((item) => ({ label: item.label, meta: `${item.duration}min`, done: done.some((workout) => workout.type === item.type), xp: missionXpForQuickItem(item) })),
+    { label: "Alimentacao", meta: `${foods.length} registro(s)`, done: foods.length > 0, xp: Math.min(60, Math.max(15, foods.length * 15)) },
+    { label: "Corpo", meta: bodyLog ? "check-in feito" : "sono, dor, energia", done: Boolean(bodyLog), xp: 25 }
+  ];
+  target.innerHTML = `
+    <div class="xp-hero">
+      <span>Level ${stats.level}</span>
+      <strong>${stats.xp} XP</strong>
+      <small>${stats.missionsDone}/${stats.target} missoes hoje · ofensiva ${stats.streak}/7</small>
+      <div class="mission-bar"><i style="width: ${Math.min(100, stats.levelXp)}%"></i></div>
+    </div>
+    <div class="xp-week">
+      ${weekActive.map((day) => `<div class="${day.sessions.length ? "done" : ""}"><span>${day.label}</span><strong>${day.xp}</strong><small>${day.sessions.length} sessao</small></div>`).join("")}
+    </div>
+    <div class="xp-list">
+      <div class="daily-section-title">Missoes de hoje</div>
+      ${todayMissions.map((item) => `
+        <div class="${item.done ? "done" : ""}">
+          <span></span>
+          <strong>${item.label}</strong>
+          <small>${item.meta}</small>
+          <em>+${item.xp} XP</em>
+        </div>
+      `).join("")}
+    </div>
+    <div class="xp-list">
+      <div class="daily-section-title">Categorias de XP</div>
+      ${topTypes.length ? topTypes.map((item) => `
+        <div>
+          <span></span>
+          <strong>${presetLabel(item.type)}</strong>
+          <small>${item.total} registros</small>
+          <em>${item.xp} XP</em>
+        </div>
+      `).join("") : '<p class="empty-state">Registre treinos para criar categorias de XP.</p>'}
     </div>
   `;
 }
@@ -2462,6 +2528,7 @@ function render() {
   renderBackupStatus();
   renderDataHealth();
   renderUserPanel();
+  renderXpDashboard();
   renderTimer();
 }
 

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR" data-theme="light" data-accent="purple">
+<html lang="pt-BR" data-theme="light" data-accent="purple" data-page="today">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./styles.css?v=41">
+    <link rel="stylesheet" href="./styles.css?v=42">
   </head>
   <body>
     <aside class="sidebar">
@@ -27,6 +27,7 @@
       <div class="nav-lbl">Menu</div>
       <nav class="nav" aria-label="Principal">
         <button class="nav-item active" type="button" data-page-target="today"><span class="ico">📊</span>Hoje</button>
+        <button class="nav-item" type="button" data-page-target="xp"><span class="ico">⚡</span>XP</button>
         <button class="nav-item" type="button" data-page-target="plan"><span class="ico">📌</span>Plano</button>
         <button class="nav-item" type="button" data-page-target="history"><span class="ico">💪</span>Diário</button>
         <button class="nav-item an" type="button" data-page-target="progress"><span class="ico">📈</span>Performance</button>
@@ -297,6 +298,19 @@
             </div>
             <div class="week-grid" id="weekGrid"></div>
           </div>
+        </section>
+        </section>
+
+      <section class="page" id="page-xp">
+        <section class="xp-page panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">progresso visivel</p>
+              <h3>XP do atleta</h3>
+            </div>
+            <button type="button" data-page-target="today">Registrar agora</button>
+          </div>
+          <div class="xp-dashboard" id="xpDashboard"></div>
         </section>
       </section>
 
@@ -675,6 +689,6 @@
       </section>
     </main>
 
-    <script src="./app.js?v=41"></script>
+    <script src="./app.js?v=42"></script>
   </body>
 </html>
