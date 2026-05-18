@@ -64,6 +64,7 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [x] Refazer direcao visual para tirar a cara de Discord: tema claro como padrao, nav desktop sem emojis, off-white editorial e cards menos "chat".
 - [x] Forcar virada visual visivel: nova chave de aparencia, cache PWA v39, layout editorial com titulo grande e cards retangulares sem bolhas.
 - [x] Fazer novo corte visual nativo: cache v40, aparencia v4, lista de check-ins, nav flutuante e visual mais leve de app fitness.
+- [x] Corrigir F5/cache e peso visual: assets versionados v41, service worker com skip waiting/reload, home mais leve estilo Strava e formulários pesados fora da primeira dobra.
 - [ ] Validar no uso real por uma semana.
 - [~] Decidir se a primeira base duravel sera `localStorage`, IndexedDB, SQLite/Capacitor ou API Node.
 

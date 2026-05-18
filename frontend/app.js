@@ -3596,11 +3596,27 @@ $("#importPreview").addEventListener("click", (event) => {
 
 function registerServiceWorker() {
   if (!("serviceWorker" in navigator)) return;
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (refreshing) return;
+    refreshing = true;
+    window.location.reload();
+  });
   navigator.serviceWorker.register("./sw.js").then((registration) => {
     $("#pwaStatus").textContent = "Offline ativo. Dados ficam neste navegador.";
+    registration.update();
+    if (registration.waiting) registration.waiting.postMessage("SKIP_WAITING");
     registration.addEventListener("updatefound", () => {
       $("#pwaStatus").textContent = "Atualizacao disponivel.";
       $("#pwaBanner").classList.add("attention");
+      const worker = registration.installing;
+      if (worker) {
+        worker.addEventListener("statechange", () => {
+          if (worker.state === "installed" && navigator.serviceWorker.controller) {
+            worker.postMessage("SKIP_WAITING");
+          }
+        });
+      }
     });
   }).catch(() => {
     $("#pwaStatus").textContent = "Offline indisponivel neste contexto.";
