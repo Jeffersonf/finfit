@@ -74,14 +74,14 @@ function scopedWorkouts(items = state.workouts) {
 
 function sportIcon(type) {
   return {
-    todos: "◎",
-    academia: "💪",
-    natacao: "🏊",
-    futevolei: "🏐",
-    corrida: "🏃",
-    mobilidade: "🧘",
-    outro: "✦"
-  }[type] || "✦";
+    todos: "ALL",
+    academia: "GYM",
+    natacao: "SWM",
+    futevolei: "FTV",
+    corrida: "RUN",
+    mobilidade: "MOB",
+    outro: "GEN"
+  }[type] || "GEN";
 }
 
 function loadAppearance() {
@@ -2205,18 +2205,54 @@ function renderPeriodization() {
 }
 
 function renderPlan() {
-  const week = currentWeekWorkouts();
-  $("#planGrid").innerHTML = weekDays.map((day) => {
-    const dayWorkouts = week.filter((workout) => new Date(`${workout.date}T12:00:00`).getDay() === day.key);
-    return `
-      <div class="plan-day">
-        <strong>${day.label}</strong>
-        ${dayWorkouts.length ? dayWorkouts.map((item) => `<span>${presetLabel(item.type)}</span><small>${item.name} - ${item.status}</small>`).join("") : "<span>sem treino</span><small>clique em gerar base para planejar</small>"}
+  const sports = presets.filter((preset) => preset.type !== "outro");
+  $("#planGrid").innerHTML = `
+    <div class="plan-table" role="table" aria-label="Plano semanal">
+      <div class="plan-row plan-head" role="row">
+        <span>Dia</span>
+        ${sports.map((sport) => `<span>${sport.label}</span>`).join("")}
       </div>
-    `;
-  }).join("");
+      ${weekDays.map((day) => {
+        const date = dateForCurrentWeekday(day.key);
+        return `
+          <div class="plan-row" role="row">
+            <strong>${day.label}</strong>
+            ${sports.map((sport) => {
+              const workout = state.workouts.find((item) => item.date === date && item.type === sport.type && item.status !== "pulado");
+              const status = workout?.status || "";
+              const mark = status === "feito" ? "✓" : status === "planejado" ? "□" : "+";
+              const label = status === "feito" ? "feito" : status === "planejado" ? "planejado" : "livre";
+              return `<button type="button" class="${status || "empty"}" data-plan-cell="${date}:${sport.type}" title="${sport.label} ${label}">${mark}<small>${label}</small></button>`;
+            }).join("")}
+          </div>
+        `;
+      }).join("")}
+    </div>
+  `;
   renderSeasons();
   renderPeriodization();
+}
+
+function togglePlanCell(value) {
+  const [date, type] = value.split(":");
+  const existing = state.workouts.find((item) => item.date === date && item.type === type && item.status !== "pulado");
+  if (!existing) {
+    const preset = presets.find((item) => item.type === type) || presets[0];
+    state.workouts.push(normalizeWorkout({
+      id: uid("workout"),
+      type,
+      name: preset.defaultName,
+      date,
+      duration: preset.duration,
+      intensity: "moderado",
+      status: "planejado"
+    }));
+  } else if (existing.status === "planejado") {
+    existing.status = "feito";
+  } else {
+    state.workouts = state.workouts.filter((item) => item.id !== existing.id);
+  }
+  render();
 }
 
 function renderBody() {
@@ -3390,6 +3426,11 @@ $("#foodCatalogGrid").addEventListener("click", (event) => {
 $("#seedNutritionButton").addEventListener("click", () => {
   state.foodLogs = seedState.foodLogs.map(normalizeFoodLog);
   render();
+});
+
+$("#planGrid").addEventListener("click", (event) => {
+  const cell = event.target.closest("[data-plan-cell]");
+  if (cell) togglePlanCell(cell.dataset.planCell);
 });
 
 $("#createWeekPlanButton").addEventListener("click", () => {
