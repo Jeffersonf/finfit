@@ -13,7 +13,7 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-ui);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 400;
   line-height: 1.45;
   -webkit-font-smoothing: antialiased;
@@ -27,14 +27,14 @@ textarea {
 }
 
 button {
-  min-height: 38px;
+  min-height: 34px;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   background: var(--surface);
   color: var(--text);
   cursor: pointer;
   font-weight: 500;
-  transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.15s;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
 }
 
 button:hover {
@@ -54,7 +54,7 @@ input,
 select,
 textarea {
   width: 100%;
-  min-height: 40px;
+  min-height: 36px;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   background: var(--surface);
@@ -137,7 +137,7 @@ label span,
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 18px;
-  height: 58px;
+  height: 52px;
   padding: 0 clamp(16px, 3vw, 44px);
   border-bottom: 1px solid var(--line);
   background: var(--nav-bg);
@@ -176,7 +176,7 @@ label span,
   height: 34px;
   min-height: 34px;
   padding: 0;
-  border-radius: 50%;
+  border-radius: var(--radius-sm);
   background: transparent;
 }
 
@@ -222,7 +222,7 @@ label span,
 .shell {
   width: min(100% - 32px, 1440px);
   margin: 0 auto;
-  padding: 84px 0 64px;
+  padding: 72px 0 56px;
 }
 
 .pwa-banner {
@@ -250,7 +250,7 @@ label span,
 }
 
 .pt {
-  font-size: clamp(1.65rem, 2.2vw, 2.55rem);
+  font-size: clamp(1.45rem, 2vw, 2.2rem);
   font-weight: 650;
   line-height: 1.02;
 }
@@ -315,7 +315,7 @@ article,
 .panel,
 .box,
 .activity-hub {
-  padding: 18px;
+  padding: 14px;
 }
 
 .panel-header,
@@ -478,8 +478,8 @@ article strong {
 .mission-streak {
   display: grid;
   align-content: center;
-  min-height: 116px;
-  padding: 14px;
+  min-height: 94px;
+  padding: 12px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--surface-2);
@@ -512,7 +512,7 @@ article strong {
 .mission-track span {
   width: 18px;
   height: 6px;
-  border-radius: 999px;
+  border-radius: 2px;
   background: var(--surface-3);
 }
 
@@ -581,7 +581,7 @@ article strong {
   display: grid;
   grid-template-columns: 30px minmax(0, 1fr);
   align-content: start;
-  min-height: 120px;
+  min-height: 96px;
   padding: 12px;
   text-align: left;
 }
@@ -592,7 +592,7 @@ article strong {
   width: 28px;
   height: 28px;
   border: 1px solid var(--line-strong);
-  border-radius: 50%;
+  border-radius: var(--radius-sm);
   color: transparent;
   background: var(--surface);
 }
@@ -624,7 +624,7 @@ article strong {
 .xp-list em,
 .daily-timeline em b {
   padding: 4px 7px;
-  border-radius: 999px;
+  border-radius: 3px;
   background: var(--surface-3);
   color: var(--soft);
   font-weight: 500;
@@ -767,8 +767,8 @@ article strong {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 14px;
-  min-height: 170px;
-  padding: 20px;
+  min-height: 132px;
+  padding: 16px;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--surface);
@@ -858,6 +858,14 @@ article strong {
   color: var(--accent);
 }
 
+.activity-category-grid button span,
+.daily-timeline button > span,
+.private-feed > div > span {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
 .activity-context-body,
 .running-zone-grid,
 .route-split-list,
@@ -888,7 +896,7 @@ article strong {
 .swatch span {
   width: 18px;
   height: 18px;
-  border-radius: 50%;
+  border-radius: var(--radius-sm);
   background: var(--accent);
 }
 
@@ -972,7 +980,7 @@ article strong {
   width: 14px;
   height: 14px;
   border: 1px solid var(--line-strong);
-  border-radius: 50%;
+  border-radius: var(--radius-sm);
 }
 
 .xp-list div.done span {
@@ -982,6 +990,87 @@ article strong {
 
 .xp-list small {
   grid-column: 2;
+}
+
+.plan-grid {
+  overflow-x: auto;
+}
+
+.plan-table {
+  display: grid;
+  min-width: 760px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.plan-row {
+  display: grid;
+  grid-template-columns: 92px repeat(5, minmax(116px, 1fr));
+  border-bottom: 1px solid var(--line);
+}
+
+.plan-row:last-child {
+  border-bottom: 0;
+}
+
+.plan-row > strong,
+.plan-row > span,
+.plan-row > button {
+  min-height: 46px;
+  border: 0;
+  border-right: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+}
+
+.plan-row > strong,
+.plan-row > span {
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+}
+
+.plan-row > button {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 1px;
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+.plan-row > button small {
+  font-size: 0.64rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.plan-row > :last-child {
+  border-right: 0;
+}
+
+.plan-head {
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.plan-row button.planejado {
+  color: var(--soft);
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
+}
+
+.plan-row button.feito {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 13%, transparent);
+}
+
+.plan-day {
+  display: none;
 }
 
 .modal {
@@ -1098,9 +1187,7 @@ html[data-page="xp"] .topbar {
   }
 
   .nav .ico {
-    display: block;
-    margin-bottom: 2px;
-    font-size: 1rem;
+    display: none;
   }
 
   .shell {
