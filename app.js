@@ -208,9 +208,10 @@ function sportIcon(type) {
 
 function loadAppearance() {
   try {
-    return { theme: "black", accent: "purple", ...JSON.parse(localStorage.getItem(APPEARANCE_KEY)) };
+    const saved = JSON.parse(localStorage.getItem(APPEARANCE_KEY));
+    return { theme: "light", accent: "purple", ...saved };
   } catch {
-    return { theme: "black", accent: "purple" };
+    return { theme: "light", accent: "purple" };
   }
 }
 
@@ -3027,7 +3028,7 @@ $(".swatch-grid").addEventListener("click", (event) => {
   if (button) saveAppearance({ accent: button.dataset.accentChoice });
 });
 
-$("#resetAppearanceButton").addEventListener("click", () => saveAppearance({ theme: "black", accent: "purple" }));
+$("#resetAppearanceButton").addEventListener("click", () => saveAppearance({ theme: "light", accent: "purple" }));
 
 $("#sidebarSearchInput").addEventListener("input", (event) => {
   setPage("history");
