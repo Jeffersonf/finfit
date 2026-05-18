@@ -2,12 +2,12 @@
   color-scheme: light;
   --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
   --font-display: var(--font-ui);
-  --bg: #f4f4f1;
-  --surface: #ffffff;
-  --surface-2: #f8f8f5;
-  --surface-3: #ecece7;
-  --line: rgba(28, 30, 33, 0.1);
-  --line-strong: rgba(28, 30, 33, 0.18);
+  --bg: #e9eae5;
+  --surface: #fffefa;
+  --surface-2: #f4f5ef;
+  --surface-3: #e4e6dc;
+  --line: rgba(28, 30, 33, 0.13);
+  --line-strong: rgba(28, 30, 33, 0.24);
   --text: #202124;
   --soft: rgba(32, 33, 36, 0.68);
   --muted: rgba(32, 33, 36, 0.48);
@@ -18,7 +18,7 @@
   --danger: #d94841;
   --radius: 5px;
   --radius-sm: 4px;
-  --shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-subtle: 0 8px 24px rgba(28, 30, 33, 0.07);
   --nav-bg: rgba(255, 255, 255, 0.96);
 }
 
