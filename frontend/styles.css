@@ -625,6 +625,98 @@ article,
     var(--surface);
 }
 
+.mission-board {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.7fr) minmax(0, 1.3fr) minmax(120px, 0.45fr);
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.mission-progress,
+.mission-copy,
+.mission-streak {
+  display: grid;
+  align-content: center;
+  gap: 7px;
+  min-height: 112px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface-2) 78%, var(--surface));
+}
+
+.mission-progress {
+  border-color: color-mix(in srgb, var(--accent) 32%, var(--line));
+}
+
+.mission-track {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mission-track span,
+.mission-track b {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--line-strong);
+  border-radius: 50%;
+  background: var(--surface);
+}
+
+.mission-track span.done {
+  border-color: var(--accent-3);
+  background: var(--accent-3);
+}
+
+.mission-track b {
+  border-color: color-mix(in srgb, var(--accent-2) 50%, var(--line));
+  font-size: 0.85rem;
+  font-weight: 650;
+}
+
+.mission-progress strong,
+.mission-streak strong {
+  font-size: 1.7rem;
+  font-weight: 720;
+  line-height: 1;
+}
+
+.mission-progress small,
+.mission-streak small,
+.mission-copy p {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.mission-copy span,
+.mission-streak span {
+  color: var(--accent-3);
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+
+.mission-copy h3 {
+  font-size: 1.25rem;
+  font-weight: 720;
+}
+
+.mission-bar {
+  overflow: hidden;
+  height: 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-3) 75%, transparent);
+}
+
+.mission-bar i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), var(--accent-3));
+}
+
 .daily-check-grid,
 .daily-week-strip,
 .daily-food-grid,
@@ -675,6 +767,33 @@ article,
   color: var(--muted);
   font-size: 0.76rem;
   font-style: normal;
+}
+
+.daily-check-grid button em {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  font-style: normal;
+}
+
+.daily-check-grid button em b {
+  padding: 3px 7px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-3) 12%, var(--surface-2));
+  color: var(--soft);
+  font-size: 0.7rem;
+  font-weight: 650;
+}
+
+.daily-check-grid button em b:first-child {
+  border-color: color-mix(in srgb, var(--accent-3) 38%, var(--line));
+  color: var(--accent-3);
+}
+
+.daily-check-grid button.done em b:first-child {
+  border-color: color-mix(in srgb, var(--accent-2) 48%, var(--line));
+  color: var(--accent-2);
 }
 
 .daily-check-grid button.done {
@@ -1402,6 +1521,7 @@ article strong {
   .daily-check-grid,
   .daily-summary-grid,
   .daily-analysis-grid,
+  .mission-board,
   .daily-side-checks,
   .metrics,
   .running-kpis,

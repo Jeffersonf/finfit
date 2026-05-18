@@ -1075,6 +1075,56 @@ function todayFoodLogs() {
   return state.foodLogs.filter((item) => item.date === todayIso());
 }
 
+function missionXpForWorkout(workout) {
+  const base = Math.max(10, Math.round(Number(workout.duration || 0) / 5) * 5);
+  const bonus = { leve: 5, moderado: 15, forte: 25, maximo: 35 }[workout.intensity] || 10;
+  return Math.min(120, base + bonus);
+}
+
+function missionXpForQuickItem(item) {
+  return missionXpForWorkout({ duration: item.duration, intensity: item.intensity });
+}
+
+function dailyMissionStats(done = todayWorkouts(), foods = todayFoodLogs(), bodyLog = todayBodyLog()) {
+  const workoutXp = done.reduce((sum, workout) => sum + missionXpForWorkout(workout), 0);
+  const foodXp = Math.min(60, foods.length * 15);
+  const bodyXp = bodyLog ? 25 : 0;
+  const xp = workoutXp + foodXp + bodyXp;
+  const level = Math.floor(xp / 100) + 1;
+  const levelXp = xp % 100;
+  const missionsDone = done.length + foods.length + (bodyLog ? 1 : 0);
+  const target = 5;
+  const streak = weekDays.reduce((sum, day) => {
+    const date = dateForCurrentWeekday(day.key);
+    return sum + (state.workouts.some((workout) => workout.date === date && workout.status !== "pulado") ? 1 : 0);
+  }, 0);
+  return { xp, level, levelXp, missionsDone, target, streak };
+}
+
+function missionBoardHtml(done, foods, bodyLog) {
+  const stats = dailyMissionStats(done, foods, bodyLog);
+  const progress = Math.min(100, stats.levelXp);
+  const dots = Array.from({ length: stats.target }, (_, index) => `<span class="${index < stats.missionsDone ? "done" : ""}"></span>`).join("");
+  return `
+    <div class="mission-progress">
+      <div class="mission-track">${dots}<b>🏆</b></div>
+      <strong>${stats.xp} XP</strong>
+      <small>${stats.missionsDone}/${stats.target} missões hoje</small>
+    </div>
+    <div class="mission-copy">
+      <span>Level ${stats.level}</span>
+      <h3>Hábitos viram performance.</h3>
+      <p>Cada treino, refeição e check-in de corpo alimenta sua ofensiva diária.</p>
+      <div class="mission-bar"><i style="width: ${progress}%"></i></div>
+    </div>
+    <div class="mission-streak">
+      <span>Ofensiva</span>
+      <strong>${stats.streak}/7</strong>
+      <small>dias ativos na semana</small>
+    </div>
+  `;
+}
+
 function todayBodyLog() {
   return state.bodyLogs.find((item) => item.date === todayIso());
 }
@@ -1102,6 +1152,7 @@ function dailyCheckWorkout(item) {
 function renderDailyCheck() {
   const grid = $("#dailyCheckGrid");
   const summary = $("#dailySummaryGrid");
+  const missionBoard = $("#missionBoard");
   const quickEdit = $("#dailyQuickEdit");
   const timeline = $("#dailyTimeline");
   const weekStrip = $("#dailyWeekStrip");
@@ -1119,13 +1170,16 @@ function renderDailyCheck() {
   const burned = exerciseCalories(todayIso());
   if (selectedDailyWorkoutId && !state.workouts.some((workout) => workout.id === selectedDailyWorkoutId)) selectedDailyWorkoutId = "";
   const selected = state.workouts.find((workout) => workout.id === selectedDailyWorkoutId) || done.at(-1);
+  if (missionBoard) missionBoard.innerHTML = missionBoardHtml(done, foods, bodyLog);
   grid.innerHTML = dailyCheckItems.map((item) => {
     const checked = done.some((workout) => workout.type === item.type);
+    const xp = missionXpForQuickItem(item);
     return `
       <button type="button" class="${checked ? "done" : ""}" data-daily-check="${item.id}">
         <span>${item.icon}</span>
         <strong>${item.label}</strong>
         <small>${checked ? "registrado hoje" : `${item.duration}min padrao`}</small>
+        <em><b>+${xp} XP</b><b>${item.intensity}</b></em>
       </button>
     `;
   }).join("");

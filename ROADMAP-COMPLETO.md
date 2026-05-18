@@ -58,8 +58,9 @@ O produto pode crescer como um "Strava pessoal + diario de treino + treinador de
 - [x] Fazer redesign completo do shell visual: sidebar esportiva compacta, topbar de arena, paineis unificados e telas internas com linguagem de performance.
 - [x] Refatorar CSS acumulado: reduzir de 87 KB para uma folha limpa de 22 KB, trocar paleta para grafite/laranja/verde e remover camadas pesadas de override.
 - [x] Corrigir direcao visual que lembrava Discord: trocar rail escura por topo horizontal, base clara esportiva e cards de atividade estilo log/performance.
-- [x] Criar direcao visual mais proxima de Strava/Nike/Hevy: tema escuro real, claro off-white com profundidade, fonte Inter/Inter Tight e dashboard como diario de atleta.
+- [x] Criar direcao visual mais proxima de Strava/Nike/Hevy: tema escuro real, claro off-white com profundidade, fonte Inter e dashboard como diario de atleta.
 - [x] Suavizar tipografia: remover Inter Tight, reduzir pesos 800/900, diminuir uppercase e aproximar de app esportivo premium.
+- [x] Adicionar camada de missoes do atleta: XP diario, ofensiva semanal, progresso por etapas e recompensas nos check-ins.
 - [ ] Validar no uso real por uma semana.
 - [~] Decidir se a primeira base duravel sera `localStorage`, IndexedDB, SQLite/Capacitor ou API Node.
 
