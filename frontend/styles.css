@@ -1,85 +1,55 @@
-﻿:root {
+:root {
   color-scheme: light;
-  --font-ui: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-display: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --bg: #f6f3ec;
-  --bg-2: #fffaf1;
-  --surface: #fffdf8;
-  --surface-2: #f0ece1;
-  --surface-3: #e2dccd;
-  --line: rgba(25, 28, 30, 0.13);
-  --line-strong: rgba(25, 28, 30, 0.24);
-  --text: #181a1c;
-  --soft: rgba(24, 26, 28, 0.74);
-  --muted: rgba(24, 26, 28, 0.48);
+  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-display: var(--font-ui);
+  --bg: #f4f4f1;
+  --surface: #ffffff;
+  --surface-2: #f8f8f5;
+  --surface-3: #ecece7;
+  --line: rgba(28, 30, 33, 0.1);
+  --line-strong: rgba(28, 30, 33, 0.18);
+  --text: #202124;
+  --soft: rgba(32, 33, 36, 0.68);
+  --muted: rgba(32, 33, 36, 0.48);
   --accent: #fc4c02;
-  --accent-2: #171819;
-  --accent-3: #147d7e;
-  --danger: #ff5848;
-  --ok: #19c37d;
-  --radius: 2px;
-  --radius-sm: 2px;
-  --shadow: none;
-  --shadow-subtle: none;
-  --nav-bg: rgba(255, 253, 248, 0.94);
-  --sidebar: 0px;
+  --accent-2: #202124;
+  --accent-3: #2f7df6;
+  --ok: #15965f;
+  --danger: #d94841;
+  --radius: 10px;
+  --radius-sm: 7px;
+  --shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --nav-bg: rgba(255, 255, 255, 0.96);
 }
 
-[data-accent="purple"] {
+[data-accent="purple"],
+[data-accent="amber"] {
   --accent: #fc4c02;
-  --accent-2: #171819;
-  --accent-3: #147d7e;
 }
 
 [data-accent="lime"] {
-  --accent: #17a85b;
-  --accent-2: #171819;
+  --accent: #15965f;
 }
 
 [data-accent="teal"] {
-  --accent: #00a6a6;
-  --accent-2: #171819;
-}
-
-[data-accent="amber"] {
-  --accent: #f59e0b;
-  --accent-2: #171819;
+  --accent: #008b8b;
 }
 
 [data-theme="black"],
 [data-theme="dark"] {
   color-scheme: dark;
-  --bg: #101113;
-  --bg-2: #15171a;
-  --surface: #1a1d21;
-  --surface-2: #20242a;
-  --surface-3: #2a3037;
+  --bg: #171717;
+  --surface: #202020;
+  --surface-2: #262626;
+  --surface-3: #303030;
   --line: rgba(255, 255, 255, 0.1);
-  --line-strong: rgba(255, 255, 255, 0.2);
-  --text: #f5f2ec;
-  --soft: rgba(245, 242, 236, 0.76);
-  --muted: rgba(245, 242, 236, 0.52);
-  --accent-2: #d6ff3f;
-  --accent-3: #68c7c5;
-  --nav-bg: rgba(16, 17, 19, 0.9);
-}
-
-[data-theme="light"] {
-  color-scheme: light;
-  --bg: #efeee9;
-  --bg-2: #f7f6f1;
-  --surface: #fbfaf6;
-  --surface-2: #f2f1eb;
-  --surface-3: #e7e5dc;
-  --line: rgba(31, 35, 40, 0.12);
-  --line-strong: rgba(31, 35, 40, 0.22);
-  --text: #171717;
-  --soft: rgba(23, 23, 23, 0.74);
-  --muted: rgba(23, 23, 23, 0.52);
-  --accent-2: #171819;
-  --shadow: 0 14px 36px rgba(31, 35, 40, 0.1);
-  --shadow-subtle: 0 1px 0 rgba(255, 255, 255, 0.9), 0 12px 28px rgba(31, 35, 40, 0.08);
-  --nav-bg: rgba(251, 250, 246, 0.88);
+  --line-strong: rgba(255, 255, 255, 0.18);
+  --text: #f4f4ef;
+  --soft: rgba(244, 244, 239, 0.7);
+  --muted: rgba(244, 244, 239, 0.48);
+  --accent-2: #f4f4ef;
+  --nav-bg: rgba(32, 32, 32, 0.96);
+  --shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 * {
@@ -93,20 +63,14 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  background:
-    linear-gradient(90deg, color-mix(in srgb, var(--accent) 7%, transparent), transparent 28%),
-    linear-gradient(180deg, var(--bg-2), var(--bg) 42%),
-    var(--bg);
+  overflow-x: hidden;
+  background: var(--bg);
   color: var(--text);
   font-family: var(--font-ui);
   font-size: 14px;
+  font-weight: 400;
   line-height: 1.45;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
-}
-
-body::before {
-  display: none;
 }
 
 button,
@@ -120,17 +84,16 @@ button {
   min-height: 38px;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
-  background: var(--surface-2);
+  background: var(--surface);
   color: var(--text);
   cursor: pointer;
-  font-weight: 650;
-  transition: background 0.14s, border-color 0.14s, transform 0.14s;
+  font-weight: 500;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.15s;
 }
 
 button:hover {
   border-color: color-mix(in srgb, var(--accent) 42%, var(--line));
-  background: color-mix(in srgb, var(--accent) 10%, var(--surface-2));
-  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--accent) 7%, var(--surface));
 }
 
 button:focus-visible,
@@ -148,7 +111,7 @@ textarea {
   min-height: 40px;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
-  background: color-mix(in srgb, var(--surface) 86%, var(--bg));
+  background: var(--surface);
   color: var(--text);
   padding: 9px 10px;
 }
@@ -161,24 +124,6 @@ textarea {
 label {
   display: grid;
   gap: 6px;
-}
-
-label span,
-.eyebrow,
-.cl,
-.ct,
-.daily-section-title,
-.activity-hub-stats span,
-.module-kpis span,
-.nutrition-kpis span,
-.daily-summary-grid span,
-.daily-analysis-grid span,
-.sport-insight-grid span {
-  color: var(--muted);
-  font-size: 0.72rem;
-  font-weight: 650;
-  letter-spacing: 0.01em;
-  text-transform: none;
 }
 
 h1,
@@ -194,16 +139,17 @@ h3,
 .cv,
 article strong {
   font-family: var(--font-display);
-  letter-spacing: 0;
+  letter-spacing: -0.01em;
 }
 
 h2 {
-  font-size: clamp(1.35rem, 2vw, 2.1rem);
-  line-height: 1.05;
+  font-size: clamp(1.35rem, 2vw, 2rem);
+  line-height: 1.08;
 }
 
 h3 {
   font-size: 1rem;
+  font-weight: 600;
 }
 
 small,
@@ -218,6 +164,25 @@ small,
   grid-column: 1 / -1;
 }
 
+.eyebrow,
+.cl,
+.ct,
+.daily-section-title,
+label span,
+.activity-hub-stats span,
+.daily-summary-grid span,
+.daily-analysis-grid span,
+.sport-insight-grid span,
+.nutrition-kpis span,
+.module-kpis span,
+.profile-stats span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 .sidebar {
   position: fixed;
   inset: 0 0 auto 0;
@@ -226,187 +191,137 @@ small,
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 18px;
-  width: auto;
-  height: 76px;
-  padding: 0 28px;
-  border-right: 0;
+  height: 58px;
+  padding: 0 clamp(16px, 3vw, 44px);
   border-bottom: 1px solid var(--line);
   background: var(--nav-bg);
   backdrop-filter: blur(14px);
-  box-shadow: none;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
   gap: 10px;
-  margin: 0;
 }
 
 .brand-word {
   display: inline-flex;
-  width: auto;
-  height: auto;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  font-family: var(--font-display);
-  font-size: 24px;
-  font-weight: 600;
+  color: var(--accent);
+  font-size: 21px;
+  font-style: italic;
+  font-weight: 650;
   line-height: 1;
-  text-transform: none;
+  letter-spacing: -0.03em;
 }
 
-.brand-word span:first-child {
+.brand-word span {
   color: var(--accent);
 }
 
-.brand-word span:last-child {
-  color: var(--text);
-}
-
-.brand-actions {
+.logo-actions {
   display: flex;
   gap: 6px;
-  order: 3;
 }
 
 .theme-btn {
   display: grid;
   place-items: center;
-  width: 30px;
-  height: 30px;
-  min-height: 30px;
+  width: 34px;
+  height: 34px;
+  min-height: 34px;
   padding: 0;
-  border-radius: 999px;
+  border-radius: 50%;
+  background: transparent;
 }
 
 .sb-search,
 .nav-lbl,
 .sidebar-utility,
 .sb-bottom,
-.nav [data-page-target="body"],
-.nav [data-page-target="library"],
-.nav [data-page-target="user"] {
+.ci,
+.activity-focus-head {
   display: none;
 }
 
 .nav {
   display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 2px;
-  overflow-x: auto;
+  min-width: 0;
+  height: 100%;
+  gap: 0;
 }
 
 .nav button,
 .nav-item {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  width: auto;
-  min-height: 44px;
+  min-height: 58px;
   padding: 0 14px;
-  border-color: transparent;
+  border: 0;
+  border-radius: 0;
   background: transparent;
-  color: var(--muted);
-  font-size: 0.9rem;
-  font-weight: 600;
-  line-height: 1;
-  text-align: center;
+  color: var(--soft);
+  font-size: 0.88rem;
   white-space: nowrap;
 }
 
 .nav .ico {
   display: none;
-  width: auto;
-  height: auto;
-  border-radius: 0;
-  background: transparent;
-  color: inherit;
-  font-size: 14px;
 }
 
 .nav button.active,
 .nav-item.active {
-  border-color: var(--text);
-  background: var(--text);
-  color: var(--surface);
-}
-
-.nav button.active .ico,
-.nav-item.active .ico {
-  background: transparent;
-  color: inherit;
+  color: var(--text);
+  box-shadow: inset 0 -2px 0 var(--accent);
 }
 
 .shell {
-  max-width: 1320px;
-  min-width: 0;
+  width: min(100% - 32px, 1440px);
   margin: 0 auto;
-  padding: 104px 28px 72px;
+  padding: 84px 0 64px;
 }
 
 .pwa-banner {
   display: none;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 10px;
-  padding: 8px 10px;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 10px 12px;
   border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius);
   background: var(--surface);
-  color: var(--muted);
-  font-size: 0.82rem;
+}
+
+.pwa-banner.show {
+  display: flex;
 }
 
 .topbar {
-  position: relative;
-  top: auto;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: 14px;
-  margin: 8px 0 22px;
-  padding: 0 0 22px;
-  border-bottom: 2px solid var(--text);
-  border-bottom: 0;
-  background: transparent;
-  backdrop-filter: none;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 16px;
 }
 
 .pt {
-  max-width: 760px;
-  font-size: clamp(2.5rem, 6vw, 5.8rem);
-  font-weight: 560;
-  line-height: 0.9;
-  letter-spacing: -0.02em;
+  font-size: clamp(1.65rem, 2.2vw, 2.55rem);
+  font-weight: 650;
+  line-height: 1.02;
 }
 
 .ps {
-  margin-top: 10px;
+  margin-top: 4px;
   color: var(--muted);
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: none;
 }
 
 .primary-action,
-.save-workout {
-  border: 2px solid var(--accent);
-  border-radius: 999px;
+.save-workout,
+.activity-hub-actions button:first-child,
+.quick-text button,
+.preview-actions button:first-child {
+  border-color: var(--accent);
   background: var(--accent);
   color: #fff;
-  box-shadow: var(--shadow-subtle);
-}
-
-.primary-action:hover,
-.save-workout:hover {
-  background: color-mix(in srgb, var(--accent) 86%, white);
 }
 
 .page {
@@ -418,155 +333,138 @@ small,
   gap: 18px;
 }
 
+.training-cockpit {
+  grid-template-columns: minmax(0, 1.25fr) minmax(380px, 0.75fr);
+  align-items: start;
+}
+
 .panel,
 .box,
 article,
-.sc {
-  border: 1px solid var(--line-strong);
-  border-radius: 0;
+.sc,
+.activity-hub,
+.activity-focus-grid,
+.daily-check-grid button,
+.daily-timeline button,
+.private-feed > div,
+.quick-action-card,
+.coach-action-card,
+.sport-preset,
+.food-item,
+.body-item,
+.favorite-card,
+.template-card,
+.workout-list li,
+.timeline-item,
+.preview-row,
+.user-hero-card,
+.xp-week div,
+.xp-list div:not(.daily-section-title) {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
   background: var(--surface);
   box-shadow: var(--shadow-subtle);
 }
 
 .panel,
-.box {
-  padding: 22px;
+.box,
+.activity-hub {
+  padding: 18px;
 }
 
 .panel-header,
-.bh {
+.bh,
+.activity-hub-main,
+.activity-hub-title,
+.activity-hub-actions,
+.daily-edit-head,
+.modal-head,
+.sport-title,
+.nutrition-head,
+.user-hero {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 14px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--line);
 }
 
-.panel-header button,
-.bh button {
-  min-height: 32px;
-  padding: 0 10px;
-  font-size: 0.78rem;
+.panel-header {
+  margin-bottom: 14px;
 }
 
 .activity-focus {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.activity-focus-head,
-.activity-focus-grid button,
-.activity-hub {
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface);
-}
-
-.activity-focus-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  box-shadow: none;
-}
-
-.activity-focus-head strong {
-  color: var(--accent);
-  font-family: var(--font-display);
-  font-size: 1.1rem;
-  font-weight: 650;
+  margin-bottom: 10px;
 }
 
 .activity-focus-grid {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  display: flex;
   gap: 0;
-  border: 1px solid var(--line-strong);
-  background: var(--surface);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.activity-focus-grid::-webkit-scrollbar {
+  display: none;
 }
 
 .activity-focus-grid button {
-  display: grid;
-  grid-template-columns: 1fr;
-  align-items: center;
-  gap: 6px;
-  min-height: 92px;
-  padding: 14px 12px;
+  min-width: 118px;
+  min-height: 46px;
+  padding: 8px 12px;
   border: 0;
   border-right: 1px solid var(--line);
-  text-align: center;
-  box-shadow: none;
+  border-radius: 0;
+  background: transparent;
+  text-align: left;
+}
+
+.activity-focus-grid button:last-child {
+  border-right: 0;
 }
 
 .activity-focus-grid button span {
-  font-size: 1.35rem;
+  display: none;
 }
 
 .activity-focus-grid button strong {
-  min-width: 0;
-  overflow: hidden;
-  font-weight: 650;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  display: block;
+  font-weight: 560;
 }
 
 .activity-focus-grid button small {
-  grid-column: 1 / -1;
   color: var(--muted);
-  font-size: 0.72rem;
 }
 
 .activity-focus-grid button.active {
-  background: var(--text);
-  color: var(--surface);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
 }
 
 .activity-hub {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-  margin-bottom: 12px;
-  padding: 20px;
-  box-shadow: var(--shadow-subtle);
-}
-
-.activity-hub-main,
-.activity-hub-title,
-.activity-hub-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.activity-hub-main {
-  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 16px;
 }
 
 .activity-hub-title > span {
-  display: grid;
-  place-items: center;
-  width: 42px;
-  height: 42px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--accent) 18%, var(--surface-2));
-  font-size: 1.3rem;
+  display: none;
+}
+
+.activity-hub-title strong {
+  display: block;
+  font-weight: 600;
+}
+
+.activity-hub-title small {
+  color: var(--muted);
 }
 
 .activity-hub-actions {
-  flex-wrap: wrap;
   justify-content: flex-end;
 }
 
 .activity-hub-actions button {
-  min-height: 32px;
-  padding: 0 10px;
-  font-size: 0.78rem;
+  min-height: 34px;
 }
 
 .activity-hub-stats,
@@ -575,14 +473,12 @@ article,
 .sport-insight-grid,
 .nutrition-kpis,
 .module-kpis,
+.profile-stats,
 .metrics,
 .running-kpis {
   display: grid;
-  gap: 8px;
-}
-
-.activity-hub-stats {
   grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
 }
 
 .activity-hub-stats div,
@@ -591,14 +487,13 @@ article,
 .sport-insight-grid div,
 .nutrition-kpis div,
 .module-kpis div,
-.profile-stats article {
-  display: grid;
-  gap: 3px;
-  min-height: 74px;
-  padding: 10px;
+.profile-stats article,
+.metrics article,
+.running-kpis article {
+  min-height: 86px;
+  padding: 12px;
   border: 1px solid var(--line);
-  border-left: 0;
-  border-radius: 14px;
+  border-radius: var(--radius-sm);
   background: var(--surface-2);
 }
 
@@ -607,32 +502,29 @@ article,
 .daily-analysis-grid strong,
 .sport-insight-grid strong,
 .nutrition-kpis strong,
-.module-kpis strong {
+.module-kpis strong,
+.profile-stats strong,
+.metrics strong,
+.running-kpis strong,
+.cv,
+article strong {
+  display: block;
+  margin-top: 5px;
   color: var(--text);
-  font-family: var(--font-display);
-  font-size: 1.25rem;
+  font-size: 1.45rem;
   font-weight: 600;
-}
-
-.training-cockpit {
-  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
-  align-items: start;
-  gap: 16px;
+  line-height: 1;
 }
 
 .daily-check {
-  grid-row: span 4;
-  border-top: 0;
-  border: 2px solid var(--text);
-  background: var(--surface);
+  display: grid;
+  gap: 14px;
 }
 
 .mission-board {
   display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.6fr) minmax(120px, 0.55fr);
-  gap: 0;
-  margin: -1px -1px 18px;
-  border: 1px solid var(--line-strong);
+  grid-template-columns: minmax(210px, 0.8fr) minmax(0, 1.3fr) minmax(160px, 0.55fr);
+  gap: 10px;
 }
 
 .mission-progress,
@@ -640,86 +532,79 @@ article,
 .mission-streak {
   display: grid;
   align-content: center;
-  gap: 7px;
-  min-height: 128px;
-  padding: 18px;
-  border: 0;
-  border-right: 1px solid var(--line);
-  border-radius: 0;
+  min-height: 116px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
   background: var(--surface-2);
 }
 
-.mission-progress {
-  border-color: var(--line);
+.mission-progress strong,
+.mission-streak strong,
+.xp-hero strong,
+.readiness strong,
+.timer-face strong,
+.rest-face strong {
+  display: block;
+  font-size: clamp(1.8rem, 3vw, 3.2rem);
+  font-weight: 650;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.mission-progress strong,
+.xp-hero strong {
+  color: var(--accent);
 }
 
 .mission-track {
   display: flex;
-  align-items: center;
-  gap: 6px;
+  gap: 5px;
+  margin-bottom: 12px;
 }
 
-.mission-track span,
-.mission-track b {
-  display: grid;
-  place-items: center;
+.mission-track span {
   width: 18px;
-  height: 18px;
-  border: 1px solid var(--line-strong);
-  border-radius: 50%;
-  background: var(--surface);
+  height: 6px;
+  border-radius: 999px;
+  background: var(--surface-3);
 }
 
 .mission-track span.done {
-  border-color: var(--accent-3);
-  background: var(--accent-3);
-}
-
-.mission-track b {
-  border-color: color-mix(in srgb, var(--accent-2) 50%, var(--line));
-  font-size: 0.72rem;
-  font-weight: 650;
-}
-
-.mission-progress strong,
-.mission-streak strong {
-  font-size: 2rem;
-  font-weight: 600;
-  line-height: 1;
-}
-
-.mission-progress small,
-.mission-streak small,
-.mission-copy p {
-  color: var(--muted);
-  font-size: 0.82rem;
+  background: var(--accent);
 }
 
 .mission-copy span,
 .mission-streak span {
-  color: var(--accent-3);
-  font-size: 0.78rem;
-  font-weight: 650;
+  color: var(--muted);
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .mission-copy h3 {
-  font-size: 1.6rem;
+  margin: 4px 0;
+  font-size: 1.2rem;
   font-weight: 600;
-  letter-spacing: -0.01em;
+}
+
+.mission-copy p {
+  color: var(--soft);
 }
 
 .mission-bar {
+  height: 5px;
+  margin-top: 12px;
   overflow: hidden;
-  height: 8px;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--surface-3) 75%, transparent);
+  background: var(--surface-3);
 }
 
 .mission-bar i {
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--accent), var(--accent-3));
+  background: var(--accent);
 }
 
 .daily-check-grid,
@@ -728,201 +613,159 @@ article,
 .daily-body-grid,
 .daily-favorite-grid,
 .next-action-grid,
-.private-feed {
+.private-feed,
+.coach-action-list,
+.sport-preset-grid,
+.quick-actions-grid,
+.workout-list,
+.timeline-list,
+.food-list,
+.body-list,
+.favorite-grid,
+.template-list {
   display: grid;
-  gap: 8px;
+  gap: 10px;
 }
 
 .daily-check-grid {
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 0;
-  border: 1px solid var(--line-strong);
 }
 
 .daily-check-grid button {
   display: grid;
-  align-content: space-between;
-  gap: 6px;
-  min-height: 132px;
-  padding: 16px;
-  border: 0;
-  border-right: 1px solid var(--line);
-  border-radius: 0;
+  grid-template-columns: 30px minmax(0, 1fr);
+  align-content: start;
+  min-height: 120px;
+  padding: 12px;
   text-align: left;
-  background: var(--surface-2);
 }
 
 .daily-check-grid button span {
   display: grid;
   place-items: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 999px;
-  margin: 0;
-  background: var(--surface-3);
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  color: transparent;
+  background: var(--surface);
+}
+
+.daily-check-grid button.done span {
+  border-color: var(--accent);
+  background: var(--accent);
 }
 
 .daily-check-grid button strong {
-  font-size: 1rem;
-  font-weight: 560;
-  text-transform: none;
+  font-weight: 600;
 }
 
-.daily-check-grid button small,
-.daily-summary-grid small,
-.daily-analysis-grid small,
-.sport-insight-grid small,
-.private-feed small,
-.private-feed em {
+.daily-check-grid button small {
+  grid-column: 2;
   color: var(--muted);
+}
+
+.daily-check-grid button em {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 6px;
+  margin-top: auto;
   font-size: 0.76rem;
   font-style: normal;
 }
 
-.daily-check-grid button em {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  font-style: normal;
-}
-
-.daily-check-grid button em b {
-  padding: 3px 7px;
-  border: 1px solid var(--line);
+.daily-check-grid button em b,
+.xp-list em,
+.daily-timeline em b {
+  padding: 4px 7px;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--accent-3) 12%, var(--surface-2));
+  background: var(--surface-3);
   color: var(--soft);
-  font-size: 0.7rem;
-  font-weight: 650;
+  font-weight: 500;
 }
 
-.daily-check-grid button em b:first-child {
-  border-color: color-mix(in srgb, var(--accent-3) 38%, var(--line));
-  color: var(--accent-3);
-}
-
-.daily-check-grid button.done em b:first-child {
-  border-color: color-mix(in srgb, var(--accent-2) 48%, var(--line));
-  color: var(--accent-2);
-}
-
-.daily-check-grid button.done {
-  background: color-mix(in srgb, var(--accent) 12%, var(--surface-2));
-}
-
-.daily-check-grid button.done span {
-  background: var(--accent-2);
-  color: color-mix(in srgb, var(--bg) 80%, black);
-}
-
-.daily-summary-grid,
-.daily-analysis-grid {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  margin-top: 16px;
+.daily-check-grid button.done em b:first-child,
+.xp-list div.done em {
+  background: color-mix(in srgb, var(--accent) 13%, var(--surface));
+  color: var(--accent);
 }
 
 .daily-week-strip {
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  margin: 10px 0;
 }
 
 .daily-week-strip div {
-  display: grid;
-  gap: 2px;
   min-height: 58px;
-  padding: 8px;
+  padding: 9px;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
-  background: var(--surface);
+  background: var(--surface-2);
 }
 
 .daily-week-strip div.today {
   border-color: var(--accent);
 }
 
-.daily-week-strip div.done strong {
-  color: var(--accent-2);
-}
-
-.daily-week-strip span,
-.daily-week-strip small {
-  color: var(--muted);
-  font-size: 0.72rem;
-}
-
 .daily-side-checks {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin: 10px 0;
+  gap: 12px;
 }
 
 .daily-food-grid,
 .daily-body-grid,
 .daily-favorite-grid,
-.sport-insight-grid {
-  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+.next-action-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .daily-food-grid button,
 .daily-body-grid button,
 .daily-favorite-grid button,
-.next-action-grid button {
+.next-action-grid button,
+.quick-action-card,
+.coach-action-card {
   display: grid;
-  gap: 2px;
-  min-height: 58px;
-  padding: 9px;
+  gap: 3px;
+  min-height: 62px;
+  padding: 11px;
   text-align: left;
 }
 
 .daily-quick-edit,
 .daily-analysis {
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 12px;
 }
 
-.daily-edit-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.daily-edit-form,
+.workout-form,
+.nutrition-form,
+.body-form,
+.user-form,
+.quick-text {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
-  margin-bottom: 8px;
 }
 
-.daily-edit-head span {
-  color: var(--muted);
-  font-size: 0.72rem;
-  font-weight: 650;
-  text-transform: none;
+.quick-text {
+  grid-template-columns: minmax(0, 1fr) auto;
 }
 
-.daily-edit-form {
+.daily-timeline button,
+.private-feed > div {
   display: grid;
-  grid-template-columns: 90px 126px 80px minmax(180px, 1fr) auto;
-  gap: 8px;
-  align-items: end;
-}
-
-.daily-timeline {
-  display: grid;
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.daily-timeline button {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 8px;
-  min-height: 56px;
-  padding: 9px;
+  min-height: 62px;
+  padding: 10px;
   text-align: left;
 }
 
 .daily-timeline button.active {
   border-color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 12%, var(--surface-2));
 }
 
 .daily-timeline em {
@@ -931,28 +774,58 @@ article,
   color: var(--muted);
   font-size: 0.72rem;
   font-style: normal;
-  text-transform: none;
+}
+
+.private-feed {
+  gap: 14px;
+}
+
+.private-feed > div {
+  position: relative;
+  grid-template-columns: 1fr;
+  align-items: end;
+  min-height: 190px;
+  padding: 132px 14px 14px;
+  overflow: hidden;
+}
+
+.private-feed > div::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 118px;
+  border-bottom: 1px solid var(--line);
+  background:
+    linear-gradient(135deg, transparent 0 20%, color-mix(in srgb, var(--accent) 85%, transparent) 20% 23%, transparent 23% 45%, color-mix(in srgb, var(--accent) 85%, transparent) 45% 48%, transparent 48%),
+    linear-gradient(90deg, color-mix(in srgb, var(--surface-3) 70%, transparent) 1px, transparent 1px),
+    linear-gradient(0deg, color-mix(in srgb, var(--surface-3) 70%, transparent) 1px, transparent 1px),
+    var(--surface-2);
+  background-size: 100% 100%, 30px 30px, 30px 30px, auto;
+}
+
+.private-feed > div > span {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: var(--shadow-subtle);
 }
 
 .hero {
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 12px;
-  min-height: 180px;
-  padding: 24px;
-  border-top: 0;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  min-height: 170px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
   background: var(--surface);
-}
-
-.hero h2 {
-  font-size: clamp(1.65rem, 3vw, 2.6rem);
-  font-weight: 560;
-  letter-spacing: -0.01em;
-}
-
-.hero-copy p:last-child {
-  max-width: 520px;
-  font-size: 1rem;
 }
 
 .hero-copy {
@@ -961,868 +834,112 @@ article,
   gap: 8px;
 }
 
-.readiness {
-  display: grid;
-  place-items: center;
-  min-width: 116px;
-  padding: 12px;
-  border-left: 0;
-  border-radius: 0;
-  background: var(--surface-2);
-}
-
-.readiness strong {
-  font-size: 2.4rem;
+.hero h2 {
+  max-width: 700px;
+  font-size: clamp(1.35rem, 2vw, 2rem);
   font-weight: 600;
 }
 
-.coach-action-list,
-.quick-actions-grid,
-.sport-preset-grid,
-.quick-start-grid,
-.plan-grid,
-.periodization-grid,
-.progress-grid,
-.record-grid,
-.exercise-grid,
-.favorite-grid,
-.template-list,
-.food-catalog-grid,
-.data-health-grid,
-.swatch-grid,
-.profile-stats {
+.readiness {
   display: grid;
-  gap: 8px;
+  align-content: center;
+  min-width: 132px;
+  padding: 14px;
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
 }
 
-.quick-actions-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+.quick-actions-widget {
+  display: none;
 }
 
-.quick-action-card,
-.coach-action-card,
+.quick-add,
+.work-mode,
+.weekly-coach {
+  grid-column: 1 / -1;
+}
+
+.sport-preset-grid {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
 .sport-preset,
-.body-item,
 .running-card,
-.progress-card,
-.record-card,
-.exercise-card,
-.insight-card,
-.season-card,
-.period-card,
-.duplicate-card,
 .food-item,
-.food-catalog-grid button,
-.activity-specific,
-.context-last,
-.activity-category-grid button,
-.context-plan-list button,
-.module-list div,
-.workout-list li,
-.day,
-.timeline-item,
+.body-item,
 .favorite-card,
-.template-card {
-  border: 1px solid var(--line);
-  border-radius: 0;
-  background: color-mix(in srgb, var(--surface-2) 84%, var(--surface));
-}
-
-.quick-action-card,
-.coach-action-card,
-.running-card,
-.food-item,
-.body-item,
+.template-card,
 .workout-list li,
 .timeline-item {
-  box-shadow: none;
+  padding: 12px;
 }
 
-.quick-action-card,
-.coach-action-card,
-.sport-preset,
-.quick-start-grid button,
-.food-catalog-grid button {
-  min-height: 76px;
-  padding: 14px;
-  text-align: left;
-}
-
-.quick-action-card.primary,
-.sport-preset.active {
-  border-color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
-}
-
-.activity-context,
-.activity-context-body,
-.activity-category-grid,
-.context-plan-list,
-.route-focus,
-.running-trend-item,
-.pace-zone,
-.run-prescription,
-.data-health-card,
-.import-card,
-.preview-actions,
-.duplicate-audit,
-.import-preview {
-  display: grid;
-  gap: 8px;
+.activity-specific,
+.activity-context {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
 }
 
 .activity-context {
-  margin-top: 8px;
-  padding: 10px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface-2);
+  display: grid;
+  gap: 12px;
 }
 
 .activity-context-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 12px;
 }
 
-.activity-context-head strong,
-.activity-category-grid strong,
-.context-plan-list strong,
-.running-card strong,
-.route-lab strong {
-  display: block;
+.activity-category-grid {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
 }
 
-.activity-context-head small,
-.activity-context-head span,
-.activity-category-grid small,
-.context-plan-list small,
-.run-prescription small,
-.pace-zone small {
-  color: var(--muted);
-  font-size: 0.76rem;
-}
-
-.activity-context-body,
-.route-focus {
-  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
-}
-
-.activity-category-grid,
-.context-plan-list {
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-}
-
-.activity-category-grid button,
-.context-plan-list button,
-.run-prescription,
-.pace-zone,
-.running-trend-item,
-.data-health-card,
-.import-card,
-.duplicate-card {
-  min-height: 62px;
+.activity-category-grid button {
+  min-width: 120px;
   padding: 10px;
   text-align: left;
 }
 
 .activity-category-grid button.active {
   border-color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 12%, var(--surface-2));
+  color: var(--accent);
 }
 
-.module-list div,
-.run-prescription,
-.pace-zone,
-.running-trend-item {
-  border-left: 3px solid var(--accent-3);
-}
-
-.quick-add,
-.work-mode,
-.running-lab,
+.activity-context-body,
+.running-zone-grid,
+.route-split-list,
 .nutrition-dashboard,
-.data-panel {
-  margin-top: 0;
-}
-
-.quick-text {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 8px;
-}
-
-.workout-form,
-.body-form,
-.food-form,
-.season-form,
-.filter-grid,
-.nutrition-goals,
-.appearance-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.form-actions,
-.timer-controls,
-.data-actions,
-.timeline-actions,
-.card-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-}
-
-.live-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap: 10px;
-}
-
-.timer-face,
-.rest-face {
-  display: grid;
-  gap: 6px;
-  padding: 14px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface);
-}
-
-.timer-face strong,
-.rest-face strong {
-  font-family: var(--font-display);
-  font-size: clamp(2.2rem, 4vw, 3.8rem);
-  font-weight: 600;
-  line-height: 1;
-}
-
-.metrics,
-.running-kpis,
-.nutrition-kpis {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0;
-  border: 1px solid var(--line-strong);
-}
-
-.sc,
-.metrics article,
-.running-kpis article {
-  display: grid;
-  gap: 6px;
-  min-height: 126px;
-  padding: 18px;
-  border: 0;
-  border-right: 1px solid var(--line);
-  border-left: 0;
-  background: var(--surface);
-}
-
-.metrics article:nth-child(2),
-.running-kpis article:nth-child(2) {
-  border-left-color: transparent;
-}
-
-.metrics article:nth-child(3),
-.running-kpis article:nth-child(3) {
-  border-left-color: transparent;
-}
-
-.metrics article:nth-child(4),
-.running-kpis article:nth-child(4) {
-  border-left-color: transparent;
-}
-
-.ci {
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 10px;
-  background: var(--surface-3);
-}
-
-.cv,
-article strong {
-  font-size: 2rem;
-  font-weight: 600;
-  line-height: 1;
-}
-
-.workspace,
-.progress-secondary {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.workout-list,
-.timeline,
-.food-list,
-.body-list,
-.insight-list,
-.season-list,
-.module-list,
-.run-prescription-list,
-.pace-zone-list,
-.running-trend,
-.route-lab {
-  display: grid;
-  gap: 8px;
-}
-
-.workout-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.workout-list li,
-.timeline-item,
-.food-item,
-.body-item,
-.insight-card,
-.record-card,
-.exercise-card {
-  position: relative;
-  overflow: hidden;
-  padding: 10px;
-  background: var(--surface);
-}
-
-.workout-list li::before,
-.timeline-item::before,
-.food-item::before,
-.body-item::before,
-.insight-card::before,
-.record-card::before,
-.exercise-card::before {
-  content: "";
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 3px;
-  background: var(--accent);
-}
-
-.workout-list li {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 10px;
-  align-items: center;
-}
-
-.timeline-item {
-  border-left: 0;
-}
-
-.week-grid {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.day {
-  min-height: 92px;
-  padding: 9px;
-}
-
-.sport-modules-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.running-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.running-card {
-  min-height: 150px;
-  padding: 12px;
-}
-
-.wide-running {
-  grid-column: span 2;
-}
-
-.nutrition-dashboard {
+.body-dashboard,
+.user-dashboard,
+.xp-dashboard {
   display: grid;
   gap: 12px;
-}
-
-.nutrition-goals {
-  align-items: end;
-  padding: 10px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface-2);
-}
-
-.food-catalog-grid {
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-}
-
-.data-actions {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.data-actions button,
-.file-action {
-  display: grid;
-  place-items: center;
-  min-height: 46px;
-  padding: 8px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  background: var(--surface-2);
-  color: var(--text);
-  font-weight: 650;
-}
-
-.file-action input {
-  display: none;
-}
-
-.user-hero-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface-2);
-}
-
-.uavatar {
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 11px;
-  background: var(--accent);
-  color: #111;
-  font-weight: 600;
-}
-
-.uavatar.big {
-  width: 58px;
-  height: 58px;
-  border-radius: 16px;
-}
-
-.profile-chip {
-  padding: 5px 9px;
-  border: 1px solid color-mix(in srgb, var(--accent-2) 42%, var(--line));
-  border-radius: 999px;
-  color: var(--accent-2);
-  font-size: 0.72rem;
-  font-weight: 650;
-  text-transform: none;
-}
-
-.swatch {
-  min-height: 46px;
-}
-
-.swatch span {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  margin-right: 6px;
-  border-radius: 50%;
-  vertical-align: -2px;
-}
-
-.swatch.lime span { background: #d9ff4f; }
-.swatch.teal span { background: #35d0ff; }
-.swatch.purple span { background: #ff5a1f; }
-.swatch.amber span { background: #ffd166; }
-
-.import-preview,
-.duplicate-audit,
-.data-health-grid {
-  margin-top: 10px;
-}
-
-.attention {
-  border-color: var(--accent);
-}
-
-@media (max-width: 1280px) {
-  .activity-hub,
-  .training-cockpit {
-    grid-template-columns: 1fr;
-  }
-
-  .daily-check {
-    grid-row: auto;
-  }
-
-  .activity-focus-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .sport-modules-grid,
-  .running-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 980px) {
-  :root {
-    --sidebar: 0px;
-  }
-
-  .sidebar {
-    inset: auto 0 0 0;
-    width: auto;
-    height: 74px;
-    padding: 5px 6px calc(5px + env(safe-area-inset-bottom));
-    border-top: 1px solid var(--line);
-    border-right: 0;
-  }
-
-  .brand,
-  .sb-bottom {
-    display: none;
-  }
-
-  .nav {
-    display: flex;
-    gap: 4px;
-    overflow-x: auto;
-    height: 100%;
-  }
-
-  .nav button,
-  .nav-item {
-    min-width: 74px;
-    min-height: 62px;
-  }
-
-  .nav .ico {
-    display: inline;
-  }
-
-  .shell {
-    padding: 14px 12px calc(92px + env(safe-area-inset-bottom));
-  }
-
-  .topbar {
-    margin: 0 0 12px;
-    padding: 0;
-  }
-
-  .activity-focus,
-  .activity-hub,
-  .workspace,
-  .progress-secondary,
-  .live-grid,
-  .quick-text,
-  .workout-form,
-  .body-form,
-  .food-form,
-  .season-form,
-  .filter-grid,
-  .nutrition-goals,
-  .appearance-grid,
-  .data-actions {
-    grid-template-columns: 1fr;
-  }
-
-  .activity-focus-grid {
-    display: flex;
-    overflow-x: auto;
-  }
-
-  .activity-focus-grid button {
-    min-width: 140px;
-  }
-
-  .daily-check-grid,
-  .daily-summary-grid,
-  .daily-analysis-grid,
-  .mission-board,
-  .daily-side-checks,
-  .metrics,
-  .running-kpis,
-  .nutrition-kpis,
-  .activity-hub-stats,
-  .quick-actions-grid,
-  .sport-modules-grid,
-  .running-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .daily-check-grid button {
-    min-height: 86px;
-  }
-
-  .daily-edit-form,
-  .hero {
-    grid-template-columns: 1fr;
-  }
-
-  .wide-running {
-    grid-column: auto;
-  }
-
-  .week-grid,
-  .daily-week-strip {
-    overflow-x: auto;
-    grid-template-columns: repeat(7, minmax(72px, 1fr));
-  }
-}
-
-/* Strava-like calm pass: simpler surfaces, less visual weight, clearer hierarchy. */
-:root,
-[data-theme="light"] {
-  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-display: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --bg: #f6f6f2;
-  --bg-2: #f6f6f2;
-  --surface: #ffffff;
-  --surface-2: #f7f7f4;
-  --surface-3: #eceee8;
-  --line: rgba(17, 24, 39, 0.09);
-  --line-strong: rgba(17, 24, 39, 0.15);
-  --text: #191919;
-  --muted: rgba(25, 25, 25, 0.5);
-  --accent: #fc4c02;
-  --accent-2: #191919;
-  --accent-3: #087e8b;
-  --radius: 14px;
-  --radius-sm: 10px;
-  --shadow-subtle: none;
-  --nav-bg: rgba(255, 255, 255, 0.94);
-}
-
-[data-theme="black"],
-[data-theme="dark"] {
-  --bg: #111214;
-  --bg-2: #111214;
-  --surface: #181a1d;
-  --surface-2: #202226;
-  --surface-3: #2a2d32;
-  --line: rgba(255, 255, 255, 0.08);
-  --line-strong: rgba(255, 255, 255, 0.14);
-  --text: #f4f1ea;
-  --muted: rgba(244, 241, 234, 0.52);
-  --accent-2: #f4f1ea;
-  --accent-3: #5bc0be;
-  --nav-bg: rgba(24, 26, 29, 0.94);
-}
-
-body {
-  background: var(--bg);
-}
-
-.sidebar {
-  top: 0;
-  width: 100%;
-  height: 60px;
-  border-width: 0 0 1px;
-  border-radius: 0;
-  transform: translateX(-50%);
-}
-
-.shell {
-  max-width: 1040px;
-  padding-top: 82px;
-}
-
-.pt {
-  font-size: clamp(1.9rem, 4vw, 3.4rem);
-  font-weight: 560;
-  letter-spacing: -0.02em;
-}
-
-.primary-action,
-.save-workout {
-  box-shadow: none;
-}
-
-.panel,
-.box,
-article,
-.sc,
-.activity-hub,
-.activity-focus-grid button {
-  border-color: var(--line);
-  border-radius: var(--radius);
-  box-shadow: none;
-}
-
-html:not([data-page="today"]) .activity-focus,
-html:not([data-page="today"]) .activity-hub {
-  display: none;
-}
-
-html[data-page="xp"] .topbar,
-html[data-page="progress"] .topbar,
-html[data-page="nutrition"] .topbar,
-html[data-page="history"] .topbar,
-html[data-page="plan"] .topbar {
-  margin-bottom: 14px;
-}
-
-.panel,
-.box {
-  padding: 18px;
-}
-
-.training-cockpit {
-  grid-template-columns: minmax(0, 1fr) 320px;
-  gap: 14px;
-}
-
-.activity-focus-grid button {
-  min-height: 54px;
-  min-width: 112px;
-  padding: 9px 12px;
-}
-
-.activity-hub {
-  padding: 14px;
-}
-
-.activity-hub-stats,
-.daily-summary-grid,
-.daily-analysis-grid,
-.metrics,
-.running-kpis,
-.nutrition-kpis {
-  gap: 8px;
-  border: 0;
-}
-
-.activity-hub-stats div,
-.daily-summary-grid div,
-.daily-analysis-grid div,
-.sport-insight-grid div,
-.nutrition-kpis div,
-.module-kpis div,
-.profile-stats article {
-  border: 1px solid var(--line);
-  background: var(--surface);
-}
-
-.mission-board {
-  display: block;
-  margin-bottom: 12px;
-  border: 0;
-}
-
-.mission-progress {
-  display: flex;
-  min-height: 58px;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 12px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface-2);
-}
-
-.mission-copy,
-.mission-streak {
-  display: none;
-}
-
-.mission-track span,
-.mission-track b {
-  width: 14px;
-  height: 14px;
-}
-
-.mission-progress strong {
-  font-size: 1.15rem;
-  font-weight: 680;
-}
-
-.daily-check-grid {
-  gap: 8px;
-  border: 0;
-}
-
-.daily-check-grid button {
-  min-height: 64px;
-  border-color: var(--line);
-  border-radius: var(--radius);
-  background: var(--surface);
-}
-
-.daily-check-grid button em b:nth-child(2) {
-  display: none;
-}
-
-.daily-side-checks,
-.daily-quick-edit,
-.daily-analysis,
-.weekly-coach,
-.hero,
-.metrics,
-.workspace {
-  margin-top: 12px;
-}
-
-.hero {
-  min-height: auto;
-  padding: 18px;
-}
-
-.hero h2 {
-  font-size: clamp(1.25rem, 2vw, 1.75rem);
-}
-
-.readiness {
-  min-width: 96px;
-}
-
-.readiness strong,
-.cv,
-article strong {
-  font-size: 1.45rem;
-  font-weight: 680;
-}
-
-.metrics article,
-.running-kpis article,
-.sc {
-  min-height: 92px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-}
-
-.quick-add,
-.work-mode {
-  display: none;
 }
 
 .xp-page {
-  max-width: 860px;
-  margin: 0 auto;
+  max-width: none;
 }
 
 .xp-dashboard {
-  display: grid;
-  gap: 14px;
+  grid-template-columns: minmax(280px, 0.7fr) minmax(0, 1fr) minmax(280px, 0.75fr);
+  align-items: start;
 }
 
 .xp-hero {
-  display: grid;
-  gap: 8px;
+  min-height: 210px;
   padding: 18px;
+  border: 1px solid var(--line);
   border-radius: var(--radius);
   background:
-    linear-gradient(135deg, color-mix(in srgb, var(--accent) 12%, transparent), transparent 62%),
-    var(--surface-2);
+    linear-gradient(135deg, color-mix(in srgb, var(--accent) 14%, transparent), transparent 58%),
+    var(--surface);
 }
 
 .xp-hero span,
@@ -1831,9 +948,7 @@ article strong {
 }
 
 .xp-hero strong {
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  color: var(--accent);
 }
 
 .xp-week {
@@ -1844,23 +959,11 @@ article strong {
 
 .xp-week div,
 .xp-list div:not(.daily-section-title) {
-  display: grid;
-  gap: 4px;
   padding: 12px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
 }
 
 .xp-week div.done {
-  border-color: color-mix(in srgb, var(--accent) 30%, var(--line));
-}
-
-.xp-week span,
-.xp-week small,
-.xp-list small {
-  color: var(--muted);
-  font-size: 0.76rem;
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
 }
 
 .xp-list {
@@ -1869,14 +972,16 @@ article strong {
 }
 
 .xp-list div:not(.daily-section-title) {
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
   align-items: center;
+  gap: 8px;
 }
 
 .xp-list div:not(.daily-section-title) span {
-  width: 18px;
-  height: 18px;
-  border: 2px solid var(--line-strong);
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--line-strong);
   border-radius: 50%;
 }
 
@@ -1885,33 +990,151 @@ article strong {
   background: var(--accent);
 }
 
-.xp-list em {
-  color: var(--accent);
-  font-style: normal;
-  font-weight: 650;
+.xp-list small {
+  grid-column: 2;
 }
 
-@media (max-width: 980px) {
-  .sidebar {
-    inset: auto 10px 10px;
-    left: 10px;
-    width: auto;
-    height: 66px;
-    border: 1px solid var(--line);
-    border-radius: 22px;
-    transform: none;
-  }
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: none;
+  place-items: center;
+  padding: 18px;
+  background: rgba(0, 0, 0, 0.36);
+}
 
-  .shell {
-    padding-top: 18px;
-  }
+.modal.show {
+  display: grid;
+}
 
-  .training-cockpit {
+.modal-card {
+  width: min(760px, 100%);
+  max-height: min(86vh, 900px);
+  overflow: auto;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.hidden {
+  display: none !important;
+}
+
+html:not([data-page="today"]) .activity-focus,
+html:not([data-page="today"]) .activity-hub {
+  display: none;
+}
+
+html[data-page="xp"] .topbar {
+  display: flex;
+}
+
+@media (max-width: 1180px) {
+  .training-cockpit,
+  .xp-dashboard {
     grid-template-columns: 1fr;
   }
 
+  .daily-check-grid,
+  .sport-preset-grid,
+  .activity-hub-stats,
+  .daily-summary-grid,
+  .daily-analysis-grid,
+  .sport-insight-grid,
+  .nutrition-kpis,
+  .module-kpis,
+  .profile-stats,
+  .metrics,
+  .running-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  body {
+    font-size: 13px;
+  }
+
+  .sidebar {
+    inset: auto 0 0;
+    grid-template-columns: 1fr;
+    height: 64px;
+    padding: 0 8px;
+  }
+
+  .brand,
+  .logo-actions {
+    display: none;
+  }
+
+  .nav {
+    justify-content: space-around;
+    overflow-x: auto;
+  }
+
+  .nav button,
+  .nav-item {
+    min-width: 74px;
+    min-height: 64px;
+    padding: 0 8px;
+    font-size: 0.75rem;
+  }
+
+  .nav .ico {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 1rem;
+  }
+
+  .shell {
+    width: min(100% - 20px, 1440px);
+    padding: 18px 0 84px;
+  }
+
+  .topbar,
+  .hero,
+  .panel-header,
+  .bh,
+  .activity-hub-main,
+  .daily-edit-head {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .pt {
+    font-size: clamp(1.55rem, 8vw, 2.25rem);
+  }
+
+  .mission-board,
+  .daily-side-checks,
+  .daily-check-grid,
+  .daily-food-grid,
+  .daily-body-grid,
+  .daily-favorite-grid,
+  .next-action-grid,
+  .daily-edit-form,
+  .workout-form,
+  .nutrition-form,
+  .body-form,
+  .user-form,
+  .quick-text,
+  .activity-hub-stats,
+  .daily-summary-grid,
+  .daily-analysis-grid,
+  .sport-insight-grid,
+  .nutrition-kpis,
+  .module-kpis,
+  .profile-stats,
+  .metrics,
+  .running-kpis {
+    grid-template-columns: 1fr;
+  }
+
+  .daily-week-strip,
   .xp-week {
-    grid-template-columns: repeat(7, minmax(64px, 1fr));
+    grid-template-columns: repeat(7, minmax(58px, 1fr));
     overflow-x: auto;
   }
 }
@@ -1924,752 +1147,5 @@ article strong {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-  }
-}
-
-/* Native sport app pass: cleaner, lighter, less dashboard/admin. */
-:root,
-[data-theme="light"] {
-  --bg: #f7f7f3;
-  --bg-2: #f7f7f3;
-  --surface: #ffffff;
-  --surface-2: #f3f4ef;
-  --surface-3: #e8ebe3;
-  --line: rgba(20, 24, 28, 0.08);
-  --line-strong: rgba(20, 24, 28, 0.14);
-  --text: #111315;
-  --soft: rgba(17, 19, 21, 0.72);
-  --muted: rgba(17, 19, 21, 0.48);
-  --accent: #ff4f1f;
-  --accent-2: #111315;
-  --accent-3: #00a6a6;
-  --radius: 22px;
-  --radius-sm: 16px;
-  --shadow-subtle: 0 12px 34px rgba(16, 24, 40, 0.07);
-  --nav-bg: rgba(255, 255, 255, 0.86);
-}
-
-[data-theme="black"],
-[data-theme="dark"] {
-  --bg: #0f1114;
-  --bg-2: #0f1114;
-  --surface: #181b20;
-  --surface-2: #20242a;
-  --surface-3: #2b3038;
-  --line: rgba(255, 255, 255, 0.08);
-  --line-strong: rgba(255, 255, 255, 0.14);
-  --text: #f5f2ec;
-  --soft: rgba(245, 242, 236, 0.74);
-  --muted: rgba(245, 242, 236, 0.46);
-  --accent-2: #f5f2ec;
-  --nav-bg: rgba(18, 20, 23, 0.86);
-  --shadow-subtle: 0 16px 40px rgba(0, 0, 0, 0.22);
-}
-
-body {
-  background:
-    radial-gradient(circle at 78% -10%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 28%),
-    var(--bg);
-}
-
-.sidebar {
-  left: 50%;
-  right: auto;
-  top: 16px;
-  width: min(1120px, calc(100vw - 32px));
-  height: 58px;
-  padding: 0 12px 0 18px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: var(--nav-bg);
-  transform: translateX(-50%);
-}
-
-.brand-word {
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.brand-actions {
-  justify-self: end;
-}
-
-.theme-btn {
-  border-radius: 50%;
-  background: var(--surface);
-}
-
-.nav {
-  justify-content: center;
-  gap: 2px;
-}
-
-.nav button,
-.nav-item {
-  min-height: 38px;
-  padding: 0 12px;
-  border-radius: 999px;
-  font-size: 0.84rem;
-}
-
-.nav button.active,
-.nav-item.active {
-  background: var(--text);
-  color: var(--surface);
-}
-
-.shell {
-  max-width: 1120px;
-  padding: 96px 18px 72px;
-}
-
-.topbar {
-  margin: 0 0 20px;
-  padding: 0;
-  border: 0;
-}
-
-.pt {
-  max-width: 520px;
-  font-size: clamp(2rem, 4vw, 3.8rem);
-  font-weight: 560;
-  letter-spacing: -0.02em;
-}
-
-.primary-action {
-  min-height: 46px;
-  padding: 0 18px;
-  border-radius: 999px;
-}
-
-.page.active,
-.training-cockpit {
-  gap: 16px;
-}
-
-.training-cockpit {
-  grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
-}
-
-.panel,
-.box,
-article,
-.sc,
-.activity-hub,
-.activity-focus-grid button {
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface);
-  box-shadow: var(--shadow-subtle);
-}
-
-.panel,
-.box {
-  padding: 20px;
-}
-
-.panel-header,
-.bh {
-  padding-bottom: 0;
-  border-bottom: 0;
-}
-
-.activity-focus {
-  margin-bottom: 12px;
-}
-
-.activity-focus-head {
-  margin-bottom: 2px;
-}
-
-.activity-focus-head strong {
-  color: var(--text);
-}
-
-.activity-focus-grid {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  border: 0;
-  background: transparent;
-  scrollbar-width: none;
-}
-
-.activity-focus-grid::-webkit-scrollbar {
-  display: none;
-}
-
-.activity-focus-grid button {
-  min-width: 126px;
-  min-height: 60px;
-  border-right: 0;
-  padding: 10px 12px;
-  text-align: left;
-}
-
-.activity-focus-grid button span {
-  display: none;
-}
-
-.activity-focus-grid button.active {
-  background: var(--text);
-  color: var(--surface);
-}
-
-.activity-focus-grid button small {
-  color: currentColor;
-  opacity: 0.58;
-}
-
-.activity-hub {
-  padding: 18px;
-}
-
-.activity-hub-title > span,
-.ci {
-  display: none;
-}
-
-.activity-hub-stats {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.activity-hub-stats div,
-.daily-summary-grid div,
-.daily-analysis-grid div,
-.sport-insight-grid div,
-.nutrition-kpis div,
-.module-kpis div,
-.profile-stats article {
-  border: 0;
-  border-radius: 18px;
-  background: var(--surface-2);
-}
-
-.daily-check {
-  border: 0;
-}
-
-.mission-board {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-  margin: 0 0 16px;
-  border: 0;
-}
-
-.mission-progress,
-.mission-copy,
-.mission-streak {
-  min-height: auto;
-  border: 0;
-  border-radius: 18px;
-  background: var(--surface-2);
-}
-
-.mission-progress {
-  grid-template-columns: 1fr auto;
-  align-items: center;
-}
-
-.mission-copy {
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--accent) 13%, transparent), transparent 55%),
-    var(--surface-2);
-}
-
-.mission-copy h3 {
-  font-size: 1.2rem;
-}
-
-.mission-streak {
-  display: none;
-}
-
-.daily-check-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-  border: 0;
-}
-
-.daily-check-grid button {
-  grid-template-columns: 36px minmax(0, 1fr) auto;
-  align-items: center;
-  min-height: 72px;
-  padding: 12px;
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  background: var(--surface);
-}
-
-.daily-check-grid button span {
-  width: 26px;
-  height: 26px;
-  border: 2px solid var(--accent-3);
-  background: transparent;
-  color: transparent;
-  font-size: 0;
-}
-
-.daily-check-grid button.done span {
-  border-color: var(--accent);
-  background: var(--accent);
-}
-
-.daily-check-grid button small {
-  grid-column: 2;
-}
-
-.daily-check-grid button em {
-  grid-column: 3;
-  grid-row: 1 / span 2;
-  justify-content: flex-end;
-}
-
-.daily-check-grid button em b {
-  background: var(--surface-2);
-}
-
-.daily-summary-grid,
-.daily-analysis-grid,
-.metrics,
-.running-kpis,
-.nutrition-kpis {
-  gap: 10px;
-  border: 0;
-}
-
-.daily-week-strip div,
-.quick-action-card,
-.coach-action-card,
-.sport-preset,
-.running-card,
-.food-item,
-.body-item,
-.workout-list li,
-.timeline-item {
-  border-radius: 18px;
-}
-
-.hero {
-  min-height: auto;
-  border: 0;
-}
-
-.hero h2 {
-  font-size: clamp(1.35rem, 2.5vw, 2.15rem);
-  font-weight: 560;
-  letter-spacing: -0.01em;
-}
-
-.readiness {
-  border-radius: 18px;
-}
-
-.quick-actions-widget {
-  display: none;
-}
-
-.quick-add,
-.work-mode {
-  grid-column: 1 / -1;
-}
-
-.metrics article,
-.running-kpis article,
-.sc {
-  min-height: 108px;
-  border: 0;
-  border-radius: var(--radius);
-}
-
-.cv,
-article strong {
-  font-size: 1.65rem;
-  font-weight: 600;
-}
-
-/* Soft typography pass: closer to Strava/Nike, less gamer/admin weight. */
-body {
-  font-weight: 400;
-}
-
-button,
-input,
-select,
-textarea,
-.nav button,
-.nav-item,
-.primary-action,
-.theme-btn,
-.eyebrow,
-.cl,
-.ct,
-label span,
-.daily-section-title,
-.sport-preset small,
-.activity-focus-head,
-.panel-header p,
-.bh p {
-  font-weight: 500;
-}
-
-h1,
-h2,
-h3,
-.panel-header h3,
-.bh h3,
-.activity-hub-title strong,
-.mission-copy h3,
-.profile-head h2,
-.sport-title h2,
-.xp-copy h3 {
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-
-.activity-focus-grid button strong,
-.daily-check-grid button strong,
-.quick-action-card strong,
-.coach-action-card strong,
-.sport-preset strong,
-.food-item strong,
-.body-item strong,
-.workout-list strong,
-.timeline-item strong {
-  font-weight: 560;
-}
-
-.mission-progress strong,
-.mission-streak strong,
-.readiness strong,
-.xp-hero strong,
-.timer-face strong,
-.rest-face strong,
-.activity-hub-stats strong,
-.daily-summary-grid strong,
-.daily-analysis-grid strong,
-.nutrition-kpis strong,
-.module-kpis strong,
-.profile-stats strong {
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-
-@media (max-width: 980px) {
-  .sidebar {
-    inset: auto 10px 10px;
-    left: 10px;
-    width: auto;
-    height: 68px;
-    transform: none;
-    border-radius: 24px;
-  }
-
-  .nav .ico {
-    display: inline;
-  }
-
-  .shell {
-    padding-top: 18px;
-  }
-
-  .pt {
-    font-size: clamp(2rem, 10vw, 3rem);
-  }
-}
-
-/* Final Strava lock: this stays last on purpose. */
-:root,
-[data-theme="light"] {
-  --bg: #f5f5f2;
-  --bg-2: #f5f5f2;
-  --surface: #ffffff;
-  --surface-2: #fafafa;
-  --surface-3: #eeeeea;
-  --line: rgba(36, 36, 36, 0.1);
-  --line-strong: rgba(36, 36, 36, 0.18);
-  --text: #242428;
-  --soft: rgba(36, 36, 40, 0.68);
-  --muted: rgba(36, 36, 40, 0.48);
-  --accent: #fc4c02;
-  --accent-2: #242428;
-  --accent-3: #387dff;
-  --radius: 8px;
-  --radius-sm: 6px;
-  --shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --nav-bg: rgba(255, 255, 255, 0.96);
-}
-
-[data-theme="black"],
-[data-theme="dark"] {
-  --bg: #171717;
-  --bg-2: #171717;
-  --surface: #202020;
-  --surface-2: #262626;
-  --surface-3: #303030;
-  --line: rgba(255, 255, 255, 0.1);
-  --line-strong: rgba(255, 255, 255, 0.18);
-  --text: #f4f4f0;
-  --soft: rgba(244, 244, 240, 0.7);
-  --muted: rgba(244, 244, 240, 0.48);
-  --accent-2: #f4f4f0;
-  --nav-bg: rgba(32, 32, 32, 0.96);
-}
-
-body {
-  background: var(--bg);
-}
-
-.sidebar {
-  top: 0;
-  left: 50%;
-  width: 100%;
-  max-width: none;
-  height: 56px;
-  border-width: 0 0 1px;
-  border-radius: 0;
-  box-shadow: none;
-}
-
-.shell {
-  max-width: 1080px;
-  padding-top: 82px;
-}
-
-.brand-word {
-  color: var(--accent);
-  font-size: 20px;
-  font-style: italic;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-}
-
-.brand-word span:first-child,
-.brand-word span:last-child {
-  color: var(--accent);
-}
-
-.nav {
-  gap: 0;
-}
-
-.nav .ico {
-  display: none;
-}
-
-.nav button,
-.nav-item {
-  min-height: 55px;
-  border-radius: 0;
-  background: transparent;
-  color: var(--soft);
-  font-size: 0.88rem;
-}
-
-.nav button.active,
-.nav-item.active {
-  background: transparent;
-  color: var(--text);
-  box-shadow: inset 0 -2px 0 var(--accent);
-}
-
-.primary-action,
-.activity-hub-actions button:first-child,
-.save-workout {
-  border-color: var(--accent);
-  border-radius: 4px;
-  background: var(--accent);
-  color: #fff;
-}
-
-.pt {
-  font-size: clamp(1.55rem, 2.7vw, 2.4rem);
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-
-.training-cockpit {
-  grid-template-columns: minmax(0, 1.02fr) minmax(330px, 0.98fr);
-}
-
-.panel,
-.box,
-article,
-.sc,
-.activity-hub,
-.activity-focus-grid button,
-.daily-check-grid button,
-.daily-timeline button,
-.private-feed > div,
-.xp-week div,
-.xp-list div:not(.daily-section-title) {
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface);
-  box-shadow: var(--shadow-subtle);
-}
-
-.activity-focus-head {
-  display: none;
-}
-
-.activity-focus-grid {
-  gap: 0;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface);
-}
-
-.activity-focus-grid button {
-  min-width: 112px;
-  min-height: 44px;
-  border: 0;
-  border-right: 1px solid var(--line);
-  border-radius: 0;
-  box-shadow: none;
-}
-
-.activity-focus-grid button.active {
-  background: color-mix(in srgb, var(--accent) 9%, var(--surface));
-  color: var(--accent);
-}
-
-.mission-board {
-  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr) minmax(130px, 0.5fr);
-}
-
-.mission-progress,
-.mission-copy,
-.mission-streak {
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface);
-}
-
-.mission-streak {
-  display: grid;
-}
-
-.mission-copy {
-  background: var(--surface);
-}
-
-.mission-track span.done,
-.daily-check-grid button.done span,
-.xp-list div.done span {
-  border-color: var(--accent);
-  background: var(--accent);
-}
-
-.mission-bar {
-  height: 4px;
-  background: var(--surface-3);
-}
-
-.mission-bar i {
-  background: var(--accent);
-}
-
-.daily-check-grid {
-  grid-template-columns: 1fr;
-  gap: 8px;
-}
-
-.daily-check-grid button {
-  grid-template-columns: 34px minmax(0, 1fr) auto;
-  min-height: 66px;
-}
-
-.daily-check-grid button em b {
-  border: 0;
-  background: var(--surface-2);
-  color: var(--soft);
-}
-
-.hero {
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface);
-  box-shadow: var(--shadow-subtle);
-}
-
-.hero h2 {
-  font-size: clamp(1.2rem, 2vw, 1.75rem);
-  font-weight: 600;
-}
-
-.readiness {
-  border-left: 3px solid var(--accent);
-  border-radius: var(--radius);
-}
-
-.private-feed {
-  gap: 12px;
-}
-
-.private-feed > div {
-  position: relative;
-  grid-template-columns: 1fr;
-  gap: 8px;
-  min-height: 178px;
-  padding: 126px 14px 14px;
-  overflow: hidden;
-}
-
-.private-feed > div::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto;
-  height: 112px;
-  border-bottom: 1px solid var(--line);
-  background:
-    linear-gradient(135deg, transparent 0 22%, color-mix(in srgb, var(--accent) 85%, transparent) 22% 25%, transparent 25% 44%, color-mix(in srgb, var(--accent) 85%, transparent) 44% 47%, transparent 47%),
-    linear-gradient(90deg, color-mix(in srgb, var(--surface-3) 65%, transparent) 1px, transparent 1px),
-    linear-gradient(0deg, color-mix(in srgb, var(--surface-3) 65%, transparent) 1px, transparent 1px),
-    var(--surface-2);
-  background-size: 100% 100%, 28px 28px, 28px 28px, auto;
-}
-
-.private-feed > div > span {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  z-index: 1;
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--surface);
-  box-shadow: var(--shadow-subtle);
-}
-
-@media (max-width: 980px) {
-  .sidebar {
-    inset: auto 0 0;
-    left: 0;
-    width: 100%;
-    height: 62px;
-    transform: none;
-    border-radius: 0;
-  }
-
-  .shell {
-    padding: 18px 12px 82px;
-  }
-
-  .nav .ico {
-    display: none;
-  }
-
-  .pt {
-    font-size: clamp(1.6rem, 8vw, 2.4rem);
-  }
-
-  .training-cockpit,
-  .mission-board {
-    grid-template-columns: 1fr;
   }
 }
