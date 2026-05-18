@@ -1,78 +1,3 @@
-:root {
-  color-scheme: light;
-  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-  --font-display: var(--font-ui);
-  --bg: #f4f4f1;
-  --surface: #ffffff;
-  --surface-2: #f8f8f5;
-  --surface-3: #ecece7;
-  --line: rgba(28, 30, 33, 0.1);
-  --line-strong: rgba(28, 30, 33, 0.18);
-  --text: #202124;
-  --soft: rgba(32, 33, 36, 0.68);
-  --muted: rgba(32, 33, 36, 0.48);
-  --accent: #fc4c02;
-  --accent-2: #202124;
-  --accent-3: #2f7df6;
-  --ok: #15965f;
-  --danger: #d94841;
-  --radius: 10px;
-  --radius-sm: 7px;
-  --shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --nav-bg: rgba(255, 255, 255, 0.96);
-}
-
-[data-accent="purple"],
-[data-accent="amber"] {
-  --accent: #fc4c02;
-}
-
-[data-accent="lime"] {
-  --accent: #15965f;
-}
-
-[data-accent="teal"] {
-  --accent: #008b8b;
-}
-
-[data-theme="black"],
-[data-theme="dark"] {
-  color-scheme: dark;
-  --bg: #171717;
-  --surface: #202020;
-  --surface-2: #262626;
-  --surface-3: #303030;
-  --line: rgba(255, 255, 255, 0.1);
-  --line-strong: rgba(255, 255, 255, 0.18);
-  --text: #f4f4ef;
-  --soft: rgba(244, 244, 239, 0.7);
-  --muted: rgba(244, 244, 239, 0.48);
-  --accent-2: #f4f4ef;
-  --nav-bg: rgba(32, 32, 32, 0.96);
-  --shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.2);
-}
-
-[data-theme="black"] {
-  --bg: #101010;
-  --surface: #181818;
-  --surface-2: #202020;
-  --surface-3: #2a2a2a;
-  --line: rgba(255, 255, 255, 0.09);
-  --line-strong: rgba(255, 255, 255, 0.16);
-  --text: #f3f0ea;
-  --soft: rgba(243, 240, 234, 0.72);
-  --muted: rgba(243, 240, 234, 0.5);
-  --nav-bg: rgba(16, 16, 16, 0.96);
-}
-
-[data-theme="dark"] {
-  --bg: #202020;
-  --surface: #2a2a2a;
-  --surface-2: #303030;
-  --surface-3: #3a3a3a;
-  --nav-bg: rgba(42, 42, 42, 0.96);
-}
-
 * {
   box-sizing: border-box;
 }
@@ -942,6 +867,50 @@ article strong {
 .xp-dashboard {
   display: grid;
   gap: 12px;
+}
+
+.appearance-grid,
+.swatch-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.swatch {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  min-height: 42px;
+  padding: 8px 10px;
+}
+
+.swatch span {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.swatch.purple span {
+  background: #8b5cf6;
+}
+
+.swatch.lime span {
+  background: #15965f;
+}
+
+.swatch.teal span {
+  background: #008b8b;
+}
+
+.swatch.amber span {
+  background: #f59e0b;
+}
+
+.swatch.active {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .xp-page {
