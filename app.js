@@ -703,7 +703,7 @@ function setPage(page) {
   document.documentElement.dataset.page = page;
   $$(".page").forEach((item) => item.classList.toggle("active", item.id === `page-${page}`));
   $$("[data-page-target]").forEach((button) => button.classList.toggle("active", button.dataset.pageTarget === page));
-  const titles = { today: "Feed de treino", xp: "Consistencia", plan: "Plano", history: "Diario", progress: "Performance", nutrition: "Nutri", body: "Corpo e recuperacao", library: "Biblioteca", data: "Dados", user: "Usuario" };
+  const titles = { today: "Feed de treino", xp: "XP e consistencia", plan: "Plano", history: "Diario", progress: "Performance", nutrition: "Nutri", body: "Corpo e recuperacao", library: "Biblioteca", data: "Dados", user: "Usuario" };
   $("#pageTitle").textContent = titles[page] || "Finfit";
 }
 
@@ -1126,14 +1126,14 @@ function missionBoardHtml(done, foods, bodyLog) {
   return `
     <div class="mission-progress">
       <div class="mission-track">${dots}</div>
-      <strong>${minutes} min</strong>
-      <small>${done.length} atividade(s) hoje</small>
+      <strong>${stats.xp} XP</strong>
+      <small>${done.length} atividade(s) · ${minutes}min hoje</small>
     </div>
     <div class="mission-copy">
-      <span>Resumo do dia</span>
-      <h3>${done.length ? "Atividade registrada." : "Pronto para registrar."}</h3>
+      <span>Nivel ${stats.level}</span>
+      <h3>${done.length ? "Progresso registrado." : "Pronto para ganhar XP."}</h3>
       <p>Carga ${load}, gasto estimado ${burned} kcal e ${foods.length} registro(s) de alimentacao.</p>
-      <div class="mission-bar"><i style="width: ${Math.min(100, (minutes / 90) * 100)}%"></i></div>
+      <div class="mission-bar"><i style="width: ${Math.min(100, stats.levelXp)}%"></i></div>
     </div>
     <div class="mission-streak">
       <span>Semana ativa</span>
@@ -1160,7 +1160,7 @@ function renderXpDashboard() {
     .sort((a, b) => b.minutes - a.minutes)
     .slice(0, 5);
   const todayMissions = [
-    ...dailyCheckItems.map((item) => ({ label: item.label, meta: `${item.duration}min padrao`, done: done.some((workout) => workout.type === item.type), value: item.intensity })),
+    ...dailyCheckItems.map((item) => ({ label: item.label, meta: `${item.duration}min padrao`, done: done.some((workout) => workout.type === item.type), value: `+${missionXpForQuickItem(item)} XP` })),
     { label: "Alimentacao", meta: `${foods.length} registro(s)`, done: foods.length > 0, value: `${nutritionSummary(todayIso()).consumed} kcal` },
     { label: "Corpo", meta: bodyLog ? "check-in feito" : "sono, dor, energia", done: Boolean(bodyLog), value: bodyLog ? `dor ${bodyLog.pain || 0}` : "pendente" }
   ];
@@ -1168,10 +1168,10 @@ function renderXpDashboard() {
   const weekLoad = loadSum(currentWeekWorkouts());
   target.innerHTML = `
     <div class="xp-hero">
-      <span>Consistencia semanal</span>
-      <strong>${stats.streak}/7 dias</strong>
-      <small>${weekMinutes}min acumulados - carga ${weekLoad}</small>
-      <div class="mission-bar"><i style="width: ${Math.min(100, (stats.streak / 7) * 100)}%"></i></div>
+      <span>Nivel ${stats.level}</span>
+      <strong>${stats.xp} XP</strong>
+      <small>${stats.streak}/7 dias ativos · ${weekMinutes}min acumulados · carga ${weekLoad}</small>
+      <div class="mission-bar"><i style="width: ${Math.min(100, stats.levelXp)}%"></i></div>
     </div>
     <div class="xp-week">
       ${weekActive.map((day) => `<div class="${day.sessions.length ? "done" : ""}"><span>${day.label}</span><strong>${day.minutes}</strong><small>${day.sessions.length} sessao</small></div>`).join("")}
@@ -1188,7 +1188,7 @@ function renderXpDashboard() {
       `).join("")}
     </div>
     <div class="xp-list">
-      <div class="daily-section-title">Modalidades mais frequentes</div>
+      <div class="daily-section-title">Categorias de XP</div>
       ${topTypes.length ? topTypes.map((item) => `
         <div>
           <span></span>
@@ -1196,7 +1196,7 @@ function renderXpDashboard() {
           <small>${item.total} registros</small>
           <em>${item.minutes}min</em>
         </div>
-      `).join("") : '<p class="empty-state">Registre treinos para criar categorias de consistencia.</p>'}
+      `).join("") : '<p class="empty-state">Registre treinos para criar categorias de XP.</p>'}
     </div>
   `;
 }
@@ -1254,7 +1254,7 @@ function renderDailyCheck() {
         <span>${item.icon}</span>
         <strong>${item.label}</strong>
         <small>${checked ? "registrado hoje" : `${item.duration}min padrao`}</small>
-        <em><b>${item.duration} min</b><b>${item.intensity}</b></em>
+        <em><b>+${missionXpForQuickItem(item)} XP</b><b>${item.intensity}</b></em>
       </button>
     `;
   }).join("");
