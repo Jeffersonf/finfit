@@ -253,7 +253,7 @@ small,
   background: transparent;
   font-family: var(--font-display);
   font-size: 24px;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1;
   text-transform: none;
 }
@@ -382,9 +382,9 @@ small,
 .pt {
   max-width: 760px;
   font-size: clamp(2.5rem, 6vw, 5.8rem);
-  font-weight: 800;
+  font-weight: 560;
   line-height: 0.9;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.02em;
 }
 
 .ps {
@@ -611,7 +611,7 @@ article,
   color: var(--text);
   font-family: var(--font-display);
   font-size: 1.25rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .training-cockpit {
@@ -684,7 +684,7 @@ article,
 .mission-progress strong,
 .mission-streak strong {
   font-size: 2rem;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1;
 }
 
@@ -704,8 +704,8 @@ article,
 
 .mission-copy h3 {
   font-size: 1.6rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .mission-bar {
@@ -764,7 +764,7 @@ article,
 
 .daily-check-grid button strong {
   font-size: 1rem;
-  font-weight: 700;
+  font-weight: 560;
   text-transform: none;
 }
 
@@ -946,8 +946,8 @@ article,
 
 .hero h2 {
   font-size: clamp(1.65rem, 3vw, 2.6rem);
-  font-weight: 700;
-  letter-spacing: -0.03em;
+  font-weight: 560;
+  letter-spacing: -0.01em;
 }
 
 .hero-copy p:last-child {
@@ -973,7 +973,7 @@ article,
 
 .readiness strong {
   font-size: 2.4rem;
-  font-weight: 720;
+  font-weight: 600;
 }
 
 .coach-action-list,
@@ -1196,7 +1196,7 @@ article,
 .rest-face strong {
   font-family: var(--font-display);
   font-size: clamp(2.2rem, 4vw, 3.8rem);
-  font-weight: 720;
+  font-weight: 600;
   line-height: 1;
 }
 
@@ -1248,7 +1248,7 @@ article,
 .cv,
 article strong {
   font-size: 2rem;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1;
 }
 
@@ -1407,7 +1407,7 @@ article strong {
   border-radius: 11px;
   background: var(--accent);
   color: #111;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .uavatar.big {
@@ -1639,8 +1639,8 @@ body {
 
 .pt {
   font-size: clamp(1.9rem, 4vw, 3.4rem);
-  font-weight: 720;
-  letter-spacing: -0.035em;
+  font-weight: 560;
+  letter-spacing: -0.02em;
 }
 
 .primary-action,
@@ -1832,8 +1832,8 @@ article strong {
 
 .xp-hero strong {
   font-size: clamp(2rem, 5vw, 3.5rem);
-  font-weight: 720;
-  letter-spacing: -0.04em;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .xp-week {
@@ -1987,7 +1987,7 @@ body {
 
 .brand-word {
   font-size: 18px;
-  font-weight: 760;
+  font-weight: 600;
 }
 
 .brand-actions {
@@ -2032,8 +2032,8 @@ body {
 .pt {
   max-width: 520px;
   font-size: clamp(2rem, 4vw, 3.8rem);
-  font-weight: 760;
-  letter-spacing: -0.045em;
+  font-weight: 560;
+  letter-spacing: -0.02em;
 }
 
 .primary-action {
@@ -2259,7 +2259,8 @@ article,
 
 .hero h2 {
   font-size: clamp(1.35rem, 2.5vw, 2.15rem);
-  letter-spacing: -0.025em;
+  font-weight: 560;
+  letter-spacing: -0.01em;
 }
 
 .readiness {
@@ -2286,7 +2287,74 @@ article,
 .cv,
 article strong {
   font-size: 1.65rem;
-  font-weight: 720;
+  font-weight: 600;
+}
+
+/* Soft typography pass: closer to Strava/Nike, less gamer/admin weight. */
+body {
+  font-weight: 400;
+}
+
+button,
+input,
+select,
+textarea,
+.nav button,
+.nav-item,
+.primary-action,
+.theme-btn,
+.eyebrow,
+.cl,
+.ct,
+label span,
+.daily-section-title,
+.sport-preset small,
+.activity-focus-head,
+.panel-header p,
+.bh p {
+  font-weight: 500;
+}
+
+h1,
+h2,
+h3,
+.panel-header h3,
+.bh h3,
+.activity-hub-title strong,
+.mission-copy h3,
+.profile-head h2,
+.sport-title h2,
+.xp-copy h3 {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.activity-focus-grid button strong,
+.daily-check-grid button strong,
+.quick-action-card strong,
+.coach-action-card strong,
+.sport-preset strong,
+.food-item strong,
+.body-item strong,
+.workout-list strong,
+.timeline-item strong {
+  font-weight: 560;
+}
+
+.mission-progress strong,
+.mission-streak strong,
+.readiness strong,
+.xp-hero strong,
+.timer-face strong,
+.rest-face strong,
+.activity-hub-stats strong,
+.daily-summary-grid strong,
+.daily-analysis-grid strong,
+.nutrition-kpis strong,
+.module-kpis strong,
+.profile-stats strong {
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 @media (max-width: 980px) {
