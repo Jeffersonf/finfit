@@ -703,7 +703,7 @@ function setPage(page) {
   document.documentElement.dataset.page = page;
   $$(".page").forEach((item) => item.classList.toggle("active", item.id === `page-${page}`));
   $$("[data-page-target]").forEach((button) => button.classList.toggle("active", button.dataset.pageTarget === page));
-  const titles = { today: "Diario de atleta", xp: "XP do atleta", plan: "Plano", history: "Diario", progress: "Performance", nutrition: "Nutri", body: "Corpo e recuperacao", library: "Biblioteca", data: "Dados", user: "Usuario" };
+  const titles = { today: "Feed de treino", xp: "Consistencia", plan: "Plano", history: "Diario", progress: "Performance", nutrition: "Nutri", body: "Corpo e recuperacao", library: "Biblioteca", data: "Dados", user: "Usuario" };
   $("#pageTitle").textContent = titles[page] || "Finfit";
 }
 
@@ -1114,24 +1114,31 @@ function dailyMissionStats(done = todayWorkouts(), foods = todayFoodLogs(), body
 
 function missionBoardHtml(done, foods, bodyLog) {
   const stats = dailyMissionStats(done, foods, bodyLog);
-  const progress = Math.min(100, stats.levelXp);
-  const dots = Array.from({ length: stats.target }, (_, index) => `<span class="${index < stats.missionsDone ? "done" : ""}"></span>`).join("");
+  const minutes = done.reduce((sum, workout) => sum + Number(workout.duration || 0), 0);
+  const load = loadSum(done);
+  const burned = exerciseCalories(todayIso());
+  const weekMinutes = currentWeekWorkouts().reduce((sum, workout) => sum + Number(workout.duration || 0), 0);
+  const dots = weekDays.map((day) => {
+    const date = dateForCurrentWeekday(day.key);
+    const active = state.workouts.some((workout) => workout.date === date && workout.status !== "pulado");
+    return `<span class="${active ? "done" : ""}"></span>`;
+  }).join("");
   return `
     <div class="mission-progress">
-      <div class="mission-track">${dots}<b>🏆</b></div>
-      <strong>${stats.xp} XP</strong>
-      <small>${stats.missionsDone}/${stats.target} missões hoje</small>
+      <div class="mission-track">${dots}</div>
+      <strong>${minutes} min</strong>
+      <small>${done.length} atividade(s) hoje</small>
     </div>
     <div class="mission-copy">
-      <span>Level ${stats.level}</span>
-      <h3>Hábitos viram performance.</h3>
-      <p>Cada treino, refeição e check-in de corpo alimenta sua ofensiva diária.</p>
-      <div class="mission-bar"><i style="width: ${progress}%"></i></div>
+      <span>Resumo do dia</span>
+      <h3>${done.length ? "Atividade registrada." : "Pronto para registrar."}</h3>
+      <p>Carga ${load}, gasto estimado ${burned} kcal e ${foods.length} registro(s) de alimentacao.</p>
+      <div class="mission-bar"><i style="width: ${Math.min(100, (minutes / 90) * 100)}%"></i></div>
     </div>
     <div class="mission-streak">
-      <span>Ofensiva</span>
+      <span>Semana ativa</span>
       <strong>${stats.streak}/7</strong>
-      <small>dias ativos na semana</small>
+      <small>${weekMinutes}min acumulados</small>
     </div>
   `;
 }
@@ -1146,48 +1153,50 @@ function renderXpDashboard() {
   const weekActive = weekDays.map((day) => {
     const date = dateForCurrentWeekday(day.key);
     const sessions = state.workouts.filter((workout) => workout.date === date && workout.status !== "pulado");
-    return { ...day, sessions, xp: sessions.reduce((sum, workout) => sum + missionXpForWorkout(workout), 0) };
+    return { ...day, sessions, minutes: sessions.reduce((sum, workout) => sum + Number(workout.duration || 0), 0) };
   });
   const topTypes = Object.entries(groupBy(state.workouts, "type"))
-    .map(([type, workouts]) => ({ type, xp: workouts.reduce((sum, workout) => sum + missionXpForWorkout(workout), 0), total: workouts.length }))
-    .sort((a, b) => b.xp - a.xp)
+    .map(([type, workouts]) => ({ type, minutes: workouts.reduce((sum, workout) => sum + Number(workout.duration || 0), 0), total: workouts.length }))
+    .sort((a, b) => b.minutes - a.minutes)
     .slice(0, 5);
   const todayMissions = [
-    ...dailyCheckItems.map((item) => ({ label: item.label, meta: `${item.duration}min`, done: done.some((workout) => workout.type === item.type), xp: missionXpForQuickItem(item) })),
-    { label: "Alimentacao", meta: `${foods.length} registro(s)`, done: foods.length > 0, xp: Math.min(60, Math.max(15, foods.length * 15)) },
-    { label: "Corpo", meta: bodyLog ? "check-in feito" : "sono, dor, energia", done: Boolean(bodyLog), xp: 25 }
+    ...dailyCheckItems.map((item) => ({ label: item.label, meta: `${item.duration}min padrao`, done: done.some((workout) => workout.type === item.type), value: item.intensity })),
+    { label: "Alimentacao", meta: `${foods.length} registro(s)`, done: foods.length > 0, value: `${nutritionSummary(todayIso()).consumed} kcal` },
+    { label: "Corpo", meta: bodyLog ? "check-in feito" : "sono, dor, energia", done: Boolean(bodyLog), value: bodyLog ? `dor ${bodyLog.pain || 0}` : "pendente" }
   ];
+  const weekMinutes = weekActive.reduce((sum, day) => sum + day.minutes, 0);
+  const weekLoad = loadSum(currentWeekWorkouts());
   target.innerHTML = `
     <div class="xp-hero">
-      <span>Level ${stats.level}</span>
-      <strong>${stats.xp} XP</strong>
-      <small>${stats.missionsDone}/${stats.target} missoes hoje · ofensiva ${stats.streak}/7</small>
-      <div class="mission-bar"><i style="width: ${Math.min(100, stats.levelXp)}%"></i></div>
+      <span>Consistencia semanal</span>
+      <strong>${stats.streak}/7 dias</strong>
+      <small>${weekMinutes}min acumulados - carga ${weekLoad}</small>
+      <div class="mission-bar"><i style="width: ${Math.min(100, (stats.streak / 7) * 100)}%"></i></div>
     </div>
     <div class="xp-week">
-      ${weekActive.map((day) => `<div class="${day.sessions.length ? "done" : ""}"><span>${day.label}</span><strong>${day.xp}</strong><small>${day.sessions.length} sessao</small></div>`).join("")}
+      ${weekActive.map((day) => `<div class="${day.sessions.length ? "done" : ""}"><span>${day.label}</span><strong>${day.minutes}</strong><small>${day.sessions.length} sessao</small></div>`).join("")}
     </div>
     <div class="xp-list">
-      <div class="daily-section-title">Missoes de hoje</div>
+      <div class="daily-section-title">Check-ins de hoje</div>
       ${todayMissions.map((item) => `
         <div class="${item.done ? "done" : ""}">
           <span></span>
           <strong>${item.label}</strong>
           <small>${item.meta}</small>
-          <em>+${item.xp} XP</em>
+          <em>${item.value}</em>
         </div>
       `).join("")}
     </div>
     <div class="xp-list">
-      <div class="daily-section-title">Categorias de XP</div>
+      <div class="daily-section-title">Modalidades mais frequentes</div>
       ${topTypes.length ? topTypes.map((item) => `
         <div>
           <span></span>
           <strong>${presetLabel(item.type)}</strong>
           <small>${item.total} registros</small>
-          <em>${item.xp} XP</em>
+          <em>${item.minutes}min</em>
         </div>
-      `).join("") : '<p class="empty-state">Registre treinos para criar categorias de XP.</p>'}
+      `).join("") : '<p class="empty-state">Registre treinos para criar categorias de consistencia.</p>'}
     </div>
   `;
 }
@@ -1240,13 +1249,12 @@ function renderDailyCheck() {
   if (missionBoard) missionBoard.innerHTML = missionBoardHtml(done, foods, bodyLog);
   grid.innerHTML = dailyCheckItems.map((item) => {
     const checked = done.some((workout) => workout.type === item.type);
-    const xp = missionXpForQuickItem(item);
     return `
       <button type="button" class="${checked ? "done" : ""}" data-daily-check="${item.id}">
         <span>${item.icon}</span>
         <strong>${item.label}</strong>
         <small>${checked ? "registrado hoje" : `${item.duration}min padrao`}</small>
-        <em><b>+${xp} XP</b><b>${item.intensity}</b></em>
+        <em><b>${item.duration} min</b><b>${item.intensity}</b></em>
       </button>
     `;
   }).join("");
