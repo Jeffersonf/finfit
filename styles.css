@@ -1580,6 +1580,236 @@ article strong {
   }
 }
 
+/* Strava-like calm pass: simpler surfaces, less visual weight, clearer hierarchy. */
+:root,
+[data-theme="light"] {
+  --bg: #f6f6f2;
+  --bg-2: #f6f6f2;
+  --surface: #ffffff;
+  --surface-2: #f7f7f4;
+  --surface-3: #eceee8;
+  --line: rgba(17, 24, 39, 0.09);
+  --line-strong: rgba(17, 24, 39, 0.15);
+  --text: #191919;
+  --muted: rgba(25, 25, 25, 0.5);
+  --accent: #fc4c02;
+  --accent-2: #191919;
+  --accent-3: #087e8b;
+  --radius: 14px;
+  --radius-sm: 10px;
+  --shadow-subtle: none;
+  --nav-bg: rgba(255, 255, 255, 0.94);
+}
+
+[data-theme="black"],
+[data-theme="dark"] {
+  --bg: #111214;
+  --bg-2: #111214;
+  --surface: #181a1d;
+  --surface-2: #202226;
+  --surface-3: #2a2d32;
+  --line: rgba(255, 255, 255, 0.08);
+  --line-strong: rgba(255, 255, 255, 0.14);
+  --text: #f4f1ea;
+  --muted: rgba(244, 241, 234, 0.52);
+  --accent-2: #f4f1ea;
+  --accent-3: #5bc0be;
+  --nav-bg: rgba(24, 26, 29, 0.94);
+}
+
+body {
+  background: var(--bg);
+}
+
+.sidebar {
+  top: 0;
+  width: 100%;
+  height: 60px;
+  border-width: 0 0 1px;
+  border-radius: 0;
+  transform: translateX(-50%);
+}
+
+.shell {
+  max-width: 1040px;
+  padding-top: 82px;
+}
+
+.pt {
+  font-size: clamp(1.9rem, 4vw, 3.4rem);
+  font-weight: 720;
+  letter-spacing: -0.035em;
+}
+
+.primary-action,
+.save-workout {
+  box-shadow: none;
+}
+
+.panel,
+.box,
+article,
+.sc,
+.activity-hub,
+.activity-focus-grid button {
+  border-color: var(--line);
+  border-radius: var(--radius);
+  box-shadow: none;
+}
+
+.panel,
+.box {
+  padding: 18px;
+}
+
+.training-cockpit {
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 14px;
+}
+
+.activity-focus-grid button {
+  min-height: 54px;
+  min-width: 112px;
+  padding: 9px 12px;
+}
+
+.activity-hub {
+  padding: 14px;
+}
+
+.activity-hub-stats,
+.daily-summary-grid,
+.daily-analysis-grid,
+.metrics,
+.running-kpis,
+.nutrition-kpis {
+  gap: 8px;
+  border: 0;
+}
+
+.activity-hub-stats div,
+.daily-summary-grid div,
+.daily-analysis-grid div,
+.sport-insight-grid div,
+.nutrition-kpis div,
+.module-kpis div,
+.profile-stats article {
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.mission-board {
+  display: block;
+  margin-bottom: 12px;
+  border: 0;
+}
+
+.mission-progress {
+  display: flex;
+  min-height: 58px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+
+.mission-copy,
+.mission-streak {
+  display: none;
+}
+
+.mission-track span,
+.mission-track b {
+  width: 14px;
+  height: 14px;
+}
+
+.mission-progress strong {
+  font-size: 1.15rem;
+  font-weight: 680;
+}
+
+.daily-check-grid {
+  gap: 8px;
+  border: 0;
+}
+
+.daily-check-grid button {
+  min-height: 64px;
+  border-color: var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.daily-check-grid button em b:nth-child(2) {
+  display: none;
+}
+
+.daily-side-checks,
+.daily-quick-edit,
+.daily-analysis,
+.weekly-coach,
+.hero,
+.metrics,
+.workspace {
+  margin-top: 12px;
+}
+
+.hero {
+  min-height: auto;
+  padding: 18px;
+}
+
+.hero h2 {
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+}
+
+.readiness {
+  min-width: 96px;
+}
+
+.readiness strong,
+.cv,
+article strong {
+  font-size: 1.45rem;
+  font-weight: 680;
+}
+
+.metrics article,
+.running-kpis article,
+.sc {
+  min-height: 92px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.quick-add,
+.work-mode {
+  display: none;
+}
+
+@media (max-width: 980px) {
+  .sidebar {
+    inset: auto 10px 10px;
+    left: 10px;
+    width: auto;
+    height: 66px;
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    transform: none;
+  }
+
+  .shell {
+    padding-top: 18px;
+  }
+
+  .training-cockpit {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

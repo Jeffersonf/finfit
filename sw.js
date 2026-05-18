@@ -1,9 +1,9 @@
-const CACHE_NAME = "finfit-cache-v40";
+const CACHE_NAME = "finfit-cache-v41";
 const APP_SHELL = [
   "./",
   "./index.html",
-  "./styles.css",
-  "./app.js",
+  "./styles.css?v=41",
+  "./app.js?v=41",
   "./manifest.webmanifest",
   "./icon.svg",
   "./offline.html"
@@ -21,6 +21,10 @@ self.addEventListener("activate", (event) => {
     )
   );
   self.clients.claim();
+});
+
+self.addEventListener("message", (event) => {
+  if (event.data === "SKIP_WAITING") self.skipWaiting();
 });
 
 self.addEventListener("fetch", (event) => {
